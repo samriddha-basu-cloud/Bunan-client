@@ -614,6 +614,50 @@
   </div>
 </div>
 
+<script type="module">
+  // ══════════════════════════════════════════════════════
+  //  Firebase initialiser — runs as ES module so dynamic
+  //  import() is fully supported in all modern browsers
+  // ══════════════════════════════════════════════════════
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore as gFS, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
+    authDomain: "bunan-4fd57.firebaseapp.com",
+    projectId: "bunan-4fd57",
+    storageBucket: "bunan-4fd57.firebasestorage.app",
+    messagingSenderId: "612151786648",
+    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
+  };
+
+  try {
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    window.__db = db;
+
+    const snapshot = await getDocs(collection(db, 'products'));
+    const products = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    console.log("✅ Firestore: loaded", products.length, "products");
+
+    // Hand off to the UI layer
+    if (typeof window.__bunanOnProducts === 'function') {
+      window.__bunanOnProducts(products, db);
+    } else {
+      window.__bunanProducts = products; // store for when UI is ready
+    }
+  } catch (err) {
+    console.error("❌ Firestore load failed:", err);
+    // Signal UI layer to show demo data
+    if (typeof window.__bunanOnProducts === 'function') {
+      window.__bunanOnProducts(null, null);
+    } else {
+      window.__bunanProducts = null;
+    }
+  }
+</script>
+
 <script>
 (function() {
   // ═══ State
@@ -623,20 +667,19 @@
   let quickMode = '';
   const WA_NUM = window.BUNAN_WA || '919999999999';
 
-  // ═══ Demo products (shown while Firebase loads / as fallback)
+  // ═══ Demo products (fallback if Firestore unavailable)
   const demoProducts = [
     {
       id: 'demo1', serialNumber: 'BN-001', saleCode: 'SAR-JMD-001',
       name: 'Jamdani Silk Saree', nameBn: 'জামদানি রেশম শাড়ি',
       category: 'Saree', fabric: 'Silk', colour: 'White',
       occasion: 'Wedding', karigari: 'Jamdani', size: 'Free Size',
-      description: 'An exquisite jamdani weave in pure Murshidabad silk, featuring the traditional floral motif pattern woven directly into the fabric — not printed, not embroidered, but grown in the loom over 72 hours.',
+      description: 'An exquisite jamdani weave in pure Murshidabad silk.',
       material: 'Pure Murshidabad Silk, Zari border',
       timeTaken: '72 hours', origin: 'Murshidabad, West Bengal',
       driveLink: '', likes: 142, isNew: true, isBestSeller: true,
       reviews: [
-        { text: 'Wore this to my wedding — every guest asked where I got it.', author: 'Priya M., Kolkata' },
-        { text: 'The craftsmanship is extraordinary. Genuinely heirloom quality.', author: 'Ritu S., Delhi' }
+        { text: 'Wore this to my wedding — every guest asked where I got it.', author: 'Priya M., Kolkata' }
       ]
     },
     {
@@ -644,20 +687,18 @@
       name: 'Kantha Stitch Stole', nameBn: 'কাঁথা সেলাই উত্তরীয়',
       category: 'Kantha', fabric: 'Cotton', colour: 'Multicolour',
       occasion: 'Casual', karigari: 'Kantha Stitch', size: 'Free Size',
-      description: 'Hand-stitched by artisans of Bolpur village. This stole carries 40,000+ running stitches in six colours, depicting the lifecycle of the lotus — from mud to bloom.',
+      description: 'Hand-stitched by artisans of Bolpur village.',
       material: 'Organic cotton, natural dyes',
       timeTaken: '15 days', origin: 'Bolpur, Birbhum',
       driveLink: '', likes: 89, isNew: false, isBestSeller: true,
-      reviews: [
-        { text: 'I gifted this and it was the most talked-about present at the ceremony.', author: 'Ananya D.' }
-      ]
+      reviews: []
     },
     {
       id: 'demo3', serialNumber: 'BN-003', saleCode: 'PNJ-KHD-003',
       name: 'Khadi Punjabi with Nakshi', nameBn: 'নকশি খাদি পাঞ্জাবি',
       category: 'Punjabi', fabric: 'Khadi', colour: 'Beige',
       occasion: 'Festival', karigari: 'Nakshi', size: 'M',
-      description: 'Handspun khadi from the spinning wheels of Shantiniketan, hand-embroidered with nakshi motifs along the collar and cuffs. Breathable, dignified, and deeply rooted.',
+      description: 'Handspun khadi from Shantiniketan.',
       material: 'Handspun Khadi cotton',
       timeTaken: '10 days', origin: 'Shantiniketan, West Bengal',
       driveLink: '', likes: 67, isNew: true, isBestSeller: false,
@@ -668,20 +709,18 @@
       name: 'Tant Cotton Saree', nameBn: 'তাঁত সুতি শাড়ি',
       category: 'Saree', fabric: 'Cotton', colour: 'Red',
       occasion: 'Daily Wear', karigari: 'Plain Handloom', size: 'Free Size',
-      description: 'The everyday elegance of Bengali tant. Lightweight, breathable, and woven on traditional throw-shuttle looms. A wardrobe essential that never goes out of style.',
+      description: 'The everyday elegance of Bengali tant.',
       material: '100% cotton tant',
       timeTaken: '8 hours', origin: 'Dhaniakhali, Hooghly',
       driveLink: '', likes: 211, isNew: false, isBestSeller: true,
-      reviews: [
-        { text: 'My morning saree. Five washes and it only gets softer.', author: 'Mamata R.' }
-      ]
+      reviews: []
     },
     {
       id: 'demo5', serialNumber: 'BN-005', saleCode: 'DPT-ORG-005',
       name: 'Organza Dupatta with Zari', nameBn: 'জরি অর্গান্ডি দোপাট্টা',
       category: 'Dupatta', fabric: 'Organza', colour: 'Purple',
       occasion: 'Wedding', karigari: 'Zari Work', size: 'Free Size',
-      description: 'Sheer as moonlight. This organza dupatta features a hand-woven zari border in pure gold thread, making it the ideal finishing touch for any bridal or festive ensemble.',
+      description: 'Sheer organza with hand-woven pure zari border.',
       material: 'Organza, pure zari',
       timeTaken: '20 hours', origin: 'Varanasi collaboration × Bengal',
       driveLink: '', likes: 54, isNew: true, isBestSeller: false,
@@ -692,7 +731,7 @@
       name: 'Muga Silk Shawl', nameBn: 'মুগা রেশম শাল',
       category: 'Shawl', fabric: 'Silk', colour: 'Yellow',
       occasion: 'Gifting', karigari: 'Plain Handloom', size: 'Free Size',
-      description: 'Woven from the golden Muga silk of Assam — one of the rarest and most durable natural fibres in the world. A wrap that improves with age, like all great things.',
+      description: 'Woven from the golden Muga silk of Assam.',
       material: 'Muga silk from Assam',
       timeTaken: '3 days', origin: 'Sualkuchi, Assam',
       driveLink: '', likes: 33, isNew: false, isBestSeller: false,
@@ -700,54 +739,24 @@
     }
   ];
 
-  // ═══ Load from Firebase (self-contained — no dependency on window.__db)
-  async function loadFromFirebase() {
-    try {
-      const { initializeApp, getApps } = await import(
-        "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
-      );
-      const { getFirestore, collection, getDocs } = await import(
-        "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-      );
-
-      // Reuse existing Firebase app if already initialised (e.g. by admin panel)
-      const firebaseConfig = {
-        apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
-        authDomain: "bunan-4fd57.firebaseapp.com",
-        projectId: "bunan-4fd57",
-        storageBucket: "bunan-4fd57.firebasestorage.app",
-        messagingSenderId: "612151786648",
-        appId: "1:612151786648:web:6ca884a59cbd73117724ed"
-      };
-
-      const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-      const db  = window.__db || getFirestore(app);
-      window.__db = db; // cache for like updates
-
-      const snapshot = await getDocs(collection(db, 'products'));
-
-      if (!snapshot.empty) {
-        allProducts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-        console.log("✅ Products loaded from Firestore:", allProducts.length);
-      } else {
-        console.warn("⚠️ No products in Firestore — showing demo data");
-      }
-
-      applyFilters();
-
-    } catch (error) {
-      console.error("❌ Firestore error:", error);
-      applyFilters(); // fall back to demo data
+  // ═══ Called by the module script above once Firestore responds
+  window.__bunanOnProducts = function(products, db) {
+    if (products && products.length > 0) {
+      allProducts = products;
+      allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
     }
-  }
-  // ═══ Init with demo data immediately
+    // If null or empty, allProducts stays as demoProducts set below
+    applyFilters();
+  };
+
+  // ═══ Start with demo data immediately (shows grid while Firestore loads)
   allProducts = [...demoProducts];
   applyFilters();
-  loadFromFirebase();
+
+  // ═══ If module already ran before this script (can happen), pick up results
+  if (window.__bunanProducts !== undefined) {
+    window.__bunanOnProducts(window.__bunanProducts, window.__db);
+  }
 
   // ═══ Apply all filters
   window.applyFilters = function() {

@@ -7,7 +7,9 @@
   #weavers {
     padding: 7rem 3rem;
     scroll-margin-top: 80px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.2), transparent, rgba(0,0,0,0.2));
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
   }
 
   .weavers-intro {
@@ -15,14 +17,14 @@
   }
   .weavers-tag {
     font-family: var(--font-deco);
-    font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
     color: var(--gold); display: block; margin-bottom: 1rem;
   }
   .weavers-title {
     font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    color: var(--gold);
-    text-shadow: var(--shadow-gold);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--text);
+    font-weight: 400;
     margin-bottom: 1rem;
   }
   .weavers-subtitle {
@@ -32,29 +34,25 @@
   }
   .weavers-lead {
     font-family: var(--font-display);
-    font-size: 1.05rem; line-height: 1.9;
-    color: var(--cream-dim);
+    font-size: 1.05rem; line-height: 1.95;
+    color: var(--text-dim);
   }
 
   /* ─── MANIFESTO BANNER ───────────────────────────────────── */
   .manifesto {
-    background:
-      repeating-linear-gradient(
-        -45deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 1px,
-        transparent 1px, transparent 14px
-      ),
-      linear-gradient(135deg, rgba(139,26,26,0.15), rgba(201,168,76,0.08));
-    border: 1px solid rgba(201,168,76,0.2);
-    border-left: 4px solid var(--gold);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold-light);
     padding: 3rem 4rem;
     max-width: 900px; margin: 0 auto 5rem;
     text-align: center;
+    box-shadow: var(--shadow-card);
   }
   .manifesto-text {
     font-family: var(--font-bengali);
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-    color: var(--cream);
-    line-height: 1.9; letter-spacing: 0.04em;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: var(--text);
+    line-height: 1.95; letter-spacing: 0.04em;
     font-style: italic;
   }
   .manifesto-en {
@@ -68,99 +66,98 @@
   .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2px; max-width: 1300px; margin: 0 auto 5rem;
+    gap: 1px; max-width: 1300px; margin: 0 auto 5rem;
+    border: 1px solid var(--border-soft);
   }
 
   .weaver-card {
     position: relative; overflow: hidden;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(201,168,76,0.08);
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
     transition: all 0.4s ease;
   }
   .weaver-card:hover {
-    border-color: rgba(201,168,76,0.3);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    background: var(--bg);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(44,26,14,0.12);
   }
 
   .weaver-portrait {
     aspect-ratio: 3/4;
     background:
       repeating-linear-gradient(
-        -45deg, rgba(201,168,76,0.06) 0px, rgba(201,168,76,0.06) 1px,
+        -45deg, rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
         transparent 1px, transparent 12px
       ),
       linear-gradient(160deg, var(--bg-dark), var(--bg));
     display: flex; align-items: center; justify-content: center;
-    font-size: 5rem;
-    color: rgba(201,168,76,0.15);
+    color: rgba(139,105,20,0.15);
     position: relative;
     overflow: hidden;
   }
+  .weaver-portrait-icon {
+    width: 80px; height: 80px; opacity: 0.15;
+    color: var(--gold-dark);
+  }
   .weaver-portrait::after {
     content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.6));
+    position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+    background: linear-gradient(180deg, transparent, rgba(44,26,14,0.35));
   }
 
   .weaver-craft-badge {
     position: absolute;
     bottom: 1rem; left: 1rem; z-index: 2;
     font-family: var(--font-deco);
-    font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase;
-    background: rgba(201,168,76,0.9);
-    color: var(--bg-dark);
+    font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase;
+    background: var(--gold-dark);
+    color: #fff;
     padding: 0.3rem 0.7rem;
   }
 
-  .weaver-body {
-    padding: 1.5rem;
-  }
+  .weaver-body { padding: 1.5rem; }
   .weaver-name {
     font-family: var(--font-bengali);
-    font-size: 1.3rem; color: var(--gold);
-    text-shadow: 0 0 15px rgba(201,168,76,0.2);
+    font-size: 1.25rem; color: var(--gold-dark);
     margin-bottom: 0.2rem;
   }
   .weaver-location {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim); margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 1rem;
   }
   .weaver-story {
     font-family: var(--font-display);
-    font-size: 0.95rem; line-height: 1.85;
-    color: var(--cream-dim);
+    font-size: 0.95rem; line-height: 1.9;
+    color: var(--text-dim);
   }
   .weaver-spec {
     display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
   }
   .weaver-tag {
     font-family: var(--font-deco);
-    font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--gold-dark);
-    border: 1px solid rgba(201,168,76,0.2);
+    font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
     padding: 0.2rem 0.6rem;
   }
   .weaver-years {
     font-family: var(--font-heading);
-    font-size: 2rem; color: rgba(201,168,76,0.4);
+    font-size: 2rem; color: rgba(139,105,20,0.2);
     position: absolute; top: 1rem; right: 1rem;
-    line-height: 1;
+    line-height: 1; font-weight: 400;
   }
 
   /* ─── MISSION STRIPS ──────────────────────────────────────── */
-  .mission-section {
-    max-width: 1200px; margin: 0 auto;
-  }
+  .mission-section { max-width: 1200px; margin: 0 auto; }
   .mission-head {
     text-align: center; margin-bottom: 3rem;
   }
   .mission-head h3 {
     font-family: var(--font-heading);
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--gold); text-shadow: var(--shadow-gold);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--text); font-weight: 400;
   }
   .mission-head p {
     font-family: var(--font-bengali);
@@ -170,40 +167,46 @@
   .mission-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 2px;
+    gap: 1px;
+    border: 1px solid var(--border-soft);
   }
   .mission-item {
     padding: 2.5rem 2rem;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(201,168,76,0.08);
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
     text-align: center;
     transition: all 0.35s ease;
   }
   .mission-item:hover {
-    background: rgba(201,168,76,0.04);
-    border-color: rgba(201,168,76,0.2);
-    transform: translateY(-3px);
+    background: var(--bg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
   }
   .mission-icon {
-    font-size: 2.5rem; margin-bottom: 1rem; display: block;
+    margin-bottom: 1.2rem; display: block;
+    width: 40px; height: 40px;
+    margin: 0 auto 1.2rem;
+    color: var(--gold-dark); opacity: 0.7;
   }
   .mission-title {
     font-family: var(--font-deco);
-    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 0.8rem;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-dark); margin-bottom: 0.8rem;
   }
   .mission-desc {
     font-family: var(--font-display);
-    font-size: 0.92rem; line-height: 1.8;
-    color: var(--cream-dim);
+    font-size: 0.95rem; line-height: 1.85;
+    color: var(--text-dim);
   }
 
   /* ─── IMPACT NUMBERS ──────────────────────────────────────── */
   .impact-band {
-    background: rgba(201,168,76,0.05);
-    border-top: 1px solid rgba(201,168,76,0.12);
-    border-bottom: 1px solid rgba(201,168,76,0.12);
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     padding: 4rem 3rem; margin-top: 5rem;
+    box-shadow: var(--shadow-card);
   }
   .impact-inner {
     max-width: 1000px; margin: 0 auto;
@@ -212,24 +215,23 @@
   }
   .impact-num {
     font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    color: var(--gold); text-shadow: var(--shadow-gold);
-    line-height: 1;
+    font-size: clamp(2.5rem, 5vw, 3.8rem);
+    color: var(--gold-dark);
+    line-height: 1; font-weight: 500;
   }
   .impact-label {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim); margin-top: 0.5rem;
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light); margin-top: 0.5rem;
   }
   .impact-sub {
     font-family: var(--font-bengali);
-    font-size: 0.8rem; color: rgba(255,255,255,0.3);
-    margin-top: 0.2rem;
+    font-size: 0.85rem; color: var(--text-dim); margin-top: 0.3rem;
   }
 
   @media (max-width: 900px) {
     #weavers { padding: 4rem 1.5rem; }
-    .manifesto { padding: 2rem 1.5rem; }
+    .manifesto { padding: 2rem; }
     .team-grid { grid-template-columns: 1fr; }
     .impact-inner { grid-template-columns: repeat(2, 1fr); }
     .mission-grid { grid-template-columns: 1fr; }
@@ -238,43 +240,41 @@
 
 <section id="weavers">
 
-  <!-- Intro -->
   <div class="weavers-intro">
-    <span class="weavers-tag">✦ The Hands Behind the Art ✦</span>
-    <h2 class="weavers-title">Our Weavers</h2>
-    <p class="weavers-subtitle">আমাদের তাঁতি — মাটির মানুষ, সোনার হাত</p>
+    <span class="weavers-tag">The Hands Behind the Cloth</span>
+    <h2 class="weavers-title">Meet the Weavers</h2>
+    <p class="weavers-subtitle">আমাদের তাঁতিরা — যারা স্বপ্ন বোনেন সুতোয়</p>
     <p class="weavers-lead">
-      At বুনন, we believe a fabric is only as beautiful as the hands that made it. 
-      Every product in our catalogue was born in a rural home, on a handloom, 
-      by a woman who learned this art from her mother, who learned it from hers.
-      These are their stories.
+      These are not anonymous artisans. They are mothers, daughters, teachers, and dreamers — 
+      women whose hands have spent decades learning a language that cannot be written, only woven. 
+      Every piece you wear carries the story of one of them.
     </p>
   </div>
 
   <!-- Manifesto -->
   <div class="manifesto">
     <p class="manifesto-text">
-      "তাঁতিনীরা শুধু কাপড় বোনেন না — তাঁরা স্বপ্ন বোনেন,<br/>
-      স্বাধীনতা বোনেন, পরিবারের ভবিষ্যৎ বোনেন।"
+      "আমরা বিক্রি করি না শুধু কাপড়। আমরা বহন করি সেই নারীর স্বপ্ন, 
+      যে ভোরবেলা তাঁতে বসেন — শুধু এইটুকু বিশ্বাস নিয়ে যে তাঁর শিল্পের মূল্য আছে।"
     </p>
     <p class="manifesto-en">
-      "The weavers don't just weave cloth — they weave dreams, 
-      weave freedom, weave the future of their families."
+      "We do not merely sell fabric. We carry the dreams of the woman who sits at the loom at dawn — 
+      with only this one belief: that her craft has worth."
     </p>
   </div>
 
-  <!-- Team Grid -->
+  <!-- Weavers grid -->
   <div class="team-grid">
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        🧵
-        <div class="weaver-craft-badge">Jamdani · 28 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Jamdani &middot; 28 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">28</div>
         <div class="weaver-name">সরস্বতী দেবী</div>
-        <div class="weaver-location">📍 Murshidabad, West Bengal</div>
+        <div class="weaver-location">Murshidabad, West Bengal</div>
         <p class="weaver-story">
           Saraswati learned jamdani at age 9, sitting beside her mother's loom in Murshidabad. 
           She married into a weaving family and raised three daughters, all of whom now weave for বুনন. 
@@ -291,13 +291,13 @@
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        🪡
-        <div class="weaver-craft-badge">Kantha · 35 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Kantha &middot; 35 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">35</div>
         <div class="weaver-name">রাধারানী মণ্ডল</div>
-        <div class="weaver-location">📍 Bolpur, Birbhum</div>
+        <div class="weaver-location">Bolpur, Birbhum</div>
         <p class="weaver-story">
           Radharani is a kantha legend in Bolpur. Her running stitch is so precise that 
           art historians have documented her work as a rare surviving example of pre-industrial kantha technique. 
@@ -314,13 +314,13 @@
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        🎨
-        <div class="weaver-craft-badge">Block Print · 20 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Block Print &middot; 20 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">20</div>
         <div class="weaver-name">সুমিত্রা হাঁসদা</div>
-        <div class="weaver-location">📍 Purulia, West Bengal</div>
+        <div class="weaver-location">Purulia, West Bengal</div>
         <p class="weaver-story">
           Sumitra is a Santali woman whose block printing draws from her tribal heritage — 
           geometric forms, animals of the forest, harvest symbols passed down through oral tradition. 
@@ -338,19 +338,18 @@
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        🌿
-        <div class="weaver-craft-badge">Natural Dye · 15 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Natural Dye &middot; 15 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">15</div>
         <div class="weaver-name">মীরা মাহাতো</div>
-        <div class="weaver-location">📍 Jharkhand border, Bengal</div>
+        <div class="weaver-location">Jharkhand border, Bengal</div>
         <p class="weaver-story">
           Meera doesn't weave — she colours. A master of natural dyeing, she extracts pigments 
           from indigo plants, pomegranate rind, turmeric, and forest bark. 
           Her colours don't fade; they age. She supplies the dyed yarns that give বুনন's 
-          cotton pieces their distinctive, earthy richness. 
-          Meera grows most of her dye plants herself in a small kitchen garden.
+          cotton pieces their distinctive, earthy richness.
         </p>
         <div class="weaver-spec">
           <span class="weaver-tag">Natural Dyes</span>
@@ -362,13 +361,13 @@
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        🧶
-        <div class="weaver-craft-badge">Tant · 40 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Tant &middot; 40 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">40</div>
         <div class="weaver-name">কমলা বসাক</div>
-        <div class="weaver-location">📍 Dhaniakhali, Hooghly</div>
+        <div class="weaver-location">Dhaniakhali, Hooghly</div>
         <p class="weaver-story">
           Kamala is 68 years old and has been at the tant loom since she was 28. 
           Her family has woven tant for four generations in Dhaniakhali — 
@@ -386,13 +385,13 @@
 
     <div class="weaver-card">
       <div class="weaver-portrait">
-        ✨
-        <div class="weaver-craft-badge">Zari · 18 years</div>
+        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
+        <div class="weaver-craft-badge">Zari &middot; 18 years</div>
       </div>
       <div class="weaver-body">
         <div class="weaver-years">18</div>
         <div class="weaver-name">পূর্ণিমা সাহা</div>
-        <div class="weaver-location">📍 Shantiniketan, Birbhum</div>
+        <div class="weaver-location">Shantiniketan, Birbhum</div>
         <p class="weaver-story">
           Purnima studied under a Tagore-era weaving tradition at Shantiniketan's 
           craft school before joining বুনন. She specializes in zari borders — 
@@ -418,22 +417,22 @@
     </div>
     <div class="mission-grid">
       <div class="mission-item">
-        <span class="mission-icon">⚖️</span>
+        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3 L12 21 M3 12 L21 12 M5 5 L19 19 M19 5 L5 19"/></svg>
         <div class="mission-title">Fair Wages</div>
         <p class="mission-desc">Every weaver receives 40% above market rate. We believe the price of craft must reflect the time, skill and soul invested in it.</p>
       </div>
       <div class="mission-item">
-        <span class="mission-icon">🏫</span>
+        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 12 L11 15 L16 9"/></svg>
         <div class="mission-title">Skill Preservation</div>
         <p class="mission-desc">বুনন runs free workshops where master weavers teach their techniques to the next generation, ensuring no art form is lost.</p>
       </div>
       <div class="mission-item">
-        <span class="mission-icon">🌱</span>
+        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2 C12 2 4 6 4 13 C4 17 7.6 20 12 20 C16.4 20 20 17 20 13 C20 6 12 2 12 2 Z"/></svg>
         <div class="mission-title">Sustainable Craft</div>
         <p class="mission-desc">We use natural dyes, organic fibres, and traditional methods that are gentle on the earth — the same earth our weavers live on.</p>
       </div>
       <div class="mission-item">
-        <span class="mission-icon">👩‍👧</span>
+        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="7" r="4"/><path d="M3 21 C3 17 5.7 14 9 14"/><circle cx="17" cy="11" r="3"/><path d="M13 21 C13 18.2 14.8 16 17 16 C19.2 16 21 18.2 21 21"/></svg>
         <div class="mission-title">Women First</div>
         <p class="mission-desc">92% of our weavers are women. Financial independence through craft has enabled education, healthcare, and dignity for hundreds of families.</p>
       </div>
@@ -469,18 +468,6 @@
 </div>
 
 <script>
-  // Animate impact numbers on scroll
-  const impactNums = document.querySelectorAll('.impact-num');
-  const impactObs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-        impactObs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-
   document.querySelectorAll('.weaver-card, .mission-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
