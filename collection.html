@@ -1,3 +1,11 @@
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+const app = initializeApp(firebaseConfig);
+window.__db = getFirestore(app);
+
+window.dispatchEvent(new Event('firebase-ready'));
+
 <!-- ══════════════════════════════════════════════════════════════════
      BUNAN — COLLECTION MODULE  (collection.html)
      Product catalogue with filters, Firebase Firestore integration
@@ -701,34 +709,42 @@
   ];
 
   // ═══ Load from Firebase when ready
-  function loadFromFirebase() {
-    if (!window.__db) {
-      window.addEventListener('firebase-ready', loadFromFirebase, { once: true });
-      return;
-    }
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({ collection, getDocs, query, orderBy }) => {
-      // Try with orderBy first
-      const q = query(collection(window.__db, 'products'), orderBy('likes', 'desc'));
-      getDocs(q).then(snapshot => {
-        if (!snapshot.empty) {
-          allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          applyFilters();
-        }
-        // else: keep demo data already shown
-      }).catch(() => {
-        // orderBy failed (missing index) — try without ordering
-        getDocs(collection(window.__db, 'products')).then(snapshot => {
-          if (!snapshot.empty) {
-            allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-            applyFilters();
-          }
-        }).catch(() => {
-          // Firebase not reachable — keep demo data
-        });
-      });
-    });
+  async function loadFromFirebase() {
+  if (!window.__db) {
+    window.addEventListener('firebase-ready', loadFromFirebase, { once: true });
+    return;
   }
 
+  try {
+    const { collection, getDocs } = await import(
+      "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+    );
+
+    allProducts = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+// sort manually instead of Firestore index
+allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+
+    if (!snapshot.empty) {
+      allProducts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      console.log("✅ Products loaded:", allProducts);
+      applyFilters();
+    } else {
+      console.warn("⚠️ No products found in Firestore");
+    }
+
+  } catch (error) {
+    console.error("❌ Firestore error:", error);
+    applyFilters();
+  }
+}
   // ═══ Init with demo data immediately
   allProducts = [...demoProducts];
   applyFilters();
@@ -814,7 +830,9 @@
   function renderGrid() {
     const grid = document.getElementById('productGrid');
     const count = document.getElementById('resultsCount');
+
     if (!grid) return;
+    grid.innerHTML = "";
 
     if (count) count.textContent = `${filteredProducts.length} piece${filteredProducts.length !== 1 ? 's' : ''} found`;
 
