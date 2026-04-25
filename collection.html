@@ -614,130 +614,48 @@
   </div>
 </div>
 
-<script>
-(function() {
-  // ═══ State
-  let allProducts = [];
-  let filteredProducts = [];
-  let currentSort = 'relevance';
-  let quickMode = '';
-  const WA_NUM = window.BUNAN_WA || '919999999999';
 
-  // ═══ Demo products (shown immediately / used as fallback)
-  const demoProducts = [
-    {
-      id: 'demo1', serialNumber: 'BN-001', saleCode: 'SAR-JMD-001',
-      name: 'Jamdani Silk Saree', nameBn: 'জামদানি রেশম শাড়ি',
-      category: 'Saree', fabric: 'Silk', colour: 'White',
-      occasion: 'Wedding', karigari: 'Jamdani', size: 'Free Size',
-      description: 'An exquisite jamdani weave in pure Murshidabad silk.',
-      material: 'Pure Murshidabad Silk, Zari border',
-      timeTaken: '72 hours', origin: 'Murshidabad, West Bengal',
-      driveLink: '', likes: 142, isNew: true, isBestSeller: true,
-      reviews: [{ text: 'Wore this to my wedding — every guest asked where I got it.', author: 'Priya M., Kolkata' }]
-    },
-    {
-      id: 'demo2', serialNumber: 'BN-002', saleCode: 'KNT-CTN-002',
-      name: 'Kantha Stitch Stole', nameBn: 'কাঁথা সেলাই উত্তরীয়',
-      category: 'Kantha', fabric: 'Cotton', colour: 'Multicolour',
-      occasion: 'Casual', karigari: 'Kantha Stitch', size: 'Free Size',
-      description: 'Hand-stitched by artisans of Bolpur village.',
-      material: 'Organic cotton, natural dyes',
-      timeTaken: '15 days', origin: 'Bolpur, Birbhum',
-      driveLink: '', likes: 89, isNew: false, isBestSeller: true, reviews: []
-    },
-    {
-      id: 'demo3', serialNumber: 'BN-003', saleCode: 'PNJ-KHD-003',
-      name: 'Khadi Punjabi with Nakshi', nameBn: 'নকশি খাদি পাঞ্জাবি',
-      category: 'Punjabi', fabric: 'Khadi', colour: 'Beige',
-      occasion: 'Festival', karigari: 'Nakshi', size: 'M',
-      description: 'Handspun khadi from Shantiniketan.',
-      material: 'Handspun Khadi cotton',
-      timeTaken: '10 days', origin: 'Shantiniketan, West Bengal',
-      driveLink: '', likes: 67, isNew: true, isBestSeller: false, reviews: []
-    },
-    {
-      id: 'demo4', serialNumber: 'BN-004', saleCode: 'SAR-MSL-004',
-      name: 'Tant Cotton Saree', nameBn: 'তাঁত সুতি শাড়ি',
-      category: 'Saree', fabric: 'Cotton', colour: 'Red',
-      occasion: 'Daily Wear', karigari: 'Plain Handloom', size: 'Free Size',
-      description: 'The everyday elegance of Bengali tant.',
-      material: '100% cotton tant',
-      timeTaken: '8 hours', origin: 'Dhaniakhali, Hooghly',
-      driveLink: '', likes: 211, isNew: false, isBestSeller: true, reviews: []
-    },
-    {
-      id: 'demo5', serialNumber: 'BN-005', saleCode: 'DPT-ORG-005',
-      name: 'Organza Dupatta with Zari', nameBn: 'জরি অর্গান্ডি দোপাট্টা',
-      category: 'Dupatta', fabric: 'Organza', colour: 'Purple',
-      occasion: 'Wedding', karigari: 'Zari Work', size: 'Free Size',
-      description: 'Sheer organza with hand-woven pure zari border.',
-      material: 'Organza, pure zari',
-      timeTaken: '20 hours', origin: 'Varanasi collaboration × Bengal',
-      driveLink: '', likes: 54, isNew: true, isBestSeller: false, reviews: []
-    },
-    {
-      id: 'demo6', serialNumber: 'BN-006', saleCode: 'SHL-SLK-006',
-      name: 'Muga Silk Shawl', nameBn: 'মুগা রেশম শাল',
-      category: 'Shawl', fabric: 'Silk', colour: 'Yellow',
-      occasion: 'Gifting', karigari: 'Plain Handloom', size: 'Free Size',
-      description: 'Woven from the golden Muga silk of Assam.',
-      material: 'Muga silk from Assam',
-      timeTaken: '3 days', origin: 'Sualkuchi, Assam',
-      driveLink: '', likes: 33, isNew: false, isBestSeller: false, reviews: []
-    }
+
+<script>
+(function () {
+
+  // ═══════════════════════════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════════════════════════
+  var allProducts      = [];
+  var filteredProducts = [];
+  var currentSort      = 'relevance';
+  var quickMode        = '';
+  var WA_NUM           = window.BUNAN_WA || '919999999999';
+
+  // ═══════════════════════════════════════════════════════════
+  //  DEMO PRODUCTS  (shown instantly; replaced when Firestore loads)
+  // ═══════════════════════════════════════════════════════════
+  var demoProducts = [
+    { id:'demo1', serialNumber:'BN-001', saleCode:'SAR-JMD-001', name:'Jamdani Silk Saree', nameBn:'জামদানি রেশম শাড়ি', category:'Saree', fabric:'Silk', colour:'White', occasion:'Wedding', karigari:'Jamdani', size:'Free Size', description:'An exquisite jamdani weave in pure Murshidabad silk.', material:'Pure Murshidabad Silk, Zari border', timeTaken:'72 hours', origin:'Murshidabad, West Bengal', driveLink:'', likes:142, isNew:true, isBestSeller:true, reviews:[{text:'Wore this to my wedding — every guest asked where I got it.',author:'Priya M., Kolkata'}] },
+    { id:'demo2', serialNumber:'BN-002', saleCode:'KNT-CTN-002', name:'Kantha Stitch Stole', nameBn:'কাঁথা সেলাই উত্তরীয়', category:'Kantha', fabric:'Cotton', colour:'Multicolour', occasion:'Casual', karigari:'Kantha Stitch', size:'Free Size', description:'Hand-stitched by artisans of Bolpur village.', material:'Organic cotton, natural dyes', timeTaken:'15 days', origin:'Bolpur, Birbhum', driveLink:'', likes:89, isNew:false, isBestSeller:true, reviews:[] },
+    { id:'demo3', serialNumber:'BN-003', saleCode:'PNJ-KHD-003', name:'Khadi Punjabi with Nakshi', nameBn:'নকশি খাদি পাঞ্জাবি', category:'Punjabi', fabric:'Khadi', colour:'Beige', occasion:'Festival', karigari:'Nakshi', size:'M', description:'Handspun khadi from Shantiniketan.', material:'Handspun Khadi cotton', timeTaken:'10 days', origin:'Shantiniketan, West Bengal', driveLink:'', likes:67, isNew:true, isBestSeller:false, reviews:[] },
+    { id:'demo4', serialNumber:'BN-004', saleCode:'SAR-MSL-004', name:'Tant Cotton Saree', nameBn:'তাঁত সুতি শাড়ি', category:'Saree', fabric:'Cotton', colour:'Red', occasion:'Daily Wear', karigari:'Plain Handloom', size:'Free Size', description:'The everyday elegance of Bengali tant.', material:'100% cotton tant', timeTaken:'8 hours', origin:'Dhaniakhali, Hooghly', driveLink:'', likes:211, isNew:false, isBestSeller:true, reviews:[] },
+    { id:'demo5', serialNumber:'BN-005', saleCode:'DPT-ORG-005', name:'Organza Dupatta with Zari', nameBn:'জরি অর্গান্ডি দোপাট্টা', category:'Dupatta', fabric:'Organza', colour:'Purple', occasion:'Wedding', karigari:'Zari Work', size:'Free Size', description:'Sheer organza with hand-woven pure zari border.', material:'Organza, pure zari', timeTaken:'20 hours', origin:'Varanasi collaboration × Bengal', driveLink:'', likes:54, isNew:true, isBestSeller:false, reviews:[] },
+    { id:'demo6', serialNumber:'BN-006', saleCode:'SHL-SLK-006', name:'Muga Silk Shawl', nameBn:'মুগা রেশম শাল', category:'Shawl', fabric:'Silk', colour:'Yellow', occasion:'Gifting', karigari:'Plain Handloom', size:'Free Size', description:'Woven from the golden Muga silk of Assam.', material:'Muga silk from Assam', timeTaken:'3 days', origin:'Sualkuchi, Assam', driveLink:'', likes:33, isNew:false, isBestSeller:false, reviews:[] }
   ];
 
-  // ═══ Show demo data immediately so the grid is never blank
-  allProducts = [...demoProducts];
-  applyFilters();
+  // ═══════════════════════════════════════════════════════════
+  //  ALL FUNCTIONS DEFINED FIRST (so nothing calls before defined)
+  // ═══════════════════════════════════════════════════════════
 
-  // ═══ Load from Firestore using the db instance set by client_index.html
-  // Works whether firebase-ready fires before or after this script runs
-  function loadFirestoreProducts(db) {
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
-      .then(function(fs) {
-        return fs.getDocs(fs.collection(db, 'products'));
-      })
-      .then(function(snapshot) {
-        if (!snapshot.empty) {
-          allProducts = snapshot.docs.map(function(d) {
-            return Object.assign({ id: d.id }, d.data());
-          });
-          allProducts.sort(function(a, b) { return (b.likes || 0) - (a.likes || 0); });
-          console.log('✅ Firestore products loaded:', allProducts.length);
-          applyFilters();
-        } else {
-          console.warn('⚠️ Firestore returned 0 products — showing demo data');
-        }
-      })
-      .catch(function(err) {
-        console.error('❌ Firestore error:', err);
-      });
-  }
+  function applyFilters() {
+    var search   = (document.getElementById('searchInput')   || {}).value  || '';
+    var category = (document.getElementById('filterCategory')|| {}).value  || '';
+    var fabric   = (document.getElementById('filterFabric')  || {}).value  || '';
+    var occasion = (document.getElementById('filterOccasion')|| {}).value  || '';
+    var colour   = (document.getElementById('filterColour')  || {}).value  || '';
+    var karigari = (document.getElementById('filterKarigari')|| {}).value  || '';
+    var size     = (document.getElementById('filterSize')    || {}).value  || '';
+    search = search.toLowerCase();
 
-  // If firebase-ready already fired (module ran before us), db is on window right now
-  if (window.__db) {
-    loadFirestoreProducts(window.__db);
-  } else {
-    // Otherwise wait for the event
-    window.addEventListener('firebase-ready', function() {
-      loadFirestoreProducts(window.__db);
-    }, { once: true });
-  }
-
-  // ═══ Apply all filters
-  window.applyFilters = function() {
-    const search   = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const category = document.getElementById('filterCategory')?.value || '';
-    const fabric   = document.getElementById('filterFabric')?.value || '';
-    const occasion = document.getElementById('filterOccasion')?.value || '';
-    const colour   = document.getElementById('filterColour')?.value || '';
-    const karigari = document.getElementById('filterKarigari')?.value || '';
-    const size     = document.getElementById('filterSize')?.value || '';
-
-    filteredProducts = allProducts.filter(p => {
-      if (quickMode === 'new' && !p.isNew) return false;
+    filteredProducts = allProducts.filter(function(p) {
+      if (quickMode === 'new'        && !p.isNew)       return false;
       if (quickMode === 'bestseller' && !p.isBestSeller) return false;
       if (category && p.category !== category) return false;
       if (fabric   && p.fabric   !== fabric)   return false;
@@ -746,15 +664,17 @@
       if (karigari && p.karigari !== karigari) return false;
       if (size     && p.size     !== size)     return false;
       if (search) {
-        const haystack = `${p.name} ${p.nameBn} ${p.saleCode} ${p.description} ${p.fabric}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
+        var hay = ((p.name||'') + ' ' + (p.nameBn||'') + ' ' + (p.saleCode||'') + ' ' + (p.description||'') + ' ' + (p.fabric||'')).toLowerCase();
+        if (hay.indexOf(search) === -1) return false;
       }
       return true;
     });
-
     sortProducts();
     renderGrid();
-  };
+  }
+
+  // expose so HTML onchange= attributes can call it
+  window.applyFilters = applyFilters;
 
   function sortProducts() {
     if (currentSort === 'relevance') filteredProducts.sort((a,b) => (b.likes||0) - (a.likes||0));
@@ -948,5 +868,45 @@
         });
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  //  FIRESTORE LOADER
+  // ═══════════════════════════════════════════════════════════
+  function loadFirestoreProducts(db) {
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+      .then(function(fs) { return fs.getDocs(fs.collection(db, 'products')); })
+      .then(function(snapshot) {
+        if (!snapshot.empty) {
+          allProducts = snapshot.docs.map(function(d) {
+            return Object.assign({ id: d.id }, d.data());
+          });
+          allProducts.sort(function(a,b){ return (b.likes||0)-(a.likes||0); });
+          console.log('✅ Firestore loaded:', allProducts.length, 'products');
+          applyFilters();
+        } else {
+          console.warn('⚠️ Firestore empty — keeping demo data');
+        }
+      })
+      .catch(function(err){ console.error('❌ Firestore error:', err); });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  INIT  (runs last — all functions are defined above)
+  // ═══════════════════════════════════════════════════════════
+
+  // 1. Show demo products immediately
+  allProducts = demoProducts.slice();
+  applyFilters();
+
+  // 2. Load real products from Firestore
+  //    Handle both cases: db already ready, or not yet
+  if (window.__db) {
+    loadFirestoreProducts(window.__db);
+  } else {
+    window.addEventListener('firebase-ready', function() {
+      loadFirestoreProducts(window.__db);
+    }, { once: true });
+  }
+
 })();
 </script>
