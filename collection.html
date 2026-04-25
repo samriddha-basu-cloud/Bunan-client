@@ -1,7 +1,6 @@
 <!-- ══════════════════════════════════════════════════════════════════
      BUNAN — COLLECTION MODULE  (collection.html)
      Product catalogue with filters, Firebase Firestore integration
-     WhatsApp enquiry with sale code pre-fill
      ══════════════════════════════════════════════════════════════════ -->
 <style>
   /* ─── COLLECTION SECTION ──────────────────────────────────── */
@@ -9,6 +8,7 @@
     padding: 7rem 3rem;
     scroll-margin-top: 80px;
     max-width: 1600px; margin: 0 auto;
+    background: var(--bg);
   }
 
   .collection-header {
@@ -16,14 +16,14 @@
   }
   .collection-tag {
     font-family: var(--font-deco);
-    font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+    font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase;
     color: var(--gold); display: block; margin-bottom: 1rem;
   }
   .collection-title {
     font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    color: var(--gold);
-    text-shadow: var(--shadow-gold);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--text);
+    font-weight: 400;
   }
   .collection-sub {
     font-family: var(--font-bengali);
@@ -33,10 +33,11 @@
 
   /* ─── FILTER PANEL ──────────────────────────────────────── */
   .filter-bar {
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(201,168,76,0.12);
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
     padding: 1.5rem 2rem;
     margin-bottom: 3rem;
+    box-shadow: var(--shadow-card);
   }
 
   .filter-row {
@@ -49,41 +50,41 @@
   }
   .filter-label {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold);
+    font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-dark);
   }
   .filter-select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--cream-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
     padding: 0.6rem 0.8rem;
     font-family: var(--font-display);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     cursor: pointer;
     outline: none;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23C9A84C'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238B6914'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.8rem center;
     padding-right: 2rem;
     transition: all 0.3s ease;
   }
   .filter-select:focus { border-color: var(--gold); }
-  .filter-select option { background: #3a3630; color: var(--cream); }
+  .filter-select option { background: var(--bg-card); color: var(--text); }
 
   .filter-search {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--cream-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
     padding: 0.6rem 0.8rem;
     font-family: var(--font-display);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     width: 100%;
     outline: none;
     transition: all 0.3s ease;
   }
-  .filter-search::placeholder { color: var(--text-dim); }
+  .filter-search::placeholder { color: var(--text-light); }
   .filter-search:focus { border-color: var(--gold); }
 
   .filter-chips {
@@ -91,9 +92,9 @@
   }
   .filter-chip {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.3rem 0.8rem;
-    border: 1px solid rgba(201,168,76,0.25);
+    font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border: 1px solid var(--border);
     color: var(--text-dim);
     cursor: pointer;
     transition: all 0.25s ease;
@@ -101,9 +102,9 @@
   }
   .filter-chip.active,
   .filter-chip:hover {
-    background: rgba(201,168,76,0.12);
-    border-color: var(--gold);
-    color: var(--gold);
+    background: rgba(139,105,20,0.08);
+    border-color: var(--gold-light);
+    color: var(--gold-dark);
   }
 
   .filter-actions {
@@ -111,15 +112,15 @@
   }
   .btn-filter-reset {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
     color: var(--text-dim);
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
     padding: 0.6rem 1.2rem;
     cursor: pointer;
     transition: all 0.3s;
   }
-  .btn-filter-reset:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-filter-reset:hover { border-color: var(--gold); color: var(--gold-dark); }
 
   /* Sort & View toggles */
   .filter-meta {
@@ -128,52 +129,51 @@
   }
   .results-count {
     font-family: var(--font-deco);
-    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim);
+    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light);
   }
   .sort-group {
-    display: flex; align-items: center; gap: 1rem;
+    display: flex; align-items: center; gap: 0.8rem;
   }
   .sort-label {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim);
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light);
   }
   .sort-btn {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--text-dim);
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid var(--border-soft);
     padding: 0.35rem 0.8rem;
     cursor: pointer;
     transition: all 0.25s;
   }
-  .sort-btn.active { border-color: var(--gold); color: var(--gold); }
+  .sort-btn.active { border-color: var(--gold-light); color: var(--gold-dark); background: rgba(139,105,20,0.05); }
 
   /* ─── PRODUCT GRID ──────────────────────────────────────── */
   .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2px;
-  }
-  .product-grid.list-view {
-    grid-template-columns: 1fr;
+    gap: 1px;
+    border: 1px solid var(--border-soft);
   }
 
   /* ─── PRODUCT CARD ──────────────────────────────────────── */
   .product-card {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(201,168,76,0.08);
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
     position: relative; overflow: hidden;
     cursor: pointer;
     transition: all 0.4s ease;
     display: flex; flex-direction: column;
   }
   .product-card:hover {
-    border-color: rgba(201,168,76,0.3);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.15);
+    background: var(--bg);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(44,26,14,0.12);
     z-index: 1;
   }
 
@@ -185,26 +185,27 @@
   .badge {
     display: inline-block;
     font-family: var(--font-deco);
-    font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase;
     padding: 0.25rem 0.6rem;
   }
-  .badge-new { background: var(--accent); color: var(--cream); }
-  .badge-best { background: var(--gold); color: var(--bg-dark); }
+  .badge-new { background: var(--accent); color: #fff; }
+  .badge-best { background: var(--gold-dark); color: #fff; }
 
   /* Like button */
   .card-like {
     position: absolute; top: 1rem; right: 1rem; z-index: 2;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(201,168,76,0.2);
-    width: 36px; height: 36px;
+    background: rgba(250,246,240,0.85);
+    border: 1px solid var(--border);
+    width: 34px; height: 34px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
     backdrop-filter: blur(4px);
   }
-  .card-like:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); }
-  .card-like.liked { color: #e74c3c; }
+  .card-like:hover { background: var(--bg-dark); border-color: var(--gold-light); color: var(--gold-dark); }
+  .card-like.liked { color: #c0392b; }
 
   /* Image area */
   .card-image {
@@ -212,7 +213,7 @@
     background:
       repeating-linear-gradient(
         -45deg,
-        rgba(201,168,76,0.06) 0px, rgba(201,168,76,0.06) 1px,
+        rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
         transparent 1px, transparent 10px
       ),
       linear-gradient(160deg, var(--bg-dark), var(--bg));
@@ -225,14 +226,14 @@
   }
   .product-card:hover .card-image img { transform: scale(1.04); }
   .card-image-placeholder {
-    font-size: 4rem; opacity: 0.15;
-    user-select: none;
+    width: 60px; height: 60px; opacity: 0.12;
+    color: var(--gold-dark);
   }
 
   /* Overlay on hover */
   .card-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+    background: linear-gradient(180deg, transparent 40%, rgba(44,26,14,0.55) 100%);
     opacity: 0;
     transition: opacity 0.4s;
     display: flex; align-items: flex-end;
@@ -241,15 +242,15 @@
   .product-card:hover .card-overlay { opacity: 1; }
   .overlay-btn {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--bg-dark);
-    background: var(--gold);
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: #fff;
+    background: var(--gold-dark);
     border: none; cursor: pointer;
-    padding: 0.5rem 1rem;
+    padding: 0.55rem 1rem;
     width: 100%;
     transition: all 0.3s;
   }
-  .overlay-btn:hover { background: var(--gold-light); }
+  .overlay-btn:hover { background: var(--gold); }
 
   /* Card body */
   .card-body {
@@ -259,13 +260,13 @@
   }
   .card-category {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold-dark);
+    font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold);
   }
   .card-name {
-    font-family: var(--font-display);
-    font-size: 1.1rem; font-weight: 600;
-    color: var(--cream);
+    font-family: var(--font-heading);
+    font-size: 1.05rem; font-weight: 500;
+    color: var(--text);
     line-height: 1.3;
   }
   .card-name-bn {
@@ -279,9 +280,9 @@
   }
   .meta-tag {
     font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-dim);
-    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-light);
+    border: 1px solid var(--border-soft);
     padding: 0.2rem 0.5rem;
   }
 
@@ -289,18 +290,18 @@
   .card-footer {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.8rem 1.2rem;
-    border-top: 1px solid rgba(201,168,76,0.08);
+    border-top: 1px solid var(--border-soft);
   }
   .card-likes {
     display: flex; align-items: center; gap: 0.4rem;
     font-family: var(--font-deco);
-    font-size: 0.6rem; letter-spacing: 0.1em;
-    color: var(--text-dim);
+    font-size: 0.58rem; letter-spacing: 0.1em;
+    color: var(--text-light);
   }
   .card-code {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em;
-    color: var(--gold-dark);
+    font-size: 0.52rem; letter-spacing: 0.15em;
+    color: var(--gold);
   }
   .card-wa-btn {
     background: #25D366;
@@ -308,7 +309,7 @@
     border: none; cursor: pointer;
     padding: 0.4rem 0.8rem;
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase;
     display: flex; align-items: center; gap: 0.3rem;
     transition: all 0.3s;
     text-decoration: none;
@@ -318,7 +319,7 @@
   /* ─── PRODUCT MODAL ──────────────────────────────────────── */
   .product-modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.85);
+    background: rgba(44,26,14,0.65);
     backdrop-filter: blur(8px);
     display: flex; align-items: center; justify-content: center;
     padding: 1rem;
@@ -328,30 +329,32 @@
   .product-modal-overlay.open { opacity: 1; pointer-events: all; }
 
   .product-modal {
-    background: var(--bg-dark);
-    border: 1px solid rgba(201,168,76,0.25);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     max-width: 900px; width: 100%;
     max-height: 90vh; overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--gold-dark) transparent;
+    scrollbar-color: var(--gold-light) transparent;
     position: relative;
     transform: translateY(20px);
     transition: transform 0.35s ease;
+    box-shadow: 0 20px 60px rgba(44,26,14,0.2);
   }
   .product-modal-overlay.open .product-modal { transform: translateY(0); }
 
   .modal-close {
     position: absolute; top: 1rem; right: 1rem; z-index: 10;
-    width: 36px; height: 36px;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--cream);
-    font-size: 1.2rem; line-height: 1;
+    width: 34px; height: 34px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 1rem; line-height: 1;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.3s;
+    font-family: var(--font-deco);
   }
-  .modal-close:hover { border-color: var(--gold); color: var(--gold); }
+  .modal-close:hover { border-color: var(--gold); color: var(--gold-dark); }
 
   .modal-grid {
     display: grid; grid-template-columns: 1fr 1fr;
@@ -360,12 +363,12 @@
     aspect-ratio: 3/4;
     background:
       repeating-linear-gradient(
-        -45deg, rgba(201,168,76,0.05) 0px, rgba(201,168,76,0.05) 1px,
+        -45deg, rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
         transparent 1px, transparent 10px
       ),
       linear-gradient(160deg, var(--bg-dark), var(--bg));
     display: flex; align-items: center; justify-content: center;
-    font-size: 6rem; color: rgba(201,168,76,0.15);
+    color: var(--gold-pale);
   }
   .modal-image img {
     width: 100%; height: 100%; object-fit: cover;
@@ -374,13 +377,13 @@
 
   .modal-category {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase;
+    font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase;
     color: var(--gold);
   }
   .modal-name {
-    font-family: var(--font-display);
-    font-size: 1.8rem; font-weight: 600;
-    color: var(--cream);
+    font-family: var(--font-heading);
+    font-size: 1.7rem; font-weight: 500;
+    color: var(--text);
     margin: 0.5rem 0 0.2rem;
     line-height: 1.2;
   }
@@ -393,58 +396,60 @@
     display: flex; align-items: center; gap: 0.8rem;
     margin-bottom: 1.5rem;
     padding: 0.6rem 0;
-    border-top: 1px solid rgba(201,168,76,0.1);
-    border-bottom: 1px solid rgba(201,168,76,0.1);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
   }
   .modal-code-val {
     font-family: var(--font-deco);
-    font-size: 0.8rem; letter-spacing: 0.2em;
-    color: var(--gold);
+    font-size: 0.75rem; letter-spacing: 0.2em;
+    color: var(--gold-dark);
   }
   .modal-desc {
     font-family: var(--font-display);
-    font-size: 0.95rem; line-height: 1.85;
-    color: var(--cream-dim);
+    font-size: 0.98rem; line-height: 1.9;
+    color: var(--text-dim);
     margin-bottom: 1.5rem;
   }
 
   .modal-specs {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 0.8rem; margin-bottom: 1.5rem;
+    border: 1px solid var(--border-soft);
+    padding: 1rem;
+    background: var(--bg);
   }
-  .spec-item { }
   .spec-key {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--gold-dark); margin-bottom: 0.2rem;
+    font-size: 0.52rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.2rem;
   }
   .spec-val {
     font-family: var(--font-display);
-    font-size: 0.92rem; color: var(--cream);
+    font-size: 0.92rem; color: var(--text);
   }
 
   /* Reviews in modal */
   .modal-reviews { margin-top: 1.5rem; }
   .reviews-title {
     font-family: var(--font-deco);
-    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--gold); margin-bottom: 1rem;
   }
   .review-item {
-    background: rgba(255,255,255,0.03);
-    border-left: 2px solid rgba(201,168,76,0.3);
+    background: var(--bg);
+    border-left: 2px solid var(--gold-light);
     padding: 0.8rem 1rem;
     margin-bottom: 0.6rem;
   }
   .review-text {
     font-family: var(--font-display);
-    font-style: italic; font-size: 0.9rem;
-    color: var(--cream-dim); line-height: 1.6;
+    font-style: italic; font-size: 0.92rem;
+    color: var(--text-dim); line-height: 1.7;
   }
   .review-author {
     font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim); margin-top: 0.4rem;
+    font-size: 0.52rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light); margin-top: 0.4rem;
   }
 
   .modal-actions {
@@ -457,7 +462,7 @@
     background: #25D366; color: #fff;
     padding: 0.9rem 1.5rem;
     font-family: var(--font-deco);
-    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
     text-decoration: none;
     border: none; cursor: pointer;
     transition: all 0.3s;
@@ -468,13 +473,18 @@
   .products-loading {
     grid-column: 1/-1;
     text-align: center; padding: 5rem;
-    color: var(--text-dim);
+    color: var(--text-light);
     font-family: var(--font-display);
-    font-size: 1.1rem; letter-spacing: 0.1em;
+    font-size: 1.05rem; letter-spacing: 0.1em;
   }
-  .products-loading .spin {
-    display: block; font-size: 2rem; margin-bottom: 1rem;
-    animation: spin 2s linear infinite;
+  .products-loading-spinner {
+    display: block;
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    margin: 0 auto 1.2rem;
+    animation: spin 1.2s linear infinite;
   }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -483,7 +493,7 @@
   }
   .products-empty p {
     font-family: var(--font-bengali);
-    font-size: 1.2rem; color: var(--text-dim);
+    font-size: 1.1rem; color: var(--text-dim);
   }
 
   @media (max-width: 900px) {
@@ -499,7 +509,7 @@
 
 <section id="collection">
   <div class="collection-header">
-    <span class="collection-tag">✦ Handpicked for You ✦</span>
+    <span class="collection-tag">Handpicked for You</span>
     <h2 class="collection-title">Our Collection</h2>
     <p class="collection-sub">আমাদের সংগ্রহ — হৃদয় থেকে হাতে বোনা</p>
   </div>
@@ -564,15 +574,15 @@
         </select>
       </div>
       <div class="filter-actions">
-        <button class="btn-filter-reset" onclick="resetFilters()">✕ Reset</button>
+        <button class="btn-filter-reset" onclick="resetFilters()">Reset</button>
       </div>
     </div>
 
     <!-- Quick chips -->
     <div class="filter-chips" id="quickChips">
       <button class="filter-chip active" data-quick="" onclick="quickFilter(this, '')">All</button>
-      <button class="filter-chip" data-quick="new" onclick="quickFilter(this, 'new')">✦ New Arrivals</button>
-      <button class="filter-chip" data-quick="bestseller" onclick="quickFilter(this, 'bestseller')">★ Best Sellers</button>
+      <button class="filter-chip" data-quick="new" onclick="quickFilter(this, 'new')">New Arrivals</button>
+      <button class="filter-chip" data-quick="bestseller" onclick="quickFilter(this, 'bestseller')">Best Sellers</button>
     </div>
   </div>
 
@@ -590,7 +600,7 @@
   <!-- PRODUCT GRID -->
   <div class="product-grid" id="productGrid">
     <div class="products-loading">
-      <span class="spin">🪡</span>
+      <span class="products-loading-spinner"></span>
       Loading collection from our weavers...
     </div>
   </div>
@@ -599,7 +609,7 @@
 <!-- ══════════════════ PRODUCT MODAL -->
 <div class="product-modal-overlay" id="productModal" onclick="closeModal(event)">
   <div class="product-modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+    <button class="modal-close" onclick="closeModal()">&#215;</button>
     <div class="modal-grid" id="modalContent"><!-- filled by JS --></div>
   </div>
 </div>
@@ -693,23 +703,33 @@
   // ═══ Load from Firebase when ready
   function loadFromFirebase() {
     if (!window.__db) {
-      window.addEventListener('firebase-ready', loadFromFirebase);
+      window.addEventListener('firebase-ready', loadFromFirebase, { once: true });
       return;
     }
     import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({ collection, getDocs, query, orderBy }) => {
+      // Try with orderBy first
       const q = query(collection(window.__db, 'products'), orderBy('likes', 'desc'));
       getDocs(q).then(snapshot => {
         if (!snapshot.empty) {
           allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
           applyFilters();
         }
+        // else: keep demo data already shown
       }).catch(() => {
-        // Firebase not configured — keep demo data
+        // orderBy failed (missing index) — try without ordering
+        getDocs(collection(window.__db, 'products')).then(snapshot => {
+          if (!snapshot.empty) {
+            allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            applyFilters();
+          }
+        }).catch(() => {
+          // Firebase not reachable — keep demo data
+        });
       });
     });
   }
 
-  // ═══ Init with demo data
+  // ═══ Init with demo data immediately
   allProducts = [...demoProducts];
   applyFilters();
   loadFromFirebase();
@@ -787,6 +807,9 @@
     document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
   };
 
+  // ═══ Placeholder SVG for items without images
+  const placeholderSVG = `<svg class="card-image-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
   // ═══ Render grid
   function renderGrid() {
     const grid = document.getElementById('productGrid');
@@ -796,7 +819,7 @@
     if (count) count.textContent = `${filteredProducts.length} piece${filteredProducts.length !== 1 ? 's' : ''} found`;
 
     if (filteredProducts.length === 0) {
-      grid.innerHTML = `<div class="products-empty"><p>কোনো পণ্য পাওয়া যায়নি। ফিল্টার পরিবর্তন করুন।</p></div>`;
+      grid.innerHTML = `<div class="products-empty"><p>No products found. Please adjust your filters.</p></div>`;
       return;
     }
 
@@ -805,19 +828,19 @@
 
   function productCard(p) {
     const imgHtml = p.driveLink
-      ? `<img src="${driveThumb(p.driveLink)}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" />`
-      : `<div class="card-image-placeholder">🥻</div>`;
+      ? `<img src="${driveThumb(p.driveLink)}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='${placeholderSVG.replace(/"/g,"'")}'" />`
+      : placeholderSVG;
 
-    const waMsg = encodeURIComponent(`নমস্কার, আমি ${p.name} (Code: ${p.saleCode}) সম্পর্কে জানতে চাই।`);
+    const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}).`);
 
     return `
     <div class="product-card" onclick="openModal('${p.id}')">
       <div class="card-badges">
         ${p.isNew      ? '<span class="badge badge-new">New</span>' : ''}
-        ${p.isBestSeller ? '<span class="badge badge-best">★ Best</span>' : ''}
+        ${p.isBestSeller ? '<span class="badge badge-best">Best Seller</span>' : ''}
       </div>
       <button class="card-like" onclick="event.stopPropagation(); likeProduct('${p.id}', this)" title="Like">
-        ♡ <span class="like-count">${p.likes||0}</span>
+        &#9825; <span class="like-count">${p.likes||0}</span>
       </button>
       <div class="card-image">${imgHtml}</div>
       <div class="card-overlay">
@@ -836,10 +859,10 @@
       <div class="card-footer">
         <div>
           <div class="card-code">${p.saleCode}</div>
-          <div class="card-likes">♡ ${p.likes||0} liked</div>
+          <div class="card-likes">&#9825; ${p.likes||0} liked</div>
         </div>
         <a class="card-wa-btn" href="https://wa.me/${WA_NUM}?text=${waMsg}" target="_blank" onclick="event.stopPropagation()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Enquire
         </a>
       </div>
@@ -858,11 +881,11 @@
     if (!p) return;
     const modal = document.getElementById('productModal');
     const content = document.getElementById('modalContent');
-    const waMsg = encodeURIComponent(`নমস্কার, আমি ${p.name} (Code: ${p.saleCode}) সম্পর্কে জানতে চাই এবং অর্ডার করতে চাই।`);
+    const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}) and place an order.`);
 
     const reviewsHtml = (p.reviews || []).length > 0
       ? `<div class="modal-reviews">
-          <div class="reviews-title">✦ Customer Reviews</div>
+          <div class="reviews-title">Customer Reviews</div>
           ${p.reviews.map(r => `
             <div class="review-item">
               <div class="review-text">"${r.text}"</div>
@@ -873,18 +896,18 @@
 
     const imgHtml = p.driveLink
       ? `<img src="${driveThumb(p.driveLink)}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" />`
-      : `🥻`;
+      : `<svg style="width:80px;height:80px;opacity:0.15;color:var(--gold-dark)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
     content.innerHTML = `
       <div class="modal-image">${imgHtml}</div>
       <div class="modal-details">
-        <div class="modal-category">${p.category} ${p.isBestSeller ? '· ★ Best Seller' : ''} ${p.isNew ? '· ✦ New' : ''}</div>
+        <div class="modal-category">${p.category}${p.isBestSeller ? ' &middot; Best Seller' : ''}${p.isNew ? ' &middot; New' : ''}</div>
         <div class="modal-name">${p.name}</div>
         <div class="modal-name-bn">${p.nameBn || ''}</div>
         <div class="modal-code-line">
-          <span style="font-family:var(--font-deco);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);">Sale Code</span>
+          <span style="font-family:var(--font-deco);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);">Sale Code</span>
           <span class="modal-code-val">${p.saleCode}</span>
-          <span style="font-family:var(--font-deco);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin-left:auto;">SN: ${p.serialNumber}</span>
+          <span style="font-family:var(--font-deco);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);margin-left:auto;">SN: ${p.serialNumber}</span>
         </div>
         <p class="modal-desc">${p.description}</p>
         <div class="modal-specs">
@@ -900,7 +923,7 @@
         ${reviewsHtml}
         <div class="modal-actions">
           <a class="modal-wa-btn" href="https://wa.me/${WA_NUM}?text=${waMsg}" target="_blank">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Enquire on WhatsApp — ${p.saleCode}
           </a>
         </div>
@@ -924,7 +947,6 @@
     btn.classList.add('liked');
     btn.querySelector('.like-count').textContent = p.likes;
 
-    // Persist to Firebase if available
     if (window.__db) {
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
         .then(({ doc, updateDoc, increment }) => {
