@@ -614,50 +614,6 @@
   </div>
 </div>
 
-<script type="module">
-  // ══════════════════════════════════════════════════════
-  //  Firebase initialiser — runs as ES module so dynamic
-  //  import() is fully supported in all modern browsers
-  // ══════════════════════════════════════════════════════
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getFirestore as gFS, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
-    authDomain: "bunan-4fd57.firebaseapp.com",
-    projectId: "bunan-4fd57",
-    storageBucket: "bunan-4fd57.firebasestorage.app",
-    messagingSenderId: "612151786648",
-    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
-  };
-
-  try {
-    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-    window.__db = db;
-
-    const snapshot = await getDocs(collection(db, 'products'));
-    const products = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    console.log("✅ Firestore: loaded", products.length, "products");
-
-    // Hand off to the UI layer
-    if (typeof window.__bunanOnProducts === 'function') {
-      window.__bunanOnProducts(products, db);
-    } else {
-      window.__bunanProducts = products; // store for when UI is ready
-    }
-  } catch (err) {
-    console.error("❌ Firestore load failed:", err);
-    // Signal UI layer to show demo data
-    if (typeof window.__bunanOnProducts === 'function') {
-      window.__bunanOnProducts(null, null);
-    } else {
-      window.__bunanProducts = null;
-    }
-  }
-</script>
-
 <script>
 (function() {
   // ═══ State
@@ -667,7 +623,7 @@
   let quickMode = '';
   const WA_NUM = window.BUNAN_WA || '919999999999';
 
-  // ═══ Demo products (fallback if Firestore unavailable)
+  // ═══ Demo products (shown immediately / used as fallback)
   const demoProducts = [
     {
       id: 'demo1', serialNumber: 'BN-001', saleCode: 'SAR-JMD-001',
@@ -678,9 +634,7 @@
       material: 'Pure Murshidabad Silk, Zari border',
       timeTaken: '72 hours', origin: 'Murshidabad, West Bengal',
       driveLink: '', likes: 142, isNew: true, isBestSeller: true,
-      reviews: [
-        { text: 'Wore this to my wedding — every guest asked where I got it.', author: 'Priya M., Kolkata' }
-      ]
+      reviews: [{ text: 'Wore this to my wedding — every guest asked where I got it.', author: 'Priya M., Kolkata' }]
     },
     {
       id: 'demo2', serialNumber: 'BN-002', saleCode: 'KNT-CTN-002',
@@ -690,8 +644,7 @@
       description: 'Hand-stitched by artisans of Bolpur village.',
       material: 'Organic cotton, natural dyes',
       timeTaken: '15 days', origin: 'Bolpur, Birbhum',
-      driveLink: '', likes: 89, isNew: false, isBestSeller: true,
-      reviews: []
+      driveLink: '', likes: 89, isNew: false, isBestSeller: true, reviews: []
     },
     {
       id: 'demo3', serialNumber: 'BN-003', saleCode: 'PNJ-KHD-003',
@@ -701,8 +654,7 @@
       description: 'Handspun khadi from Shantiniketan.',
       material: 'Handspun Khadi cotton',
       timeTaken: '10 days', origin: 'Shantiniketan, West Bengal',
-      driveLink: '', likes: 67, isNew: true, isBestSeller: false,
-      reviews: []
+      driveLink: '', likes: 67, isNew: true, isBestSeller: false, reviews: []
     },
     {
       id: 'demo4', serialNumber: 'BN-004', saleCode: 'SAR-MSL-004',
@@ -712,8 +664,7 @@
       description: 'The everyday elegance of Bengali tant.',
       material: '100% cotton tant',
       timeTaken: '8 hours', origin: 'Dhaniakhali, Hooghly',
-      driveLink: '', likes: 211, isNew: false, isBestSeller: true,
-      reviews: []
+      driveLink: '', likes: 211, isNew: false, isBestSeller: true, reviews: []
     },
     {
       id: 'demo5', serialNumber: 'BN-005', saleCode: 'DPT-ORG-005',
@@ -723,8 +674,7 @@
       description: 'Sheer organza with hand-woven pure zari border.',
       material: 'Organza, pure zari',
       timeTaken: '20 hours', origin: 'Varanasi collaboration × Bengal',
-      driveLink: '', likes: 54, isNew: true, isBestSeller: false,
-      reviews: []
+      driveLink: '', likes: 54, isNew: true, isBestSeller: false, reviews: []
     },
     {
       id: 'demo6', serialNumber: 'BN-006', saleCode: 'SHL-SLK-006',
@@ -734,28 +684,46 @@
       description: 'Woven from the golden Muga silk of Assam.',
       material: 'Muga silk from Assam',
       timeTaken: '3 days', origin: 'Sualkuchi, Assam',
-      driveLink: '', likes: 33, isNew: false, isBestSeller: false,
-      reviews: []
+      driveLink: '', likes: 33, isNew: false, isBestSeller: false, reviews: []
     }
   ];
 
-  // ═══ Called by the module script above once Firestore responds
-  window.__bunanOnProducts = function(products, db) {
-    if (products && products.length > 0) {
-      allProducts = products;
-      allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-    }
-    // If null or empty, allProducts stays as demoProducts set below
-    applyFilters();
-  };
-
-  // ═══ Start with demo data immediately (shows grid while Firestore loads)
+  // ═══ Show demo data immediately so the grid is never blank
   allProducts = [...demoProducts];
   applyFilters();
 
-  // ═══ If module already ran before this script (can happen), pick up results
-  if (window.__bunanProducts !== undefined) {
-    window.__bunanOnProducts(window.__bunanProducts, window.__db);
+  // ═══ Load from Firestore using the db instance set by client_index.html
+  // Works whether firebase-ready fires before or after this script runs
+  function loadFirestoreProducts(db) {
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
+      .then(function(fs) {
+        return fs.getDocs(fs.collection(db, 'products'));
+      })
+      .then(function(snapshot) {
+        if (!snapshot.empty) {
+          allProducts = snapshot.docs.map(function(d) {
+            return Object.assign({ id: d.id }, d.data());
+          });
+          allProducts.sort(function(a, b) { return (b.likes || 0) - (a.likes || 0); });
+          console.log('✅ Firestore products loaded:', allProducts.length);
+          applyFilters();
+        } else {
+          console.warn('⚠️ Firestore returned 0 products — showing demo data');
+        }
+      })
+      .catch(function(err) {
+        console.error('❌ Firestore error:', err);
+      });
+  }
+
+  // If firebase-ready already fired (module ran before us), db is on window right now
+  if (window.__db) {
+    loadFirestoreProducts(window.__db);
+  } else {
+    // Otherwise wait for the event
+    window.addEventListener('firebase-ready', function() {
+      loadFirestoreProducts(window.__db);
+    }, { once: true });
   }
 
   // ═══ Apply all filters
