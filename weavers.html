@@ -1,0 +1,492 @@
+<!-- ══════════════════════════════════════════════════════════════════
+     BUNAN — WEAVERS MODULE  (weavers.html)
+     Story of the rural women weavers team
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ─── WEAVERS SECTION ─────────────────────────────────────── */
+  #weavers {
+    padding: 7rem 3rem;
+    scroll-margin-top: 80px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.2), transparent, rgba(0,0,0,0.2));
+  }
+
+  .weavers-intro {
+    max-width: 700px; margin: 0 auto 5rem; text-align: center;
+  }
+  .weavers-tag {
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); display: block; margin-bottom: 1rem;
+  }
+  .weavers-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--gold);
+    text-shadow: var(--shadow-gold);
+    margin-bottom: 1rem;
+  }
+  .weavers-subtitle {
+    font-family: var(--font-bengali);
+    font-size: 1.05rem; color: var(--text-dim);
+    letter-spacing: 0.05em; margin-bottom: 1.5rem;
+  }
+  .weavers-lead {
+    font-family: var(--font-display);
+    font-size: 1.05rem; line-height: 1.9;
+    color: var(--cream-dim);
+  }
+
+  /* ─── MANIFESTO BANNER ───────────────────────────────────── */
+  .manifesto {
+    background:
+      repeating-linear-gradient(
+        -45deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 1px,
+        transparent 1px, transparent 14px
+      ),
+      linear-gradient(135deg, rgba(139,26,26,0.15), rgba(201,168,76,0.08));
+    border: 1px solid rgba(201,168,76,0.2);
+    border-left: 4px solid var(--gold);
+    padding: 3rem 4rem;
+    max-width: 900px; margin: 0 auto 5rem;
+    text-align: center;
+  }
+  .manifesto-text {
+    font-family: var(--font-bengali);
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--cream);
+    line-height: 1.9; letter-spacing: 0.04em;
+    font-style: italic;
+  }
+  .manifesto-en {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem; color: var(--text-dim);
+    margin-top: 1rem; letter-spacing: 0.06em;
+  }
+
+  /* ─── TEAM GRID ───────────────────────────────────────────── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px; max-width: 1300px; margin: 0 auto 5rem;
+  }
+
+  .weaver-card {
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(201,168,76,0.08);
+    transition: all 0.4s ease;
+  }
+  .weaver-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .weaver-portrait {
+    aspect-ratio: 3/4;
+    background:
+      repeating-linear-gradient(
+        -45deg, rgba(201,168,76,0.06) 0px, rgba(201,168,76,0.06) 1px,
+        transparent 1px, transparent 12px
+      ),
+      linear-gradient(160deg, var(--bg-dark), var(--bg));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+    color: rgba(201,168,76,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .weaver-portrait::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.6));
+  }
+
+  .weaver-craft-badge {
+    position: absolute;
+    bottom: 1rem; left: 1rem; z-index: 2;
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase;
+    background: rgba(201,168,76,0.9);
+    color: var(--bg-dark);
+    padding: 0.3rem 0.7rem;
+  }
+
+  .weaver-body {
+    padding: 1.5rem;
+  }
+  .weaver-name {
+    font-family: var(--font-bengali);
+    font-size: 1.3rem; color: var(--gold);
+    text-shadow: 0 0 15px rgba(201,168,76,0.2);
+    margin-bottom: 0.2rem;
+  }
+  .weaver-location {
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .weaver-story {
+    font-family: var(--font-display);
+    font-size: 0.95rem; line-height: 1.85;
+    color: var(--cream-dim);
+  }
+  .weaver-spec {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
+  }
+  .weaver-tag {
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold-dark);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 0.2rem 0.6rem;
+  }
+  .weaver-years {
+    font-family: var(--font-heading);
+    font-size: 2rem; color: rgba(201,168,76,0.4);
+    position: absolute; top: 1rem; right: 1rem;
+    line-height: 1;
+  }
+
+  /* ─── MISSION STRIPS ──────────────────────────────────────── */
+  .mission-section {
+    max-width: 1200px; margin: 0 auto;
+  }
+  .mission-head {
+    text-align: center; margin-bottom: 3rem;
+  }
+  .mission-head h3 {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--gold); text-shadow: var(--shadow-gold);
+  }
+  .mission-head p {
+    font-family: var(--font-bengali);
+    font-size: 0.95rem; color: var(--text-dim); margin-top: 0.5rem;
+  }
+
+  .mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px;
+  }
+  .mission-item {
+    padding: 2.5rem 2rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(201,168,76,0.08);
+    text-align: center;
+    transition: all 0.35s ease;
+  }
+  .mission-item:hover {
+    background: rgba(201,168,76,0.04);
+    border-color: rgba(201,168,76,0.2);
+    transform: translateY(-3px);
+  }
+  .mission-icon {
+    font-size: 2.5rem; margin-bottom: 1rem; display: block;
+  }
+  .mission-title {
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.8rem;
+  }
+  .mission-desc {
+    font-family: var(--font-display);
+    font-size: 0.92rem; line-height: 1.8;
+    color: var(--cream-dim);
+  }
+
+  /* ─── IMPACT NUMBERS ──────────────────────────────────────── */
+  .impact-band {
+    background: rgba(201,168,76,0.05);
+    border-top: 1px solid rgba(201,168,76,0.12);
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    padding: 4rem 3rem; margin-top: 5rem;
+  }
+  .impact-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2rem; text-align: center;
+  }
+  .impact-num {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--gold); text-shadow: var(--shadow-gold);
+    line-height: 1;
+  }
+  .impact-label {
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-dim); margin-top: 0.5rem;
+  }
+  .impact-sub {
+    font-family: var(--font-bengali);
+    font-size: 0.8rem; color: rgba(255,255,255,0.3);
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 900px) {
+    #weavers { padding: 4rem 1.5rem; }
+    .manifesto { padding: 2rem 1.5rem; }
+    .team-grid { grid-template-columns: 1fr; }
+    .impact-inner { grid-template-columns: repeat(2, 1fr); }
+    .mission-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section id="weavers">
+
+  <!-- Intro -->
+  <div class="weavers-intro">
+    <span class="weavers-tag">✦ The Hands Behind the Art ✦</span>
+    <h2 class="weavers-title">Our Weavers</h2>
+    <p class="weavers-subtitle">আমাদের তাঁতি — মাটির মানুষ, সোনার হাত</p>
+    <p class="weavers-lead">
+      At বুনন, we believe a fabric is only as beautiful as the hands that made it. 
+      Every product in our catalogue was born in a rural home, on a handloom, 
+      by a woman who learned this art from her mother, who learned it from hers.
+      These are their stories.
+    </p>
+  </div>
+
+  <!-- Manifesto -->
+  <div class="manifesto">
+    <p class="manifesto-text">
+      "তাঁতিনীরা শুধু কাপড় বোনেন না — তাঁরা স্বপ্ন বোনেন,<br/>
+      স্বাধীনতা বোনেন, পরিবারের ভবিষ্যৎ বোনেন।"
+    </p>
+    <p class="manifesto-en">
+      "The weavers don't just weave cloth — they weave dreams, 
+      weave freedom, weave the future of their families."
+    </p>
+  </div>
+
+  <!-- Team Grid -->
+  <div class="team-grid">
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        🧵
+        <div class="weaver-craft-badge">Jamdani · 28 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">28</div>
+        <div class="weaver-name">সরস্বতী দেবী</div>
+        <div class="weaver-location">📍 Murshidabad, West Bengal</div>
+        <p class="weaver-story">
+          Saraswati learned jamdani at age 9, sitting beside her mother's loom in Murshidabad. 
+          She married into a weaving family and raised three daughters, all of whom now weave for বুনন. 
+          Her signature motif — a three-petal lotus — appears in our most beloved bridal sarees. 
+          "The loom is my language," she says. "I say things with thread that I cannot say with words."
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Jamdani</span>
+          <span class="weaver-tag">Silk</span>
+          <span class="weaver-tag">Bridal</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        🪡
+        <div class="weaver-craft-badge">Kantha · 35 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">35</div>
+        <div class="weaver-name">রাধারানী মণ্ডল</div>
+        <div class="weaver-location">📍 Bolpur, Birbhum</div>
+        <p class="weaver-story">
+          Radharani is a kantha legend in Bolpur. Her running stitch is so precise that 
+          art historians have documented her work as a rare surviving example of pre-industrial kantha technique. 
+          After losing her husband early, kantha became her livelihood and her meditation. 
+          She now trains 40 younger women in her village, ensuring the stitch survives another generation.
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Kantha Stitch</span>
+          <span class="weaver-tag">Cotton</span>
+          <span class="weaver-tag">Stoles</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        🎨
+        <div class="weaver-craft-badge">Block Print · 20 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">20</div>
+        <div class="weaver-name">সুমিত্রা হাঁসদা</div>
+        <div class="weaver-location">📍 Purulia, West Bengal</div>
+        <p class="weaver-story">
+          Sumitra is a Santali woman whose block printing draws from her tribal heritage — 
+          geometric forms, animals of the forest, harvest symbols passed down through oral tradition. 
+          She carves her own printing blocks from wood she collects from the forest. 
+          বুনন was the first platform that paid her fairly for her art. 
+          She used her first payment to put her son through engineering school.
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Block Print</span>
+          <span class="weaver-tag">Tribal Art</span>
+          <span class="weaver-tag">Cotton</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        🌿
+        <div class="weaver-craft-badge">Natural Dye · 15 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">15</div>
+        <div class="weaver-name">মীরা মাহাতো</div>
+        <div class="weaver-location">📍 Jharkhand border, Bengal</div>
+        <p class="weaver-story">
+          Meera doesn't weave — she colours. A master of natural dyeing, she extracts pigments 
+          from indigo plants, pomegranate rind, turmeric, and forest bark. 
+          Her colours don't fade; they age. She supplies the dyed yarns that give বুনন's 
+          cotton pieces their distinctive, earthy richness. 
+          Meera grows most of her dye plants herself in a small kitchen garden.
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Natural Dyes</span>
+          <span class="weaver-tag">Indigo</span>
+          <span class="weaver-tag">Organic</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        🧶
+        <div class="weaver-craft-badge">Tant · 40 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">40</div>
+        <div class="weaver-name">কমলা বসাক</div>
+        <div class="weaver-location">📍 Dhaniakhali, Hooghly</div>
+        <p class="weaver-story">
+          Kamala is 68 years old and has been at the tant loom since she was 28. 
+          Her family has woven tant for four generations in Dhaniakhali — 
+          the village that gave Bengal its most beloved everyday saree. 
+          She weaves 3 sarees a day, without counting. 
+          "The loom doesn't need instructions," she says. "It knows what to do. So do I."
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Tant</span>
+          <span class="weaver-tag">Cotton</span>
+          <span class="weaver-tag">Daily Wear</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weaver-card">
+      <div class="weaver-portrait">
+        ✨
+        <div class="weaver-craft-badge">Zari · 18 years</div>
+      </div>
+      <div class="weaver-body">
+        <div class="weaver-years">18</div>
+        <div class="weaver-name">পূর্ণিমা সাহা</div>
+        <div class="weaver-location">📍 Shantiniketan, Birbhum</div>
+        <p class="weaver-story">
+          Purnima studied under a Tagore-era weaving tradition at Shantiniketan's 
+          craft school before joining বুনন. She specializes in zari borders — 
+          pure gold thread work woven directly into fabric, not stitched on later. 
+          Her bridal dupatta borders are sought after across Bengal. 
+          She is also our youngest master weaver, at 34.
+        </p>
+        <div class="weaver-spec">
+          <span class="weaver-tag">Zari</span>
+          <span class="weaver-tag">Silk</span>
+          <span class="weaver-tag">Bridal</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /team-grid -->
+
+  <!-- Mission pillars -->
+  <div class="mission-section">
+    <div class="mission-head">
+      <h3>Why It Matters</h3>
+      <p>আমরা কেন করি এই কাজ</p>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-item">
+        <span class="mission-icon">⚖️</span>
+        <div class="mission-title">Fair Wages</div>
+        <p class="mission-desc">Every weaver receives 40% above market rate. We believe the price of craft must reflect the time, skill and soul invested in it.</p>
+      </div>
+      <div class="mission-item">
+        <span class="mission-icon">🏫</span>
+        <div class="mission-title">Skill Preservation</div>
+        <p class="mission-desc">বুনন runs free workshops where master weavers teach their techniques to the next generation, ensuring no art form is lost.</p>
+      </div>
+      <div class="mission-item">
+        <span class="mission-icon">🌱</span>
+        <div class="mission-title">Sustainable Craft</div>
+        <p class="mission-desc">We use natural dyes, organic fibres, and traditional methods that are gentle on the earth — the same earth our weavers live on.</p>
+      </div>
+      <div class="mission-item">
+        <span class="mission-icon">👩‍👧</span>
+        <div class="mission-title">Women First</div>
+        <p class="mission-desc">92% of our weavers are women. Financial independence through craft has enabled education, healthcare, and dignity for hundreds of families.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Impact Band -->
+<div class="impact-band">
+  <div class="impact-inner">
+    <div>
+      <div class="impact-num">200+</div>
+      <div class="impact-label">Active Weavers</div>
+      <div class="impact-sub">সক্রিয় তাঁতি</div>
+    </div>
+    <div>
+      <div class="impact-num">12</div>
+      <div class="impact-label">Villages</div>
+      <div class="impact-sub">গ্রাম</div>
+    </div>
+    <div>
+      <div class="impact-num">92%</div>
+      <div class="impact-label">Women Weavers</div>
+      <div class="impact-sub">নারী তাঁতি</div>
+    </div>
+    <div>
+      <div class="impact-num">40%</div>
+      <div class="impact-label">Above Market Pay</div>
+      <div class="impact-sub">বাজার মূল্যের উপরে</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Animate impact numbers on scroll
+  const impactNums = document.querySelectorAll('.impact-num');
+  const impactObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        impactObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.weaver-card, .mission-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.style.opacity='1'; el.style.transform='translateY(0)'; }
+    }, {threshold: 0.1}).observe(el);
+  });
+</script>

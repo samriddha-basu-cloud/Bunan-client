@@ -1,0 +1,366 @@
+<!-- ══════════════════════════════════════════════════════════════════
+     BUNAN — TESTIMONIALS MODULE  (testimonials.html)
+     Customer testimonials section
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ─── TESTIMONIALS ────────────────────────────────────────── */
+  #testimonials {
+    padding: 7rem 3rem;
+    scroll-margin-top: 80px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.15));
+  }
+
+  .test-header {
+    text-align: center; margin-bottom: 5rem;
+  }
+  .test-tag {
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); display: block; margin-bottom: 1rem;
+  }
+  .test-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--gold); text-shadow: var(--shadow-gold);
+  }
+  .test-subtitle {
+    font-family: var(--font-bengali);
+    font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem;
+  }
+
+  /* ─── FEATURED QUOTE ──────────────────────────────────────── */
+  .featured-quote {
+    max-width: 800px; margin: 0 auto 5rem;
+    text-align: center; position: relative;
+  }
+  .featured-quote::before {
+    content: '"';
+    font-family: var(--font-heading);
+    font-size: 8rem; line-height: 0.6;
+    color: rgba(201,168,76,0.15);
+    position: absolute; top: 0; left: -1rem;
+  }
+  .featured-quote-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-style: italic; line-height: 1.8;
+    color: var(--cream);
+    position: relative; z-index: 1;
+  }
+  .featured-quote-author {
+    margin-top: 1.5rem;
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+  }
+  .fq-line {
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .fq-name {
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .fq-place {
+    font-family: var(--font-display);
+    font-size: 0.85rem; color: var(--text-dim);
+  }
+
+  /* ─── TESTIMONIALS MOSAIC ─────────────────────────────────── */
+  .test-mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px; max-width: 1200px; margin: 0 auto 4rem;
+  }
+
+  .test-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(201,168,76,0.08);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.4s ease;
+  }
+  .test-card:hover {
+    background: rgba(201,168,76,0.04);
+    border-color: rgba(201,168,76,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .test-card.featured {
+    grid-column: span 2;
+    background: rgba(201,168,76,0.04);
+    border-color: rgba(201,168,76,0.15);
+  }
+
+  .test-stars {
+    color: var(--gold);
+    font-size: 0.9rem; letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 8px rgba(201,168,76,0.4);
+  }
+  .test-text {
+    font-family: var(--font-display);
+    font-size: 1rem; font-style: italic;
+    line-height: 1.85; color: var(--cream-dim);
+    margin-bottom: 1.5rem;
+  }
+  .test-card.featured .test-text {
+    font-size: 1.1rem;
+  }
+
+  .test-author-row {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .test-avatar {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--bg));
+    border: 1px solid rgba(201,168,76,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+    font-family: var(--font-bengali);
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+  .test-info { }
+  .test-name {
+    font-family: var(--font-display);
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--cream);
+  }
+  .test-meta {
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim); margin-top: 0.2rem;
+  }
+  .test-product {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold-dark);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* ─── CTA BAND ────────────────────────────────────────────── */
+  .test-cta {
+    max-width: 700px; margin: 0 auto;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(201,168,76,0.03);
+    border: 1px solid rgba(201,168,76,0.12);
+    position: relative; overflow: hidden;
+  }
+  .test-cta::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .test-cta::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .test-cta h3 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--gold); text-shadow: var(--shadow-gold);
+    margin-bottom: 0.5rem;
+  }
+  .test-cta .cta-bn {
+    font-family: var(--font-bengali);
+    font-size: 1rem; color: var(--text-dim);
+    margin-bottom: 1.5rem;
+  }
+  .test-cta p {
+    font-family: var(--font-display);
+    font-size: 1rem; line-height: 1.8; color: var(--cream-dim);
+    margin-bottom: 2rem;
+  }
+  .cta-buttons {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+  .btn-wa-main {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: #25D366; color: #fff;
+    padding: 0.9rem 2rem;
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+  }
+  .btn-wa-main:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
+
+  @media (max-width: 900px) {
+    #testimonials { padding: 4rem 1.5rem; }
+    .test-mosaic { grid-template-columns: 1fr; }
+    .test-card.featured { grid-column: span 1; }
+    .featured-quote::before { display: none; }
+  }
+</style>
+
+<section id="testimonials">
+
+  <div class="test-header">
+    <span class="test-tag">✦ Words from Our Family ✦</span>
+    <h2 class="test-title">What They Say</h2>
+    <p class="test-subtitle">যারা বুনন পরেছেন, তারা কী বলেন</p>
+  </div>
+
+  <!-- Featured quote -->
+  <div class="featured-quote">
+    <p class="featured-quote-text">
+      "I have worn many sarees in my life, but the day I draped a বুনন jamdani, 
+      something changed. It wasn't just a saree. It felt like someone had woven their 
+      entire life into six meters of silk — and gifted it to me."
+    </p>
+    <div class="featured-quote-author">
+      <div class="fq-line"></div>
+      <div>
+        <div class="fq-name">Dr. Ananya Chattopadhyay</div>
+        <div class="fq-place">Professor, Jadavpur University · Kolkata</div>
+      </div>
+      <div class="fq-line"></div>
+    </div>
+  </div>
+
+  <!-- Mosaic grid -->
+  <div class="test-mosaic">
+
+    <div class="test-card featured">
+      <span class="test-product">Jamdani Saree · SAR-JMD-001</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "My daughter wore a বুনন bridal saree at her wedding in December. 
+        Three months later, we still receive messages asking about it. 
+        The jamdani motifs were so fine I thought they were printed — 
+        but when I looked closely, each flower was woven right into the fabric. 
+        I nearly cried. My mother-in-law, who is 78 and has seen every kind of saree, 
+        said it was the most beautiful thing she had seen in forty years."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">প</div>
+        <div class="test-info">
+          <div class="test-name">Pratima Ganguly</div>
+          <div class="test-meta">Homemaker · Salt Lake, Kolkata</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card">
+      <span class="test-product">Kantha Stole · KNT-CTN-002</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "I gifted the kantha stole to a friend in London. 
+        She video-called me in tears. Said she'd never received anything so beautiful 
+        in her life. She sleeps with it on cold nights."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">র</div>
+        <div class="test-info">
+          <div class="test-name">Rajdeep Banerjee</div>
+          <div class="test-meta">Software Engineer · Bengaluru</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card">
+      <span class="test-product">Tant Saree · SAR-MSL-004</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "I ordered the red tant saree on a whim. It arrived in beautiful packaging. 
+        I wore it the same evening. My husband said I looked like a bride again."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">ম</div>
+        <div class="test-info">
+          <div class="test-name">Mamata Roy</div>
+          <div class="test-meta">Teacher · Burdwan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card">
+      <span class="test-product">Khadi Punjabi · PNJ-KHD-003</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "Wore the khadi punjabi to a cultural event. Every elder in the room 
+        came to ask where I got it. I felt proud of something I hadn't made. 
+        That's the magic of বুনন — the pride transfers."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">স</div>
+        <div class="test-info">
+          <div class="test-name">Sohini Das</div>
+          <div class="test-meta">Artist · Shantiniketan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card">
+      <span class="test-product">Muga Shawl · SHL-SLK-006</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "The Muga shawl arrived and I immediately wrapped myself in it. 
+        Within a day it felt like it had always belonged to me. 
+        That's the thing about real craft — it adapts to you."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">ক</div>
+        <div class="test-info">
+          <div class="test-name">Kavita Nair</div>
+          <div class="test-meta">Journalist · Mumbai</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-card featured">
+      <span class="test-product">Organza Dupatta · DPT-ORG-005</span>
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">
+        "My sister's wedding. I was searching for weeks for something that would stand out 
+        without being loud. The organza dupatta from বুনন was the answer. 
+        The zari border caught the light during the ceremony — 
+        everyone thought it was a family heirloom. We joked that it was. 
+        A year from now, it will be."
+      </p>
+      <div class="test-author-row">
+        <div class="test-avatar">ন</div>
+        <div class="test-info">
+          <div class="test-name">Nandini Bose</div>
+          <div class="test-meta">Architect · New Delhi</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /test-mosaic -->
+
+  <!-- CTA -->
+  <div class="test-cta">
+    <h3>Ready to Experience বুনন?</h3>
+    <p class="cta-bn">আজই আপনার পছন্দের পোশাক খুঁজুন</p>
+    <p>
+      Every piece ships with its weaver's name, village, and the time taken to create it. 
+      Because when you wear বুনন, you carry a story — and every story deserves to be known.
+    </p>
+    <div class="cta-buttons">
+      <a href="#collection" class="btn-primary">Explore the Collection</a>
+      <a href="https://wa.me/919999999999?text=নমস্কার%2C%20আমি%20বুনন%20থেকে%20কেনাকাটা%20করতে%20আগ্রহী।" 
+         target="_blank" class="btn-wa-main">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp Enquiry
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  document.querySelectorAll('.test-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.6s ease ${i * 0.08}s, transform 0.6s ease ${i * 0.08}s`;
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.style.opacity='1'; el.style.transform='translateY(0)'; }
+    }, { threshold: 0.1 }).observe(el);
+  });
+</script>
