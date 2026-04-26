@@ -316,158 +316,6 @@
   }
   .card-wa-btn:hover { background: #1ebe5d; }
 
-  /* ─── PRODUCT MODAL ──────────────────────────────────────── */
-  .product-modal-overlay {
-    position: fixed; inset: 0; z-index: 2000;
-    background: rgba(44,26,14,0.65);
-    backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center;
-    padding: 1rem;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.35s ease;
-  }
-  .product-modal-overlay.open { opacity: 1; pointer-events: all; }
-
-  .product-modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    max-width: 900px; width: 100%;
-    max-height: 90vh; overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--gold-light) transparent;
-    position: relative;
-    transform: translateY(20px);
-    transition: transform 0.35s ease;
-    box-shadow: 0 20px 60px rgba(44,26,14,0.2);
-  }
-  .product-modal-overlay.open .product-modal { transform: translateY(0); }
-
-  .modal-close {
-    position: absolute; top: 1rem; right: 1rem; z-index: 10;
-    width: 34px; height: 34px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-size: 1rem; line-height: 1;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s;
-    font-family: var(--font-deco);
-  }
-  .modal-close:hover { border-color: var(--gold); color: var(--gold-dark); }
-
-  .modal-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-  }
-  .modal-image {
-    aspect-ratio: 3/4;
-    background:
-      repeating-linear-gradient(
-        -45deg, rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
-        transparent 1px, transparent 10px
-      ),
-      linear-gradient(160deg, var(--bg-dark), var(--bg));
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold-pale);
-  }
-  .modal-image img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-  .modal-details { padding: 2.5rem 2rem; }
-
-  .modal-category {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--gold);
-  }
-  .modal-name {
-    font-family: var(--font-heading);
-    font-size: 1.7rem; font-weight: 500;
-    color: var(--text);
-    margin: 0.5rem 0 0.2rem;
-    line-height: 1.2;
-  }
-  .modal-name-bn {
-    font-family: var(--font-bengali);
-    font-size: 1.1rem; color: var(--text-dim);
-    margin-bottom: 1.2rem;
-  }
-  .modal-code-line {
-    display: flex; align-items: center; gap: 0.8rem;
-    margin-bottom: 1.5rem;
-    padding: 0.6rem 0;
-    border-top: 1px solid var(--border-soft);
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .modal-code-val {
-    font-family: var(--font-deco);
-    font-size: 0.75rem; letter-spacing: 0.2em;
-    color: var(--gold-dark);
-  }
-  .modal-desc {
-    font-family: var(--font-display);
-    font-size: 0.98rem; line-height: 1.9;
-    color: var(--text-dim);
-    margin-bottom: 1.5rem;
-  }
-
-  .modal-specs {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 0.8rem; margin-bottom: 1.5rem;
-    border: 1px solid var(--border-soft);
-    padding: 1rem;
-    background: var(--bg);
-  }
-  .spec-key {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 0.2rem;
-  }
-  .spec-val {
-    font-family: var(--font-display);
-    font-size: 0.92rem; color: var(--text);
-  }
-
-  /* Reviews in modal */
-  .modal-reviews { margin-top: 1.5rem; }
-  .reviews-title {
-    font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1rem;
-  }
-  .review-item {
-    background: var(--bg);
-    border-left: 2px solid var(--gold-light);
-    padding: 0.8rem 1rem;
-    margin-bottom: 0.6rem;
-  }
-  .review-text {
-    font-family: var(--font-display);
-    font-style: italic; font-size: 0.92rem;
-    color: var(--text-dim); line-height: 1.7;
-  }
-  .review-author {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-light); margin-top: 0.4rem;
-  }
-
-  .modal-actions {
-    display: flex; gap: 0.8rem; margin-top: 2rem;
-    flex-wrap: wrap;
-  }
-  .modal-wa-btn {
-    flex: 1;
-    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-    background: #25D366; color: #fff;
-    padding: 0.9rem 1.5rem;
-    font-family: var(--font-deco);
-    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
-    text-decoration: none;
-    border: none; cursor: pointer;
-    transition: all 0.3s;
-  }
-  .modal-wa-btn:hover { background: #1ebe5d; }
 
   /* Loading / empty states */
   .products-loading {
@@ -501,9 +349,23 @@
     .filter-row { flex-direction: column; }
     .filter-group { min-width: 100%; }
     .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-    .modal-grid { grid-template-columns: 1fr; }
-    .modal-image { aspect-ratio: 4/3; }
-    .modal-specs { grid-template-columns: 1fr; }
+  }
+
+  /* ── PAGE TRANSITION ─────────────────────────────── */
+  body {
+    animation: pageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateX(32px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  body.exit {
+    animation: pageOut 0.35s cubic-bezier(0.55, 0, 0.7, 0.4) forwards;
+    pointer-events: none;
+  }
+  @keyframes pageOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-32px); }
   }
 </style>
 
@@ -606,11 +468,6 @@
   </div>
 </section>
 
-<!-- ══════════════════ PRODUCT MODAL -->
-<div class="product-modal-overlay" id="productModal" onclick="closeModal(event)">
-  <div class="product-modal">
-    <button class="modal-close" onclick="closeModal()">&#215;</button>
-    <div class="modal-grid" id="modalContent"><!-- filled by JS --></div>
   </div>
 </div>
 
@@ -751,7 +608,7 @@
     const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}).`);
 
     return `
-    <div class="product-card" onclick="openModal('${p.id}')">
+    <div class="product-card" onclick="navigateToPiece('${p.id}')">
       <div class="card-badges">
         ${p.isNew      ? '<span class="badge badge-new">New</span>' : ''}
         ${p.isBestSeller ? '<span class="badge badge-best">Best Seller</span>' : ''}
@@ -761,7 +618,7 @@
       </button>
       <div class="card-image">${imgHtml}</div>
       <div class="card-overlay">
-        <button class="overlay-btn" onclick="event.stopPropagation(); openModal('${p.id}')">View Details</button>
+        <button class="overlay-btn" onclick="event.stopPropagation(); navigateToPiece('${p.id}')">View Details</button>
       </div>
       <div class="card-body">
         <div class="card-category">${p.category}</div>
@@ -793,68 +650,14 @@
   }
 
   // ═══ Open modal
-  window.openModal = function(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    const modal = document.getElementById('productModal');
-    const content = document.getElementById('modalContent');
-    const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}) and place an order.`);
-
-    const reviewsHtml = (p.reviews || []).length > 0
-      ? `<div class="modal-reviews">
-          <div class="reviews-title">Customer Reviews</div>
-          ${p.reviews.map(r => `
-            <div class="review-item">
-              <div class="review-text">"${r.text}"</div>
-              <div class="review-author">— ${r.author}</div>
-            </div>`).join('')}
-        </div>`
-      : '';
-
-    const imgHtml = p.driveLink
-      ? `<img src="${driveThumb(p.driveLink)}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" />`
-      : `<svg style="width:80px;height:80px;opacity:0.15;color:var(--gold-dark)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg>`;
-
-    content.innerHTML = `
-      <div class="modal-image">${imgHtml}</div>
-      <div class="modal-details">
-        <div class="modal-category">${p.category}${p.isBestSeller ? ' &middot; Best Seller' : ''}${p.isNew ? ' &middot; New' : ''}</div>
-        <div class="modal-name">${p.name}</div>
-        <div class="modal-name-bn">${p.nameBn || ''}</div>
-        <div class="modal-code-line">
-          <span style="font-family:var(--font-deco);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);">Sale Code</span>
-          <span class="modal-code-val">${p.saleCode}</span>
-          <span style="font-family:var(--font-deco);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);margin-left:auto;">SN: ${p.serialNumber}</span>
-        </div>
-        <p class="modal-desc">${p.description}</p>
-        <div class="modal-specs">
-          <div class="spec-item"><div class="spec-key">Material</div><div class="spec-val">${p.material || p.fabric}</div></div>
-          <div class="spec-item"><div class="spec-key">Time Taken</div><div class="spec-val">${p.timeTaken || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Origin</div><div class="spec-val">${p.origin || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Karigari</div><div class="spec-val">${p.karigari || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Colour</div><div class="spec-val">${p.colour || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Size</div><div class="spec-val">${p.size || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Occasion</div><div class="spec-val">${p.occasion || '—'}</div></div>
-          <div class="spec-item"><div class="spec-key">Loved by</div><div class="spec-val">${p.likes || 0} people</div></div>
-        </div>
-        ${reviewsHtml}
-        <div class="modal-actions">
-          <a class="modal-wa-btn" href="https://wa.me/${WA_NUM}?text=${waMsg}" target="_blank">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Enquire on WhatsApp — ${p.saleCode}
-          </a>
-        </div>
-      </div>`;
-
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  // ── Navigate to piece story page with exit animation ─────────────────
+  window.navigateToPiece = function(id) {
+    document.body.classList.add('exit');
+    setTimeout(function() {
+      window.location.href = 'piece.html?id=' + id;
+    }, 340);
   };
 
-  window.closeModal = function(e) {
-    if (e && e.target !== document.getElementById('productModal')) return;
-    document.getElementById('productModal').classList.remove('open');
-    document.body.style.overflow = '';
-  };
 
   // ═══ Like product
   window.likeProduct = function(id, btn) {
