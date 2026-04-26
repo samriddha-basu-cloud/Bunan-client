@@ -237,7 +237,7 @@
     opacity: 0;
     transition: opacity 0.4s;
     display: flex; align-items: flex-end;
-    padding: 1rem; gap: 0.5rem;
+    padding: 1rem;
   }
   .product-card:hover .card-overlay { opacity: 1; }
   .overlay-btn {
@@ -247,26 +247,10 @@
     background: var(--gold-dark);
     border: none; cursor: pointer;
     padding: 0.55rem 1rem;
-    flex: 1;
+    width: 100%;
     transition: all 0.3s;
-    text-decoration: none;
-    display: flex; align-items: center; justify-content: center;
   }
   .overlay-btn:hover { background: var(--gold); }
-  .overlay-story-btn {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.3);
-    cursor: pointer;
-    padding: 0.55rem 0.9rem;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: flex; align-items: center; justify-content: center;
-    white-space: nowrap;
-  }
-  .overlay-story-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); color: #fff; }
 
   /* Card body */
   .card-body {
@@ -331,6 +315,22 @@
     text-decoration: none;
   }
   .card-wa-btn:hover { background: #1ebe5d; }
+
+  /* Story link */
+  .card-story-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.65rem 1.2rem;
+    border-top: 1px solid var(--border-soft);
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none;
+    transition: all 0.3s; background: transparent;
+  }
+  .card-story-link:hover {
+    color: var(--gold-dark); background: rgba(139,105,20,0.04);
+  }
+  .card-story-link svg { width: 12px; height: 12px; transition: transform 0.3s; }
+  .card-story-link:hover svg { transform: translateX(3px); }
 
   /* ─── PRODUCT MODAL ──────────────────────────────────────── */
   .product-modal-overlay {
@@ -886,8 +886,7 @@
       </button>
       <div class="card-image">${imgHtml}</div>
       <div class="card-overlay">
-        <button class="overlay-btn" onclick="event.stopPropagation(); openModal('${p.id}')">Quick View</button>
-        <a class="overlay-story-btn" href="piece.html?id=${p.id}" onclick="event.stopPropagation()">The Story</a>
+        <button class="overlay-btn" onclick="event.stopPropagation(); openModal('${p.id}')">View Details</button>
       </div>
       <div class="card-body">
         <div class="card-category">${p.category}</div>
@@ -909,6 +908,10 @@
           Enquire
         </a>
       </div>
+      <a class="card-story-link" href="piece.html?id=${p.id}" onclick="event.stopPropagation()">
+        Read the story of this piece
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>`;
   }
 
@@ -968,9 +971,6 @@
           <a class="modal-wa-btn" href="https://wa.me/${WA_NUM}?text=${waMsg}" target="_blank">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Enquire on WhatsApp — ${p.saleCode}
-          </a>
-          <a href="piece.html?id=${p.id}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.9rem 1.4rem;border:1px solid var(--border);font-family:var(--font-deco);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:all 0.3s;flex-shrink:0;" onmouseover="this.style.borderColor='var(--gold-light)';this.style.color='var(--gold-dark)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">
-            Read the Story
           </a>
         </div>
       </div>`;
