@@ -3,226 +3,373 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bunan — The Piece</title>
+  <title>বুনন — The Piece</title>
   <link rel="icon" type="image/png" href="logo.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+Bengali:wght@300;400;500&family=Cinzel:wght@300;400&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@300;400;500&family=Noto+Serif+Bengali:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
 
   <style>
+    /* ══════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════ */
     :root {
-      --bg:          #FAF6F0;
-      --bg-dark:     #F2EAE0;
-      --bg-card:     #FFFFFF;
-      --text:        #2C1A0E;
-      --text-dim:    #7A5C44;
-      --text-light:  #A07858;
-      --gold:        #8B6914;
-      --gold-light:  #C4993A;
-      --gold-dark:   #6B4F0E;
-      --gold-pale:   #E8D5A3;
-      --border:      rgba(139,105,20,0.18);
-      --border-soft: rgba(139,105,20,0.09);
-      --fh: 'Playfair Display', Georgia, serif;
-      --fd: 'EB Garamond', Georgia, serif;
+      --bg:           #F7F2EB;
+      --bg-warm:      #EFE7D8;
+      --bg-deep:      #E6D9C6;
+      --bg-card:      #FDFAF5;
+      --text:         #1E1208;
+      --text-dim:     #6B4F34;
+      --text-light:   #9C7A58;
+      --gold:         #9B7420;
+      --gold-lt:      #C9A84C;
+      --gold-dk:      #6B4F0E;
+      --gold-pale:    #E8D5A3;
+      --gold-wash:    rgba(155,116,32,0.07);
+      --border:       rgba(139,105,20,0.16);
+      --border-soft:  rgba(139,105,20,0.08);
+      --ink:          rgba(30,18,8,0.08);
+
+      --fh: 'Cormorant Garamond', Georgia, serif;
+      --fd: 'Cormorant Garamond', Georgia, serif;
       --fb: 'Noto Serif Bengali', serif;
       --fc: 'Cinzel', Georgia, serif;
+      --fs: 'Jost', sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+      --ease-in-out:   cubic-bezier(0.76, 0, 0.24, 1);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
     body {
-      background: var(--bg); color: var(--text);
-      font-family: var(--fd); min-height: 100vh; overflow-x: hidden;
-    }
-    body::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--fd);
+      min-height: 100vh;
+      overflow-x: hidden;
+      animation: pageIn 0.7s var(--ease-out-expo) both;
     }
 
-    /* ── LOADING ─────────────────────────────────── */
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    body.exit-back {
+      animation: pageOut 0.4s var(--ease-in-out) forwards;
+      pointer-events: none;
+    }
+    @keyframes pageOut {
+      to { opacity: 0; transform: translateX(-28px); }
+    }
+
+    /* ══════════════════════════════════════════════
+       LOADING
+    ══════════════════════════════════════════════ */
     #state-loading {
-      position: fixed; inset: 0; background: var(--bg);
+      position: fixed; inset: 0; z-index: 800;
+      background: var(--bg);
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 1.4rem;
-      z-index: 500; transition: opacity 0.5s ease;
+      align-items: center; justify-content: center; gap: 2rem;
+      transition: opacity 0.6s ease;
     }
     #state-loading.out { opacity: 0; pointer-events: none; }
-    .spinner {
-      width: 30px; height: 30px;
-      border: 1px solid var(--border);
-      border-top-color: var(--gold-light);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    .spinner-label {
-      font-family: var(--fc); font-size: 0.52rem;
-      letter-spacing: 0.36em; text-transform: uppercase; color: var(--text-light);
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── ERROR ───────────────────────────────────── */
+    .load-logo {
+      font-family: var(--fb);
+      font-size: 2.4rem; color: var(--gold);
+      letter-spacing: 0.04em;
+      animation: breathe 2.4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%,100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
+    .load-line {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-lt), transparent);
+      animation: loadSweep 1.6s ease-in-out infinite;
+    }
+    @keyframes loadSweep {
+      0%   { transform: scaleX(0.2); opacity: 0.3; }
+      50%  { transform: scaleX(1); opacity: 1; }
+      100% { transform: scaleX(0.2); opacity: 0.3; }
+    }
+    .load-label {
+      font-family: var(--fc);
+      font-size: 0.48rem; letter-spacing: 0.38em;
+      text-transform: uppercase; color: var(--text-light);
+    }
+
+    /* ══════════════════════════════════════════════
+       ERROR
+    ══════════════════════════════════════════════ */
     #state-error {
       display: none; min-height: 100vh;
       align-items: center; justify-content: center;
-      flex-direction: column; gap: 1.2rem;
+      flex-direction: column; gap: 1.5rem;
       text-align: center; padding: 3rem;
     }
     #state-error.show { display: flex; }
-    .err-title { font-family: var(--fh); font-size: 1.8rem; font-weight: 400; }
-    .err-body  { font-family: var(--fd); font-size: 1rem; color: var(--text-dim); line-height: 1.85; }
+    .err-ornament {
+      font-family: var(--fh); font-size: 5rem;
+      color: var(--gold-pale); line-height: 1; user-select: none;
+    }
+    .err-title { font-family: var(--fh); font-size: 1.9rem; font-weight: 400; }
+    .err-body  { font-family: var(--fd); font-size: 1.05rem; color: var(--text-dim); line-height: 1.9; max-width: 440px; }
     .err-link  {
-      font-family: var(--fc); font-size: 0.58rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--gold-dark); text-decoration: none;
-      border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-top: 0.8rem; transition: color 0.3s;
+      font-family: var(--fc); font-size: 0.56rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--gold-dk); text-decoration: none;
+      border-bottom: 1px solid var(--border); padding-bottom: 3px;
+      transition: color 0.3s, border-color 0.3s;
     }
-    .err-link:hover { color: var(--gold); }
+    .err-link:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
 
-    /* ── NAV ─────────────────────────────────────── */
-    .p-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      height: 62px; display: flex; align-items: center;
-      justify-content: space-between; padding: 0 3rem;
-      background: rgba(250,246,240,0.95);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-soft);
-    }
-    .p-nav-back {
-      display: flex; align-items: center; gap: 0.65rem;
-      font-family: var(--fc); font-size: 0.58rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--text-dim);
-      text-decoration: none; transition: color 0.3s;
-    }
-    .p-nav-back:hover { color: var(--gold-dark); }
-    .p-nav-back svg { width: 14px; height: 14px; transition: transform 0.3s; flex-shrink: 0; }
-    .p-nav-back:hover svg { transform: translateX(-3px); }
-    .p-nav-brand {
-      font-family: var(--fb); font-size: 1.3rem; font-weight: 500;
-      color: var(--gold-dark); text-decoration: none; letter-spacing: 0.04em;
-    }
-    .p-nav-code {
-      font-family: var(--fc); font-size: 0.52rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--text-light);
-    }
-
-    /* ── PAGE WRAPPER ────────────────────────────── */
+    /* ══════════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════════ */
     #piece-page { display: none; }
     #piece-page.show { display: block; }
 
-    /* ── HERO ────────────────────────────────────── */
-    .p-hero {
-      display: grid; grid-template-columns: 1fr 1fr;
-      min-height: calc(100vh - 62px);
-      margin-top: 62px;
+    .p-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(247,242,235,0.92);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border-soft);
+      transition: box-shadow 0.4s ease;
     }
+    .p-nav.scrolled { box-shadow: 0 2px 30px rgba(30,18,8,0.07); }
 
-    /* ── CAROUSEL ──────────────────────────────────── */
-    .p-img-wrap {
-      position: sticky; top: 62px;
-      height: calc(100vh - 62px);
-      background: var(--bg-dark);
-      overflow: hidden;
+    .p-nav-back {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: var(--fc); font-size: 0.52rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-dim);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .p-nav-back:hover { color: var(--gold-dk); }
+    .p-nav-back svg { width: 13px; height: 13px; transition: transform 0.3s; }
+    .p-nav-back:hover svg { transform: translateX(-3px); }
+
+    .p-nav-brand {
+      font-family: var(--fb); font-size: 1.35rem; font-weight: 500;
+      color: var(--gold-dk); text-decoration: none; letter-spacing: 0.04em;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .p-nav-right {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .p-nav-code {
+      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-light);
+    }
+    .p-nav-share {
+      width: 32px; height: 32px;
       display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border); cursor: pointer;
+      background: transparent; transition: all 0.3s; color: var(--text-dim);
+    }
+    .p-nav-share:hover { border-color: var(--gold-lt); color: var(--gold-dk); background: var(--gold-wash); }
+    .p-nav-share svg { width: 13px; height: 13px; }
+
+    /* ══════════════════════════════════════════════
+       HERO — TWO COLUMN
+    ══════════════════════════════════════════════ */
+    .p-hero {
+      display: grid;
+      grid-template-columns: 55% 45%;
+      min-height: 100vh;
+      padding-top: 64px;
     }
 
-    /* Track holds all slides side by side */
+    /* ══════════════════════════════════════════════
+       CAROUSEL
+    ══════════════════════════════════════════════ */
+    .p-img-panel {
+      position: sticky; top: 64px;
+      height: calc(100vh - 64px);
+      background: var(--bg-warm);
+      overflow: hidden;
+    }
+
+    /* Thumbnail strip at bottom */
+    .carousel-wrap {
+      position: relative; width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+    }
+
+    .carousel-viewport {
+      flex: 1; overflow: hidden; position: relative;
+    }
+
     .carousel-track {
-      display: flex;
-      width: 100%; height: 100%;
-      transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+      display: flex; height: 100%;
+      transition: transform 0.7s var(--ease-in-out);
       will-change: transform;
     }
+
     .carousel-slide {
-      flex: 0 0 100%;
-      width: 100%; height: 100%;
-      overflow: hidden;
-      position: relative;
+      flex: 0 0 100%; height: 100%;
+      position: relative; overflow: hidden;
     }
+
     .carousel-slide img {
       width: 100%; height: 100%; object-fit: cover;
       display: block;
-      transition: transform 8s ease;
+      transform: scale(1.04);
+      transition: transform 0.9s var(--ease-out-expo);
     }
-    .p-img-wrap:hover .carousel-slide.active img { transform: scale(1.035); }
+    .carousel-slide.active img { transform: scale(1); }
 
-    /* Prev / Next arrows */
+    /* Gradient overlay bottom */
+    .carousel-viewport::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(30,18,8,0.35), transparent);
+      pointer-events: none; z-index: 2;
+    }
+
+    /* Prev / Next */
     .carousel-btn {
       position: absolute; top: 50%; z-index: 10;
       transform: translateY(-50%);
-      width: 40px; height: 40px;
-      background: rgba(250,246,240,0.88);
+      width: 44px; height: 44px;
+      background: rgba(247,242,235,0.85);
       border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.25s;
+      cursor: pointer;
+      transition: all 0.25s;
+      backdrop-filter: blur(8px);
+    }
+    .carousel-btn:hover {
+      background: var(--bg-card);
+      border-color: var(--gold-lt);
+      transform: translateY(-50%) scale(1.05);
+    }
+    .carousel-btn svg { width: 15px; height: 15px; color: var(--text-dim); }
+    .carousel-btn:hover svg { color: var(--gold-dk); }
+    .carousel-prev { left: 1.2rem; }
+    .carousel-next { right: 1.2rem; }
+
+    /* Autoplay progress bar */
+    .carousel-progress {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: rgba(255,255,255,0.15); z-index: 5;
+    }
+    .carousel-progress-bar {
+      height: 100%;
+      background: var(--gold-lt);
+      width: 0%;
+      transition: width linear;
+    }
+
+    /* Counter */
+    .carousel-counter {
+      position: absolute; top: 1.2rem; left: 1.2rem; z-index: 10;
+      font-family: var(--fc); font-size: 0.46rem; letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(247,242,235,0.8);
+      background: rgba(30,18,8,0.4);
+      padding: 0.3rem 0.7rem;
       backdrop-filter: blur(6px);
     }
-    .carousel-btn:hover { background: var(--bg-card); border-color: var(--gold-light); }
-    .carousel-btn svg { width: 14px; height: 14px; color: var(--text-dim); }
-    .carousel-btn:hover svg { color: var(--gold-dark); }
-    .carousel-prev { left: 1rem; }
-    .carousel-next { right: 1rem; }
-    .carousel-btn.hidden { opacity: 0; pointer-events: none; }
 
-    /* Dot indicators */
-    .carousel-dots {
-      position: absolute; bottom: 1.2rem; left: 50%;
-      transform: translateX(-50%);
-      display: flex; gap: 0.45rem; z-index: 10;
+    /* Thumbnail strip */
+    .carousel-thumbs {
+      display: flex; gap: 4px; padding: 6px;
+      background: var(--bg-deep);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
     }
-    .carousel-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(250,246,240,0.45);
-      cursor: pointer; transition: all 0.3s;
-      border: none; padding: 0;
+    .carousel-thumbs::-webkit-scrollbar { display: none; }
+    .carousel-thumb {
+      flex: 0 0 52px; height: 52px;
+      border: 2px solid transparent;
+      cursor: pointer; overflow: hidden;
+      transition: border-color 0.25s, opacity 0.25s;
+      opacity: 0.5;
     }
-    .carousel-dot.active {
-      background: var(--gold-light);
-      transform: scale(1.3);
-    }
+    .carousel-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .carousel-thumb.active { border-color: var(--gold-lt); opacity: 1; }
+    .carousel-thumb:hover { opacity: 0.85; }
 
-    /* Counter top-right */
-    .carousel-counter {
-      position: absolute; top: 1rem; right: 1rem; z-index: 10;
-      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(250,246,240,0.7);
-      background: rgba(44,26,14,0.35);
-      padding: 0.25rem 0.6rem;
-      backdrop-filter: blur(4px);
-    }
+    /* No image placeholder */
     .p-no-img {
       display: flex; flex-direction: column;
-      align-items: center; gap: 1.5rem; padding: 4rem; width: 100%;
+      align-items: center; justify-content: center;
+      gap: 2rem; width: 100%; height: 100%;
+      color: var(--text-light);
     }
-    .p-no-img-rule { width: 60px; height: 1px; background: var(--border); }
+    .p-no-img-ornament {
+      font-family: var(--fh); font-size: 5rem; color: var(--gold-pale);
+      line-height: 1; user-select: none;
+    }
     .p-no-img-label {
-      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.32em;
-      text-transform: uppercase; color: var(--text-light);
+      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.3em;
+      text-transform: uppercase;
     }
 
-    /* Identity panel */
+    /* ══════════════════════════════════════════════
+       IDENTITY PANEL
+    ══════════════════════════════════════════════ */
     .p-identity {
-      padding: 5rem 5.5rem 5rem 5rem;
-      display: flex; flex-direction: column; justify-content: center;
+      padding: 5rem 4.5rem 5rem 4rem;
       border-left: 1px solid var(--border-soft);
+      display: flex; flex-direction: column;
+      justify-content: center;
     }
+
+    /* Staggered reveal */
     .p-identity > * {
-      opacity: 0; transform: translateY(12px);
-      animation: fadeUp 0.65s ease forwards;
+      opacity: 0; transform: translateY(14px);
+      animation: fadeSlideUp 0.7s var(--ease-out-expo) forwards;
     }
-    .p-identity > *:nth-child(1) { animation-delay: 0.06s; }
-    .p-identity > *:nth-child(2) { animation-delay: 0.13s; }
-    .p-identity > *:nth-child(3) { animation-delay: 0.20s; }
-    .p-identity > *:nth-child(4) { animation-delay: 0.27s; }
-    .p-identity > *:nth-child(5) { animation-delay: 0.34s; }
-    .p-identity > *:nth-child(6) { animation-delay: 0.41s; }
-    .p-identity > *:nth-child(7) { animation-delay: 0.48s; }
-    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .p-identity > *:nth-child(1)  { animation-delay: 0.08s; }
+    .p-identity > *:nth-child(2)  { animation-delay: 0.16s; }
+    .p-identity > *:nth-child(3)  { animation-delay: 0.24s; }
+    .p-identity > *:nth-child(4)  { animation-delay: 0.32s; }
+    .p-identity > *:nth-child(5)  { animation-delay: 0.40s; }
+    .p-identity > *:nth-child(6)  { animation-delay: 0.48s; }
+    .p-identity > *:nth-child(7)  { animation-delay: 0.56s; }
+    .p-identity > *:nth-child(8)  { animation-delay: 0.64s; }
+    .p-identity > *:nth-child(9)  { animation-delay: 0.72s; }
+    .p-identity > *:nth-child(10) { animation-delay: 0.80s; }
+
+    @keyframes fadeSlideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .p-badges {
+      display: flex; gap: 0.5rem; margin-bottom: 1.8rem; flex-wrap: wrap;
+    }
+    .p-badge {
+      font-family: var(--fc); font-size: 0.44rem; letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.7rem;
+      border: 1px solid var(--border);
+      color: var(--text-light);
+    }
+    .p-badge.gold { border-color: rgba(201,168,76,0.4); color: var(--gold); background: rgba(201,168,76,0.06); }
+    .p-badge.new  { border-color: rgba(79,130,110,0.3); color: #3a7a60; background: rgba(79,130,110,0.05); }
 
     .p-eyebrow {
-      font-family: var(--fc); font-size: 0.55rem; letter-spacing: 0.32em;
+      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.3em;
       text-transform: uppercase; color: var(--gold);
-      display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 1rem;
     }
     .p-eyebrow::after {
       content: ''; flex: 1; height: 1px;
@@ -231,281 +378,455 @@
 
     .p-name {
       font-family: var(--fh);
-      font-size: clamp(1.9rem, 3vw, 2.8rem);
-      font-weight: 400; line-height: 1.18; color: var(--text);
+      font-size: clamp(2rem, 3.2vw, 3.2rem);
+      font-weight: 300; line-height: 1.15; color: var(--text);
+      letter-spacing: -0.01em;
     }
     .p-name-bn {
-      font-family: var(--fb); font-size: 1.2rem; font-weight: 300;
-      color: var(--text-dim); margin-top: 0.4rem; margin-bottom: 2.5rem;
+      font-family: var(--fb); font-size: 1.15rem; font-weight: 300;
+      color: var(--text-dim); margin-top: 0.4rem; margin-bottom: 0.5rem;
+    }
+    .p-tagline {
+      font-family: var(--fh); font-size: 1.05rem; font-style: italic;
+      color: var(--text-dim); line-height: 1.6;
+      margin-bottom: 2rem;
     }
 
-    .p-code-strip {
-      display: flex; gap: 2.5rem; align-items: flex-start;
+    /* Code strip */
+    .p-meta-strip {
+      display: grid; grid-template-columns: repeat(3, auto);
+      gap: 0 2rem;
       border-top: 1px solid var(--border-soft);
       border-bottom: 1px solid var(--border-soft);
-      padding: 1rem 0; margin-bottom: 2.5rem;
+      padding: 1rem 0; margin-bottom: 2rem;
     }
-    .p-code-label {
-      font-family: var(--fc); font-size: 0.44rem; letter-spacing: 0.24em;
-      text-transform: uppercase; color: var(--text-light); margin-bottom: 0.25rem;
+    .p-meta-item { }
+    .p-meta-label {
+      font-family: var(--fc); font-size: 0.42rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text-light); margin-bottom: 0.3rem;
     }
-    .p-code-val {
-      font-family: var(--fc); font-size: 0.72rem; letter-spacing: 0.16em; color: var(--gold-dark);
+    .p-meta-val {
+      font-family: var(--fc); font-size: 0.7rem; letter-spacing: 0.14em;
+      color: var(--gold-dk);
     }
-    .p-code-val.plain {
-      font-family: var(--fd); font-size: 0.9rem; letter-spacing: 0.04em; color: var(--text-dim);
+    .p-meta-val.plain {
+      font-family: var(--fd); font-size: 0.92rem; letter-spacing: 0.02em;
+      color: var(--text-dim);
     }
 
-    .p-tags { display: flex; flex-wrap: wrap; gap: 0.42rem; margin-bottom: 2.5rem; }
+    /* Attribute tags */
+    .p-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2rem; }
     .p-tag {
-      font-family: var(--fc); font-size: 0.46rem; letter-spacing: 0.16em;
+      font-family: var(--fc); font-size: 0.44rem; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--text-dim);
-      border: 1px solid var(--border-soft); padding: 0.25rem 0.62rem;
+      border: 1px solid var(--border-soft);
+      padding: 0.24rem 0.6rem;
+      transition: all 0.25s;
     }
-    .p-tag.hi {
-      border-color: rgba(196,153,58,0.35); color: var(--gold-dark);
-      background: rgba(196,153,58,0.05);
-    }
+    .p-tag:hover { border-color: var(--border); color: var(--text); }
+    .p-tag.hi { border-color: rgba(155,116,32,0.3); color: var(--gold-dk); background: var(--gold-wash); }
 
-    .p-like-row { margin-bottom: 2.5rem; }
+    /* Like button */
+    .p-like-row { margin-bottom: 2rem; }
     .p-like-btn {
-      display: inline-flex; align-items: center; gap: 0.55rem;
-      font-family: var(--fc); font-size: 0.54rem; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--text-dim);
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: var(--fs); font-size: 0.78rem; font-weight: 400;
+      color: var(--text-dim);
       background: transparent; border: 1px solid var(--border);
-      padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s;
+      padding: 0.55rem 1.1rem; cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.02em;
     }
-    .p-like-btn:hover, .p-like-btn.liked {
-      border-color: var(--gold-light); color: var(--gold-dark);
-      background: rgba(196,153,58,0.05);
+    .p-like-btn:hover {
+      border-color: var(--gold-lt); color: var(--gold-dk);
+      background: var(--gold-wash);
     }
-    .p-like-btn svg { width: 13px; height: 13px; }
-    .p-like-btn.liked svg { fill: var(--gold-dark); stroke: var(--gold-dark); }
+    .p-like-btn.liked {
+      border-color: var(--gold-lt); color: var(--gold-dk);
+      background: var(--gold-wash);
+    }
+    .p-like-btn svg { width: 14px; height: 14px; transition: transform 0.35s var(--ease-out-expo); }
+    .p-like-btn:hover svg { transform: scale(1.2); }
+    .p-like-btn.liked svg { fill: var(--gold-dk); stroke: var(--gold-dk); transform: scale(1.2); }
+    .like-pulse {
+      animation: likePulse 0.5s var(--ease-out-expo);
+    }
+    @keyframes likePulse {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.5); }
+      100% { transform: scale(1.2); }
+    }
 
-    .p-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    /* Action buttons */
+    .p-actions { display: flex; flex-direction: column; gap: 0.7rem; }
     .p-btn-wa {
       display: flex; align-items: center; justify-content: center; gap: 0.7rem;
-      background: #25D366; color: #fff; padding: 1rem 2rem;
-      font-family: var(--fc); font-size: 0.6rem; letter-spacing: 0.18em;
-      text-transform: uppercase; text-decoration: none; transition: background 0.3s;
+      background: #1A5C38; color: rgba(255,255,255,0.92);
+      padding: 1rem 2rem;
+      font-family: var(--fc); font-size: 0.56rem; letter-spacing: 0.2em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.3s; position: relative; overflow: hidden;
     }
-    .p-btn-wa:hover { background: #1ebe5d; }
-    .p-btn-back {
+    .p-btn-wa::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,0.06);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+    .p-btn-wa:hover::before { transform: scaleX(1); }
+    .p-btn-wa:hover { letter-spacing: 0.24em; }
+
+    .p-btn-secondary {
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--fc); font-size: 0.56rem; letter-spacing: 0.18em;
+      font-family: var(--fc); font-size: 0.54rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--text-dim);
-      border: 1px solid var(--border); padding: 0.8rem 2rem;
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
       text-decoration: none; transition: all 0.3s;
     }
-    .p-btn-back:hover { border-color: var(--gold-light); color: var(--gold-dark); }
+    .p-btn-secondary:hover { border-color: var(--gold-lt); color: var(--gold-dk); background: var(--gold-wash); }
 
-    /* ── STORY ───────────────────────────────────── */
+    /* ══════════════════════════════════════════════
+       STORY SECTIONS
+    ══════════════════════════════════════════════ */
     .p-story {
-      max-width: 780px; margin: 0 auto;
-      padding: 8rem 2rem 5rem;
+      background: var(--bg);
     }
 
-    .chapter {
-      margin-bottom: 6rem;
-      opacity: 0; transform: translateY(16px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
+    /* Section separator */
+    .story-divider {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: 0 4rem;
+      opacity: 0; transform: scaleX(0.8);
+      transition: opacity 0.7s ease, transform 0.7s var(--ease-out-expo);
     }
+    .story-divider.visible { opacity: 1; transform: scaleX(1); }
+    .story-divider-line { flex: 1; height: 1px; background: var(--border-soft); }
+    .story-divider-ornament {
+      font-family: var(--fh); font-size: 1rem; color: var(--gold-pale);
+      user-select: none;
+    }
+
+    /* Chapter */
+    .chapter {
+      padding: 7rem 4rem;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 0 5rem;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.8s ease, transform 0.8s var(--ease-out-expo);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .chapter:last-child { border-bottom: none; }
     .chapter.visible { opacity: 1; transform: translateY(0); }
 
-    .ch-label {
-      display: flex; align-items: baseline; gap: 1.4rem; margin-bottom: 1.8rem;
+    .ch-aside {
+      padding-top: 0.4rem;
     }
     .ch-num {
-      font-family: var(--fh); font-size: 3.8rem; font-weight: 400;
-      color: var(--gold-pale); line-height: 1; flex-shrink: 0; user-select: none;
-    }
-    .ch-head-wrap {
-      border-left: 1px solid var(--border-soft); padding-left: 1.3rem;
+      font-family: var(--fh);
+      font-size: 5rem; font-weight: 300;
+      color: var(--gold-pale); line-height: 1;
+      user-select: none; margin-bottom: 1rem;
     }
     .ch-kicker {
-      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 0.3rem;
+      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem;
     }
     .ch-title {
-      font-family: var(--fh); font-size: clamp(1.1rem, 2vw, 1.45rem);
-      font-weight: 400; color: var(--text); line-height: 1.3;
+      font-family: var(--fh); font-size: 1.3rem; font-weight: 400;
+      color: var(--text); line-height: 1.3;
+    }
+    .ch-aside-rule {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--border), transparent);
+      margin: 0.8rem 0;
     }
 
+    .ch-main { }
     .ch-body {
-      font-family: var(--fd); font-size: 1.06rem; line-height: 2; color: var(--text-dim);
+      font-family: var(--fd); font-size: 1.12rem; line-height: 2;
+      color: var(--text-dim);
     }
-    .ch-body p { margin-bottom: 0.9em; }
+    .ch-body p { margin-bottom: 1.1em; }
+    .ch-body p:last-child { margin-bottom: 0; }
     .ch-body em { font-style: italic; color: var(--text); }
+    .ch-body strong { font-weight: 600; color: var(--text); }
 
-    /* Spec table */
-    .spec-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; }
-    .spec-table tr { border-bottom: 1px solid var(--border-soft); }
-    .spec-table tr:first-child { border-top: 1px solid var(--border-soft); }
-    .spec-table td { padding: 0.9rem 0; vertical-align: top; }
-    .spec-table td:first-child {
-      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--gold); width: 32%; padding-right: 2rem;
+    /* ── Spec table ── */
+    .spec-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border-soft);
+      margin-top: 1.5rem;
     }
-    .spec-table td:last-child {
+    .spec-row {
+      display: contents;
+    }
+    .spec-row:nth-child(odd) .spec-key,
+    .spec-row:nth-child(odd) .spec-val {
+      background: rgba(139,105,20,0.025);
+    }
+    .spec-key, .spec-val {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .spec-row:last-child .spec-key,
+    .spec-row:last-child .spec-val { border-bottom: none; }
+    .spec-key {
+      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold);
+      border-right: 1px solid var(--border-soft);
+      display: flex; align-items: center;
+    }
+    .spec-val {
       font-family: var(--fd); font-size: 0.98rem; color: var(--text);
     }
 
-    /* Reviews */
+    /* ── Weaver block ── */
+    .weaver-card {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-left: 3px solid var(--gold-lt);
+      display: grid; grid-template-columns: auto 1fr; gap: 1.2rem;
+    }
+    .weaver-avatar {
+      width: 52px; height: 52px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-warm);
+      font-family: var(--fh); font-size: 1.4rem; color: var(--gold-pale);
+      user-select: none; flex-shrink: 0;
+    }
+    .weaver-name {
+      font-family: var(--fh); font-size: 1.1rem; font-weight: 500;
+      color: var(--text); margin-bottom: 0.15rem;
+    }
+    .weaver-village {
+      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+    .weaver-story {
+      font-family: var(--fd); font-size: 0.98rem; font-style: italic;
+      color: var(--text-dim); line-height: 1.85;
+      grid-column: 1 / -1;
+    }
+
+    /* ── Care block ── */
+    .care-row {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .care-row:first-child { border-top: 1px solid var(--border-soft); }
+    .care-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border: 1px solid var(--border-soft);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+    }
+    .care-icon svg { width: 14px; height: 14px; }
+    .care-label {
+      font-family: var(--fc); font-size: 0.46rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-light); margin-bottom: 0.2rem;
+    }
+    .care-val {
+      font-family: var(--fd); font-size: 0.95rem; color: var(--text-dim);
+    }
+
+    /* ── Tags in story ── */
+    .story-tags {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.5rem;
+    }
+    .story-tag {
+      font-family: var(--fs); font-size: 0.75rem;
+      color: var(--text-dim);
+      background: var(--bg-warm); border: 1px solid var(--border-soft);
+      padding: 0.2rem 0.7rem; border-radius: 20px;
+    }
+
+    /* ── Reviews ── */
+    .reviews-list { margin-top: 0.5rem; }
     .review {
-      padding: 1.5rem 0; border-bottom: 1px solid var(--border-soft);
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border-soft);
     }
     .review:first-child { border-top: 1px solid var(--border-soft); }
-    .review-stars { color: var(--gold-light); font-size: 0.72rem; letter-spacing: 0.12em; margin-bottom: 0.55rem; }
+    .review-stars {
+      color: var(--gold-lt); font-size: 0.72rem; letter-spacing: 0.18em;
+      margin-bottom: 0.7rem;
+    }
     .review-text {
-      font-family: var(--fd); font-size: 1.06rem; font-style: italic;
-      line-height: 1.9; color: var(--text-dim); margin-bottom: 0.6rem;
+      font-family: var(--fd); font-size: 1.1rem; font-style: italic;
+      line-height: 1.9; color: var(--text-dim); margin-bottom: 0.7rem;
     }
     .review-author {
-      font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.2em;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .review-author-line { width: 24px; height: 1px; background: var(--border); }
+    .review-author-name {
+      font-family: var(--fc); font-size: 0.46rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--text-light);
     }
     .no-reviews {
-      font-family: var(--fd); font-size: 0.95rem; font-style: italic;
-      color: var(--text-light); padding: 1.5rem 0;
+      font-family: var(--fd); font-size: 1rem; font-style: italic;
+      color: var(--text-light); padding: 2rem 0;
     }
 
-    /* ── BOTTOM CTA ──────────────────────────────── */
+    /* ══════════════════════════════════════════════
+       BOTTOM CTA
+    ══════════════════════════════════════════════ */
     .p-cta-band {
-      background: var(--bg-dark); border-top: 1px solid var(--border-soft);
-      padding: 6rem 2rem; text-align: center;
+      background: var(--text);
+      padding: 8rem 3rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .p-cta-band::before {
+      content: 'বুনন';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--fb); font-size: 22rem; font-weight: 300;
+      color: rgba(255,255,255,0.02);
+      white-space: nowrap; user-select: none; pointer-events: none;
+      line-height: 1;
     }
     .p-cta-kicker {
-      font-family: var(--fc); font-size: 0.52rem; letter-spacing: 0.32em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem;
+      font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.36em;
+      text-transform: uppercase; color: var(--gold-lt); margin-bottom: 1.5rem;
     }
     .p-cta-title {
-      font-family: var(--fh); font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-      font-weight: 400; color: var(--text); margin-bottom: 0.8rem; line-height: 1.3;
+      font-family: var(--fh); font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 300; color: var(--bg); margin-bottom: 1rem; line-height: 1.25;
     }
     .p-cta-body {
-      font-family: var(--fd); font-size: 1rem; color: var(--text-dim);
-      line-height: 1.95; max-width: 540px; margin: 0 auto 2.5rem;
+      font-family: var(--fd); font-size: 1.05rem; color: rgba(247,242,235,0.5);
+      line-height: 2; max-width: 520px; margin: 0 auto 3rem;
     }
-    .p-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .p-cta-btn-gold {
+    .p-cta-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .p-cta-btn-light {
       display: inline-flex; align-items: center; justify-content: center;
-      font-family: var(--fc); font-size: 0.6rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: #fff;
-      background: var(--gold-dark); padding: 0.9rem 2.2rem;
-      text-decoration: none; border: 1px solid var(--gold-dark); transition: all 0.3s;
+      font-family: var(--fc); font-size: 0.56rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text);
+      background: var(--bg); padding: 0.95rem 2.4rem;
+      text-decoration: none; transition: all 0.3s;
+      border: 1px solid transparent;
     }
-    .p-cta-btn-gold:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-2px); }
+    .p-cta-btn-light:hover { background: var(--bg-warm); }
     .p-cta-btn-wa {
       display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
-      font-family: var(--fc); font-size: 0.6rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: #fff;
-      background: #25D366; padding: 0.9rem 2.2rem; text-decoration: none; transition: background 0.3s;
+      font-family: var(--fc); font-size: 0.56rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.9);
+      background: #1A5C38; padding: 0.95rem 2.4rem;
+      text-decoration: none; transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.08);
     }
-    .p-cta-btn-wa:hover { background: #1ebe5d; }
+    .p-cta-btn-wa:hover { background: #16502f; }
 
-    /* ── FOOTER ──────────────────────────────────── */
+    /* ── FOOTER ── */
     .p-footer {
-      background: var(--text); color: rgba(250,246,240,0.3);
-      padding: 1.4rem 3rem;
+      background: #0f0a05; color: rgba(247,242,235,0.22);
+      padding: 1.5rem 3rem;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .p-footer p { font-family: var(--fc); font-size: 0.5rem; letter-spacing: 0.14em; }
-    .p-footer a { color: rgba(250,246,240,0.3); text-decoration: none; transition: color 0.3s; }
+    .p-footer p { font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.14em; }
+    .p-footer a { color: rgba(247,242,235,0.22); text-decoration: none; transition: color 0.3s; font-family: var(--fc); font-size: 0.48rem; letter-spacing: 0.14em; }
     .p-footer a:hover { color: var(--gold-pale); }
 
-    /* ── RESPONSIVE ──────────────────────────────── */
-    @media (max-width: 860px) {
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    @media (max-width: 900px) {
       .p-nav { padding: 0 1.5rem; }
+      .p-nav-brand { font-size: 1.1rem; }
       .p-nav-code { display: none; }
-      .p-hero { grid-template-columns: 1fr; min-height: auto; }
-      .p-img-wrap { position: relative; top: auto; height: 72vw; min-height: 280px; } .carousel-btn { width: 32px; height: 32px; }
-      .p-identity { padding: 2.5rem 1.5rem; border-left: none; border-top: 1px solid var(--border-soft); }
-      .p-story { padding: 4rem 1.5rem 3rem; }
-      .p-footer { flex-direction: column; gap: 0.6rem; text-align: center; }
+      .p-hero { grid-template-columns: 1fr; }
+      .p-img-panel { position: relative; top: auto; height: 72vw; min-height: 300px; }
+      .p-identity { padding: 3rem 1.8rem; border-left: none; border-top: 1px solid var(--border-soft); }
+      .chapter { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 1.8rem; }
+      .ch-num { font-size: 3.5rem; }
+      .spec-grid { grid-template-columns: 1fr; }
+      .spec-key { border-right: none; border-bottom: 1px solid var(--border-soft); }
+      .spec-row:last-child .spec-key { border-bottom: 1px solid var(--border-soft); }
+      .story-divider { padding: 0 1.8rem; }
+      .p-footer { flex-direction: column; gap: 0.8rem; text-align: center; }
     }
-  
-  /* ── PAGE TRANSITION ─────────────────────────────── */
-  body {
-    animation: pageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  @keyframes pageIn {
-    from { opacity: 0; transform: translateX(32px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  body.exit-forward {
-    animation: pageOutForward 0.35s cubic-bezier(0.55, 0, 0.7, 0.4) forwards;
-    pointer-events: none;
-  }
-  body.exit-back {
-    animation: pageOutBack 0.35s cubic-bezier(0.55, 0, 0.7, 0.4) forwards;
-    pointer-events: none;
-  }
-  @keyframes pageOutForward {
-    from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(32px); }
-  }
-  @keyframes pageOutBack {
-    from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(-32px); }
-  }
-</style>
+  </style>
 </head>
 <body>
 
 <!-- LOADING -->
 <div id="state-loading">
-  <div class="spinner"></div>
-  <div class="spinner-label">Unfolding the story</div>
+  <div class="load-logo">বুনন</div>
+  <div class="load-line"></div>
+  <div class="load-label">Unfolding the story</div>
 </div>
 
 <!-- ERROR -->
 <div id="state-error">
-  <p class="err-title">This piece could not be found.</p>
-  <p class="err-body">The link may be incorrect, or this piece may no longer be available.<br/>Return to explore the full collection.</p>
-  <a href="index.html#collection" class="err-link">Back to Collection</a>
+  <div class="err-ornament">&#12539;</div>
+  <p class="err-title">This piece was not found.</p>
+  <p class="err-body">The link may be incorrect, or this piece may no longer be part of the collection. Return to explore what remains.</p>
+  <a href="index.html#collection" class="err-link">Return to the Collection</a>
 </div>
 
 <!-- PIECE PAGE -->
 <div id="piece-page">
 
-  <nav class="p-nav">
+  <!-- NAV -->
+  <nav class="p-nav" id="p-nav">
     <a href="index.html#collection" class="p-nav-back" onclick="goBack(event)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
         <path d="M19 12H5M12 5l-7 7 7 7"/>
       </svg>
       Collection
     </a>
     <a href="index.html" class="p-nav-brand">বুনন</a>
-    <span class="p-nav-code" id="nav-code">&nbsp;</span>
+    <div class="p-nav-right">
+      <span class="p-nav-code" id="nav-code"></span>
+      <button class="p-nav-share" title="Share this piece" onclick="sharePiece()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+    </div>
   </nav>
 
   <!-- HERO -->
   <section class="p-hero">
-    <div class="p-img-wrap" id="img-wrap">
+
+    <!-- Image Panel / Carousel -->
+    <div class="p-img-panel" id="img-panel">
       <div class="p-no-img" id="no-img">
-        <div class="p-no-img-rule"></div>
+        <div class="p-no-img-ornament">&#12539;</div>
         <div class="p-no-img-label">Photograph forthcoming</div>
-        <div class="p-no-img-rule"></div>
       </div>
     </div>
 
+    <!-- Identity -->
     <div class="p-identity">
+      <div class="p-badges" id="p-badges"></div>
       <div class="p-eyebrow" id="p-eyebrow">—</div>
       <h1 class="p-name" id="p-name"></h1>
       <div class="p-name-bn" id="p-name-bn"></div>
+      <div class="p-tagline" id="p-tagline" style="display:none;"></div>
 
-      <div class="p-code-strip">
-        <div>
-          <div class="p-code-label">Sale Code</div>
-          <div class="p-code-val" id="p-sale-code">—</div>
+      <div class="p-meta-strip">
+        <div class="p-meta-item">
+          <div class="p-meta-label">Sale Code</div>
+          <div class="p-meta-val" id="p-sale-code">—</div>
         </div>
-        <div>
-          <div class="p-code-label">Serial</div>
-          <div class="p-code-val" id="p-serial">—</div>
+        <div class="p-meta-item">
+          <div class="p-meta-label">Serial No.</div>
+          <div class="p-meta-val" id="p-serial">—</div>
         </div>
-        <div>
-          <div class="p-code-label">Origin</div>
-          <div class="p-code-val plain" id="p-origin">—</div>
+        <div class="p-meta-item">
+          <div class="p-meta-label">Origin</div>
+          <div class="p-meta-val plain" id="p-origin">—</div>
         </div>
       </div>
 
@@ -516,7 +837,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
-          <span id="like-count">0</span>&nbsp;people loved this
+          <span id="like-count">0</span>&thinsp;loved this
         </button>
       </div>
 
@@ -525,74 +846,151 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Enquire on WhatsApp
         </a>
-        <a href="index.html#collection" class="p-btn-back" onclick="goBack(event)">Browse More Pieces</a>
+        <a href="index.html#collection" class="p-btn-secondary" onclick="goBack(event)">Browse More Pieces</a>
       </div>
     </div>
   </section>
 
-  <!-- STORY CHAPTERS -->
-  <div class="p-story">
+  <!-- STORY -->
+  <div class="p-story" id="p-story">
 
+    <!-- I — The Piece -->
     <div class="chapter" id="ch-1">
-      <div class="ch-label">
+      <div class="ch-aside">
         <div class="ch-num">I</div>
-        <div class="ch-head-wrap">
-          <div class="ch-kicker">The Piece</div>
-          <div class="ch-title" id="ch1-title"></div>
-        </div>
+        <div class="ch-kicker">The Piece</div>
+        <div class="ch-title" id="ch1-title"></div>
+        <div class="ch-aside-rule"></div>
       </div>
-      <div class="ch-body" id="ch1-body"></div>
+      <div class="ch-main">
+        <div class="ch-body" id="ch1-body"></div>
+      </div>
     </div>
 
+    <div class="story-divider chapter-reveal">
+      <div class="story-divider-line"></div>
+      <div class="story-divider-ornament">&#10022;</div>
+      <div class="story-divider-line"></div>
+    </div>
+
+    <!-- II — The Craft & Specs -->
     <div class="chapter" id="ch-2">
-      <div class="ch-label">
+      <div class="ch-aside">
         <div class="ch-num">II</div>
-        <div class="ch-head-wrap">
-          <div class="ch-kicker">The Craft</div>
-          <div class="ch-title">Materials &amp; Making</div>
-        </div>
+        <div class="ch-kicker">The Craft</div>
+        <div class="ch-title">Materials &amp; Making</div>
+        <div class="ch-aside-rule"></div>
       </div>
-      <table class="spec-table" id="ch2-table"></table>
+      <div class="ch-main">
+        <div class="spec-grid" id="ch2-specs"></div>
+      </div>
     </div>
 
-    <div class="chapter" id="ch-3">
-      <div class="ch-label">
+    <div class="story-divider chapter-reveal">
+      <div class="story-divider-line"></div>
+      <div class="story-divider-ornament">&#10022;</div>
+      <div class="story-divider-line"></div>
+    </div>
+
+    <!-- III — The Weaver -->
+    <div class="chapter" id="ch-3" style="display:none;">
+      <div class="ch-aside">
         <div class="ch-num">III</div>
-        <div class="ch-head-wrap">
-          <div class="ch-kicker">Voices</div>
-          <div class="ch-title">What People Say</div>
-        </div>
+        <div class="ch-kicker">The Maker</div>
+        <div class="ch-title">The Weaver's Story</div>
+        <div class="ch-aside-rule"></div>
       </div>
-      <div id="ch3-reviews"></div>
+      <div class="ch-main">
+        <div id="ch3-weaver"></div>
+      </div>
+    </div>
+
+    <div class="story-divider chapter-reveal" id="divider-3" style="display:none;">
+      <div class="story-divider-line"></div>
+      <div class="story-divider-ornament">&#10022;</div>
+      <div class="story-divider-line"></div>
+    </div>
+
+    <!-- IV — Care -->
+    <div class="chapter" id="ch-4" style="display:none;">
+      <div class="ch-aside">
+        <div class="ch-num">IV</div>
+        <div class="ch-kicker">Care</div>
+        <div class="ch-title">Caring for This Piece</div>
+        <div class="ch-aside-rule"></div>
+      </div>
+      <div class="ch-main">
+        <div id="ch4-care"></div>
+      </div>
+    </div>
+
+    <div class="story-divider chapter-reveal" id="divider-4" style="display:none;">
+      <div class="story-divider-line"></div>
+      <div class="story-divider-ornament">&#10022;</div>
+      <div class="story-divider-line"></div>
+    </div>
+
+    <!-- V — Tags / Keywords -->
+    <div class="chapter" id="ch-5" style="display:none;">
+      <div class="ch-aside">
+        <div class="ch-num">V</div>
+        <div class="ch-kicker">Keywords</div>
+        <div class="ch-title">What This Piece Belongs To</div>
+        <div class="ch-aside-rule"></div>
+      </div>
+      <div class="ch-main">
+        <div class="story-tags" id="ch5-tags"></div>
+      </div>
+    </div>
+
+    <div class="story-divider chapter-reveal" id="divider-5" style="display:none;">
+      <div class="story-divider-line"></div>
+      <div class="story-divider-ornament">&#10022;</div>
+      <div class="story-divider-line"></div>
+    </div>
+
+    <!-- VI — Reviews -->
+    <div class="chapter" id="ch-6">
+      <div class="ch-aside">
+        <div class="ch-num" id="ch6-num">VI</div>
+        <div class="ch-kicker">Voices</div>
+        <div class="ch-title">What They Say</div>
+        <div class="ch-aside-rule"></div>
+      </div>
+      <div class="ch-main">
+        <div class="reviews-list" id="ch6-reviews"></div>
+      </div>
     </div>
 
   </div>
 
   <!-- BOTTOM CTA -->
-  <div class="p-cta-band">
+  <div class="p-cta-band chapter" id="cta-band">
     <div class="p-cta-kicker">Make It Yours</div>
     <h2 class="p-cta-title" id="cta-title">This piece is waiting for you.</h2>
     <p class="p-cta-body">Every Bunan piece ships with its weaver's name, village, and the hours it took to create. When you wear it, you carry a story — and every story deserves to be known.</p>
     <div class="p-cta-actions">
-      <a href="index.html#collection" class="p-cta-btn-gold" onclick="goBack(event)">Explore More Pieces</a>
+      <a href="index.html#collection" class="p-cta-btn-light" onclick="goBack(event)">Explore More Pieces</a>
       <a href="#" class="p-cta-btn-wa" id="cta-wa-btn" target="_blank">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp Enquiry
       </a>
     </div>
   </div>
 
   <footer class="p-footer">
-    <p>© 2025 Bunan. All rights reserved.</p>
+    <p>&copy; 2025 Bunan. All rights reserved.</p>
     <a href="index.html">Return to Bunan</a>
   </footer>
 
-</div>
+</div><!-- /piece-page -->
 
-<!-- ══ FIREBASE — fetch single product by doc id ═══════ -->
+
+<!-- FIREBASE -->
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, updateDoc, increment }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const CONFIG = {
     apiKey:            "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
@@ -602,161 +1000,216 @@
     messagingSenderId: "612151786648",
     appId:             "1:612151786648:web:6ca884a59cbd73117724ed"
   };
-
   const WA = "917501929425";
 
-  function driveThumb(url) {
+  /* ── helpers ─────────────────────────────── */
+  function driveThumb(url, size = 'w800') {
     const m = url?.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w800` : null;
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}` : null;
   }
 
-  // Normalise: support driveLinks[] array OR legacy driveLink string
   function getImageUrls(p) {
     if (Array.isArray(p.driveLinks) && p.driveLinks.length) return p.driveLinks;
     if (p.driveLink) return [p.driveLink];
     return [];
   }
 
-  function buildCarousel(urls, name, wrap) {
-    if (!urls.length) return; // keep no-img placeholder
+  /* ── carousel ────────────────────────────── */
+  function buildCarousel(urls, name, panel) {
+    const thumbUrls = urls.map(u => driveThumb(u)).filter(Boolean);
+    if (!thumbUrls.length) return;
 
-    const thumbs = urls.map(driveThumb).filter(Boolean);
-    if (!thumbs.length) return;
+    // Remove no-img placeholder
+    panel.innerHTML = '';
 
-    // Clear placeholder
-    wrap.innerHTML = '';
-
-    // Single image — no carousel UI needed
-    if (thumbs.length === 1) {
+    // Single image
+    if (thumbUrls.length === 1) {
+      const wrap = document.createElement('div');
+      wrap.className = 'carousel-wrap';
+      wrap.style.height = '100%';
+      const vp = document.createElement('div');
+      vp.className = 'carousel-viewport';
+      vp.style.height = '100%';
       const track = document.createElement('div');
       track.className = 'carousel-track';
       const slide = document.createElement('div');
       slide.className = 'carousel-slide active';
       const img = document.createElement('img');
-      img.src = thumbs[0]; img.alt = name; img.loading = 'eager';
-      img.onerror = () => slide.remove();
+      img.src = thumbUrls[0]; img.alt = name; img.loading = 'eager';
       slide.appendChild(img);
       track.appendChild(slide);
-      wrap.appendChild(track);
+      vp.appendChild(track);
+      wrap.appendChild(vp);
+      panel.appendChild(wrap);
       return;
     }
 
-    // Multiple images — full carousel
+    // Multi-image carousel
     let current = 0;
+    let autoplayTimer = null;
+    const AUTOPLAY_DELAY = 4500; // ms per slide
 
-    const track = document.createElement('div');
-    track.className = 'carousel-track';
+    // DOM structure
+    const wrap   = document.createElement('div');  wrap.className = 'carousel-wrap';
+    const vp     = document.createElement('div');  vp.className   = 'carousel-viewport';
+    const track  = document.createElement('div');  track.className = 'carousel-track';
+    const progEl = document.createElement('div');  progEl.className = 'carousel-progress';
+    const bar    = document.createElement('div');  bar.className   = 'carousel-progress-bar';
+    progEl.appendChild(bar);
+    const counter = document.createElement('div'); counter.className = 'carousel-counter';
+    const thumbsWrap = document.createElement('div'); thumbsWrap.className = 'carousel-thumbs';
 
-    thumbs.forEach((src, i) => {
+    // Build slides
+    const slides = thumbUrls.map((src, i) => {
       const slide = document.createElement('div');
       slide.className = 'carousel-slide' + (i === 0 ? ' active' : '');
       const img = document.createElement('img');
-      img.src = src; img.alt = `${name} — ${i + 1}`;
+      img.src = src; img.alt = `${name} — view ${i + 1}`;
       img.loading = i === 0 ? 'eager' : 'lazy';
-      img.onerror = () => slide.style.display = 'none';
+      img.onerror = () => { slide.style.display = 'none'; };
       slide.appendChild(img);
       track.appendChild(slide);
+      return slide;
     });
-    wrap.appendChild(track);
 
-    // Buttons
+    // Build thumbnails
+    const thumbEls = thumbUrls.map((src, i) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'carousel-thumb' + (i === 0 ? ' active' : '');
+      const t = driveThumb(urls[i], 'w120');
+      const tImg = document.createElement('img');
+      tImg.src = t || src; tImg.alt = '';
+      thumb.appendChild(tImg);
+      thumb.addEventListener('click', () => { goTo(i); resetAutoplay(); });
+      thumbsWrap.appendChild(thumb);
+      return thumb;
+    });
+
+    // Prev / Next buttons
     const prev = document.createElement('button');
-    prev.className = 'carousel-btn carousel-prev hidden';
+    prev.className = 'carousel-btn carousel-prev';
+    prev.setAttribute('aria-label', 'Previous image');
     prev.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>';
 
     const next = document.createElement('button');
     next.className = 'carousel-btn carousel-next';
+    next.setAttribute('aria-label', 'Next image');
     next.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
 
-    // Dots
-    const dotsWrap = document.createElement('div');
-    dotsWrap.className = 'carousel-dots';
-    const dots = thumbs.map((_, i) => {
-      const d = document.createElement('button');
-      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      d.onclick = () => goTo(i);
-      dotsWrap.appendChild(d);
-      return d;
-    });
-
-    // Counter
-    const counter = document.createElement('div');
-    counter.className = 'carousel-counter';
-    counter.textContent = `1 / ${thumbs.length}`;
-
+    /* ── goTo ── */
     function goTo(idx) {
-      track.querySelectorAll('.carousel-slide')[current].classList.remove('active');
-      dots[current].classList.remove('active');
-      current = (idx + thumbs.length) % thumbs.length;
-      track.querySelectorAll('.carousel-slide')[current].classList.add('active');
-      dots[current].classList.add('active');
+      slides[current].classList.remove('active');
+      thumbEls[current].classList.remove('active');
+      current = ((idx % thumbUrls.length) + thumbUrls.length) % thumbUrls.length;
+      slides[current].classList.add('active');
+      thumbEls[current].classList.add('active');
       track.style.transform = `translateX(-${current * 100}%)`;
-      counter.textContent = `${current + 1} / ${thumbs.length}`;
-      prev.classList.toggle('hidden', current === 0);
-      next.classList.toggle('hidden', current === thumbs.length - 1);
+      counter.textContent = `${current + 1} / ${thumbUrls.length}`;
+      // Scroll thumb into view
+      thumbEls[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      // Reset and restart progress bar
+      startProgressBar();
     }
 
-    prev.onclick = () => goTo(current - 1);
-    next.onclick = () => goTo(current + 1);
+    /* ── progress bar animation ── */
+    function startProgressBar() {
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      // Force reflow
+      bar.getBoundingClientRect();
+      bar.style.transition = `width ${AUTOPLAY_DELAY}ms linear`;
+      bar.style.width = '100%';
+    }
 
-    // Swipe support
+    /* ── autoplay ── */
+    function startAutoplay() {
+      autoplayTimer = setInterval(() => goTo(current + 1), AUTOPLAY_DELAY);
+      startProgressBar();
+    }
+
+    function resetAutoplay() {
+      clearInterval(autoplayTimer);
+      startAutoplay();
+    }
+
+    prev.addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
+    next.addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });
+
+    // Swipe
     let touchStartX = 0;
-    wrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-    wrap.addEventListener('touchend', e => {
+    vp.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; clearInterval(autoplayTimer); }, { passive: true });
+    vp.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - touchStartX;
       if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+      startAutoplay();
     }, { passive: true });
 
-    wrap.appendChild(prev);
-    wrap.appendChild(next);
-    wrap.appendChild(dotsWrap);
-    wrap.appendChild(counter);
+    // Keyboard
+    vp.setAttribute('tabindex', '0');
+    vp.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  { goTo(current - 1); resetAutoplay(); }
+      if (e.key === 'ArrowRight') { goTo(current + 1); resetAutoplay(); }
+    });
+
+    // Pause on hover
+    vp.addEventListener('mouseenter', () => { clearInterval(autoplayTimer); bar.style.animationPlayState = 'paused'; });
+    vp.addEventListener('mouseleave', () => { resetAutoplay(); });
+
+    counter.textContent = `1 / ${thumbUrls.length}`;
+
+    // Assemble
+    vp.appendChild(track);
+    vp.appendChild(prev);
+    vp.appendChild(next);
+    vp.appendChild(counter);
+    vp.appendChild(progEl);
+    wrap.appendChild(vp);
+    wrap.appendChild(thumbsWrap);
+    panel.appendChild(wrap);
+
+    // Start autoplay after a short delay
+    setTimeout(startAutoplay, 800);
   }
 
-  function showError() {
-    const loader = document.getElementById('state-loading');
-    loader.classList.add('out');
-    setTimeout(() => {
-      loader.style.display = 'none';
-      document.getElementById('state-error').classList.add('show');
-    }, 500);
-  }
-
-  function initReveal() {
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.chapter').forEach(el => obs.observe(el));
-  }
-
+  /* ── render ──────────────────────────────── */
   function render(p, db) {
-    // Title & nav
-    document.title = `${p.name} — Bunan`;
+    document.title = `${p.name} — বুনন`;
     document.getElementById('nav-code').textContent = p.saleCode || '';
 
-    // Images — carousel or single
-    buildCarousel(getImageUrls(p), p.name, document.getElementById('img-wrap'));
+    // Images
+    buildCarousel(getImageUrls(p), p.name, document.getElementById('img-panel'));
+
+    // Badges
+    const badgesEl = document.getElementById('p-badges');
+    if (p.isBestSeller) badgesEl.innerHTML += `<span class="p-badge gold">Best Seller</span>`;
+    if (p.isNew)        badgesEl.innerHTML += `<span class="p-badge new">New Arrival</span>`;
+    if (p.isLimited)    badgesEl.innerHTML += `<span class="p-badge">Limited Edition</span>`;
+    if (p.isFeatured)   badgesEl.innerHTML += `<span class="p-badge">Featured</span>`;
+    if (!badgesEl.children.length) badgesEl.style.display = 'none';
 
     // Eyebrow
-    const parts = [p.category, p.isBestSeller ? 'Best Seller' : null, p.isNew ? 'New Arrival' : null].filter(Boolean);
-    document.getElementById('p-eyebrow').textContent = parts.join(' · ');
+    const parts = [p.category, p.occasion].filter(Boolean);
+    document.getElementById('p-eyebrow').textContent = parts.join(' · ') || '—';
 
     // Identity
     document.getElementById('p-name').textContent    = p.name    || '';
     document.getElementById('p-name-bn').textContent = p.nameBn  || '';
-    document.getElementById('p-sale-code').textContent = p.saleCode     || '—';
-    document.getElementById('p-serial').textContent    = p.serialNumber || '—';
-    document.getElementById('p-origin').textContent    = p.origin       || '—';
+    if (p.tagline) {
+      const tEl = document.getElementById('p-tagline');
+      tEl.textContent = p.tagline;
+      tEl.style.display = '';
+    }
 
-    // Tags
+    document.getElementById('p-sale-code').textContent = p.saleCode      || '—';
+    document.getElementById('p-serial').textContent    = p.serialNumber   || '—';
+    document.getElementById('p-origin').textContent    = p.origin         || '—';
+
+    // Attribute tags
     const tagsEl = document.getElementById('p-tags');
     [
       { v: p.karigari, hi: true  },
       { v: p.fabric,   hi: false },
       { v: p.colour,   hi: false },
-      { v: p.occasion, hi: false },
       { v: p.size,     hi: false },
     ].filter(t => t.v).forEach(t => {
       const s = document.createElement('span');
@@ -769,7 +1222,7 @@
     document.getElementById('like-count').textContent = p.likes || 0;
 
     // WA links
-    const waMsg = encodeURIComponent(`Hello, I would like to enquire about ${p.name} (Code: ${p.saleCode}).`);
+    const waMsg = encodeURIComponent(`নমস্কার, আমি ${p.name} (Code: ${p.saleCode}) সম্পর্কে জানতে চাই।`);
     const waUrl = `https://wa.me/${WA}?text=${waMsg}`;
     document.getElementById('wa-btn').href     = waUrl;
     document.getElementById('cta-wa-btn').href = waUrl;
@@ -780,53 +1233,134 @@
       if (liked) return; liked = true;
       p.likes = (p.likes || 0) + 1;
       document.getElementById('like-count').textContent = p.likes;
-      document.getElementById('like-btn').classList.add('liked');
+      const btn = document.getElementById('like-btn');
+      btn.classList.add('liked');
+      const svg = btn.querySelector('svg');
+      svg.classList.add('like-pulse');
       if (db) updateDoc(doc(db, 'products', p.id), { likes: increment(1) }).catch(() => {});
     };
 
-    // Chapter I — The Piece
+    // Share
+    window.sharePiece = () => {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: p.name, text: p.tagline || p.description, url });
+      } else {
+        navigator.clipboard?.writeText(url);
+      }
+    };
+
+    // ── Chapter I — The Piece ──
     document.getElementById('ch1-title').textContent = p.name;
     let ch1 = `<p>${p.description || 'No description provided.'}</p>`;
     if (p.material || p.timeTaken) {
       const lines = [];
       if (p.material)  lines.push(`crafted from <em>${p.material}</em>`);
-      if (p.timeTaken) lines.push(`requiring <em>${p.timeTaken}</em> of patient work`);
+      if (p.timeTaken) lines.push(`requiring <em>${p.timeTaken}</em> of devoted work`);
       ch1 += `<p>This is a piece ${lines.join(', ')}.</p>`;
-    }
-    if (p.origin) {
-      ch1 += `<p>It originates from <em>${p.origin}</em> — a region whose weaving traditions span generations.</p>`;
     }
     document.getElementById('ch1-body').innerHTML = ch1;
 
-    // Chapter II — Craft / Specs
-    const rows = [
-      ['Material',    p.material || p.fabric],
-      ['Karigari',    p.karigari],
-      ['Fabric',      p.fabric],
-      ['Colour',      p.colour],
-      ['Size',        p.size],
-      ['Occasion',    p.occasion],
-      ['Time to Make', p.timeTaken],
+    // ── Chapter II — Specs ──
+    const specs = [
+      ['Material',        p.material || p.fabric],
+      ['Karigari',        p.karigari],
+      ['Fabric',          p.fabric],
+      ['Colour',          p.colour],
+      ['Size',            p.size],
+      ['Occasion',        p.occasion],
+      ['Length / Dimensions', p.dimensions],
+      ['Weight',          p.weight],
+      ['Time to Weave',   p.timeTaken],
       ['Place of Origin', p.origin],
-      ['Loved by',    p.likes != null ? `${p.likes} people` : null],
+      ['Catalogue No.',   p.serialNumber],
     ].filter(r => r[1]);
 
-    document.getElementById('ch2-table').innerHTML = rows.map(([k, v]) =>
-      `<tr><td>${k}</td><td>${v}</td></tr>`
-    ).join('');
+    document.getElementById('ch2-specs').innerHTML = specs.map(([k, v]) => `
+      <div class="spec-row">
+        <div class="spec-key">${k}</div>
+        <div class="spec-val">${v}</div>
+      </div>`).join('');
 
-    // Chapter III — Reviews
+    // ── Chapter III — Weaver ──
+    if (p.weaverName || p.weaverVillage || p.weaverStory) {
+      document.getElementById('ch-3').style.display = '';
+      document.getElementById('divider-3').style.display = '';
+      const initial = (p.weaverName || '?')[0];
+      document.getElementById('ch3-weaver').innerHTML = `
+        <div class="weaver-card">
+          <div class="weaver-avatar">${initial}</div>
+          <div>
+            <div class="weaver-name">${p.weaverName || 'Unknown Artisan'}</div>
+            ${p.weaverVillage ? `<div class="weaver-village">${p.weaverVillage}</div>` : ''}
+          </div>
+          ${p.weaverStory ? `<div class="weaver-story">"${p.weaverStory}"</div>` : ''}
+        </div>`;
+    }
+
+    // ── Chapter IV — Care ──
+    if (p.washType || p.careInstructions) {
+      document.getElementById('ch-4').style.display = '';
+      document.getElementById('divider-4').style.display = '';
+      let careHTML = '';
+      if (p.washType) careHTML += `
+        <div class="care-row">
+          <div class="care-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="care-label">Wash Method</div>
+            <div class="care-val">${p.washType}</div>
+          </div>
+        </div>`;
+      if (p.careInstructions) careHTML += `
+        <div class="care-row">
+          <div class="care-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="care-label">Additional Care</div>
+            <div class="care-val">${p.careInstructions}</div>
+          </div>
+        </div>`;
+      document.getElementById('ch4-care').innerHTML = careHTML;
+    }
+
+    // ── Chapter V — Tags ──
+    if (Array.isArray(p.tags) && p.tags.length) {
+      document.getElementById('ch-5').style.display = '';
+      document.getElementById('divider-5').style.display = '';
+      document.getElementById('ch5-tags').innerHTML = p.tags
+        .map(t => `<span class="story-tag">${t}</span>`).join('');
+    }
+
+    // Update ch6 number dynamically based on visible chapters
+    const visibleChapters = [true, true, !!(p.weaverName||p.weaverVillage||p.weaverStory), !!(p.washType||p.careInstructions), !!(Array.isArray(p.tags)&&p.tags.length), true];
+    const ch6num = visibleChapters.filter(Boolean).length;
+    const numerals = ['I','II','III','IV','V','VI','VII'];
+    document.getElementById('ch6-num').textContent = numerals[ch6num - 1] || 'VI';
+
+    // ── Chapter VI — Reviews ──
     const reviews = p.reviews || [];
-    document.getElementById('ch3-reviews').innerHTML = reviews.length
+    document.getElementById('ch6-reviews').innerHTML = reviews.length
       ? reviews.map(r => `
           <div class="review">
             <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="review-text">"${r.text}"</p>
-            <div class="review-author">— ${r.author}</div>
+            <p class="review-text">&ldquo;${r.text}&rdquo;</p>
+            <div class="review-author">
+              <div class="review-author-line"></div>
+              <div class="review-author-name">${r.author || 'Anonymous'}</div>
+            </div>
           </div>`).join('')
       : `<p class="no-reviews">No reviews yet. Be the first to experience this piece.</p>`;
 
-    // CTA title
+    // CTA
     document.getElementById('cta-title').textContent = `Own the ${p.name}.`;
 
     // Reveal
@@ -836,21 +1370,47 @@
       loader.style.display = 'none';
       document.getElementById('piece-page').classList.add('show');
       initReveal();
-    }, 480);
+    }, 500);
   }
 
-  // ── Entry point ──────────────────────────────────
+  /* ── scroll reveal ───────────────────────── */
+  function initReveal() {
+    const nav = document.getElementById('p-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.chapter, .story-divider').forEach(el => obs.observe(el));
+  }
+
+  /* ── showError ───────────────────────────── */
+  function showError() {
+    const loader = document.getElementById('state-loading');
+    loader.classList.add('out');
+    setTimeout(() => {
+      loader.style.display = 'none';
+      document.getElementById('state-error').classList.add('show');
+    }, 500);
+  }
+
+  /* ── entry point ─────────────────────────── */
   (async () => {
     const id = new URLSearchParams(window.location.search).get('id');
     if (!id) { showError(); return; }
-
     try {
       const app  = getApps().length ? getApps()[0] : initializeApp(CONFIG);
       const db   = getFirestore(app);
       const snap = await getDoc(doc(db, 'products', id));
-
       if (!snap.exists()) { showError(); return; }
-
       render({ id: snap.id, ...snap.data() }, db);
     } catch (err) {
       console.error('Bunan: piece fetch failed —', err);
@@ -859,13 +1419,12 @@
   })();
 </script>
 
-
 <script>
   function goBack(e) {
     e.preventDefault();
     var href = e.currentTarget.href;
     document.body.classList.add('exit-back');
-    setTimeout(function() { window.location.href = href; }, 340);
+    setTimeout(function() { window.location.href = href; }, 350);
   }
 </script>
 </body>
