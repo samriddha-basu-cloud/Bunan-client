@@ -755,27 +755,8 @@
     }
   ];
 
-  // ═══ Called by the module script above once Firestore responds
-  window.__bunanOnProducts = function(products, db) {
-    if (products && products.length > 0) {
-      allProducts = products;
-      allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-    }
-    // If null or empty, allProducts stays as demoProducts set below
-    applyFilters();
-  };
-
-  // ═══ Start with demo data immediately (shows grid while Firestore loads)
-  allProducts = [...demoProducts];
-  applyFilters();
-
-  // ═══ If module already ran before this script (can happen), pick up results
-  if (window.__bunanProducts !== undefined) {
-    window.__bunanOnProducts(window.__bunanProducts, window.__db);
-  }
-
-  // ═══ Apply all filters
-  window.applyFilters = function() {
+  // ═══ Apply all filters — defined first so __bunanOnProducts can safely call it
+  function applyFilters() {
     const search   = document.getElementById('searchInput')?.value.toLowerCase() || '';
     const category = document.getElementById('filterCategory')?.value || '';
     const fabric   = document.getElementById('filterFabric')?.value || '';
@@ -802,12 +783,33 @@
 
     sortProducts();
     renderGrid();
-  };
+  }
+  // expose for inline HTML handlers (oninput, onchange)
+  window.applyFilters = applyFilters;
 
   function sortProducts() {
     if (currentSort === 'relevance') filteredProducts.sort((a,b) => (b.likes||0) - (a.likes||0));
     else if (currentSort === 'newest') filteredProducts.sort((a,b) => (b.isNew?1:0) - (a.isNew?1:0));
     else if (currentSort === 'az') filteredProducts.sort((a,b) => a.name.localeCompare(b.name));
+  }
+
+  // ═══ Called by the module script above once Firestore responds
+  window.__bunanOnProducts = function(products, db) {
+    if (products && products.length > 0) {
+      allProducts = products;
+      allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    }
+    // If null or empty, allProducts stays as demoProducts set below
+    applyFilters();
+  };
+
+  // ═══ Start with demo data immediately (shows grid while Firestore loads)
+  allProducts = [...demoProducts];
+  applyFilters();
+
+  // ═══ If module already ran before this script (can happen), pick up results
+  if (window.__bunanProducts !== undefined) {
+    window.__bunanOnProducts(window.__bunanProducts, window.__db);
   }
 
   window.setSort = function(type, btn) {
