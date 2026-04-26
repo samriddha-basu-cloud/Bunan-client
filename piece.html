@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bunan — The Story of a Piece</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+Bengali:wght@300;400;500&family=Cinzel:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════ TOKENS */
+    :root {
+      --bg:          #FAF6F0;
+      --bg-dark:     #F2EAE0;
+      --bg-card:     #FFFFFF;
+      --text:        #2C1A0E;
+      --text-dim:    #7A5C44;
+      --text-light:  #A07858;
+      --gold:        #8B6914;
+      --gold-light:  #C4993A;
+      --gold-dark:   #6B4F0E;
+      --gold-pale:   #E8D5A3;
+      --border:      rgba(139,105,20,0.18);
+      --border-soft: rgba(139,105,20,0.09);
+      --accent:      #6B2737;
+
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-display: 'EB Garamond', Georgia, serif;
+      --font-bengali: 'Noto Serif Bengali', serif;
+      --font-deco:    'Cinzel', Georgia, serif;
+
+      --shadow-card: 0 2px 20px rgba(44,26,14,0.07);
+      --transition:  all 0.38s cubic-bezier(0.25,0.8,0.25,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background-color: var(--bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 2 L54 28 L28 54 L2 28 Z' fill='none' stroke='%238B6914' stroke-width='0.4' opacity='0.05'/%3E%3C/svg%3E");
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════ LOADING STATE */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2rem;
+      transition: opacity 0.6s ease;
+    }
+    #loading-screen.fade-out { opacity: 0; pointer-events: none; }
+    .loading-wordmark {
+      font-family: var(--font-bengali);
+      font-size: 2.8rem; font-weight: 300;
+      color: var(--gold-dark); letter-spacing: 0.08em;
+    }
+    .loading-bar-track {
+      width: 120px; height: 1px;
+      background: var(--border-soft);
+    }
+    .loading-bar-fill {
+      height: 100%; background: var(--gold-light);
+      animation: loadBar 1.4s ease-in-out forwards;
+    }
+    @keyframes loadBar { from { width: 0; } to { width: 100%; } }
+    .loading-sub {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    /* ═══════════════════════════════════════ NAV BAR */
+    .piece-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem; height: 68px;
+      background: rgba(250,246,240,0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-soft);
+      transition: var(--transition);
+    }
+    .piece-nav.scrolled { box-shadow: 0 2px 20px rgba(44,26,14,0.08); }
+
+    .nav-back {
+      display: flex; align-items: center; gap: 0.7rem;
+      text-decoration: none; color: var(--text-dim);
+      font-family: var(--font-deco);
+      font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-back:hover { color: var(--gold-dark); }
+    .nav-back svg { transition: transform 0.3s; }
+    .nav-back:hover svg { transform: translateX(-3px); }
+
+    .nav-wordmark {
+      font-family: var(--font-bengali);
+      font-size: 1.4rem; font-weight: 500;
+      color: var(--gold-dark); letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-code {
+      font-family: var(--font-deco);
+      font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    /* ═══════════════════════════════════════ HERO — FULL BLEED IMAGE */
+    .piece-hero {
+      height: 100vh;
+      position: relative;
+      display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .piece-hero-image {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, var(--bg-dark) 0%, var(--bg) 100%);
+      background-image:
+        repeating-linear-gradient(-45deg,
+          rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
+          transparent 1px, transparent 14px);
+    }
+    .piece-hero-image img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center top;
+    }
+
+    /* Dark vignette at bottom for text legibility */
+    .piece-hero-veil {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 30%,
+        rgba(44,26,14,0.12) 55%,
+        rgba(44,26,14,0.72) 100%
+      );
+    }
+
+    .piece-hero-content {
+      position: relative; z-index: 2;
+      padding: 4rem 6rem;
+      width: 100%;
+      animation: riseIn 1.2s ease 0.4s both;
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-deco);
+      font-size: 0.6rem; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--gold-pale); margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block; width: 32px; height: 1px;
+      background: var(--gold-pale);
+    }
+
+    .hero-name {
+      font-family: var(--font-heading);
+      font-size: clamp(2.6rem, 6vw, 5.5rem);
+      font-weight: 400; line-height: 1.05;
+      color: #fff;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.25);
+      margin-bottom: 0.4rem;
+    }
+    .hero-name em { font-style: italic; color: var(--gold-pale); }
+
+    .hero-name-bn {
+      font-family: var(--font-bengali);
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+      margin-bottom: 1.6rem;
+    }
+
+    .hero-meta-row {
+      display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .hero-badge {
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 0.28rem 0.7rem;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.75);
+    }
+    .hero-badge.gold { border-color: var(--gold-pale); color: var(--gold-pale); }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; right: 6rem; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.4);
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.22em; text-transform: uppercase;
+      animation: scrollBob 2.5s ease-in-out infinite;
+    }
+    @keyframes scrollBob {
+      0%,100% { transform: translateY(0); opacity: 0.4; }
+      50%      { transform: translateY(6px); opacity: 0.7; }
+    }
+    .hero-scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+    }
+
+    /* ═══════════════════════════════════════ BODY — EDITORIAL LAYOUT */
+    .piece-body {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 3rem 8rem;
+    }
+
+    /* Pull quote / opening line */
+    .piece-opening {
+      padding: 5rem 0 4rem;
+      border-bottom: 1px solid var(--border-soft);
+      display: grid; grid-template-columns: 1fr 3fr; gap: 3rem;
+      align-items: start;
+    }
+    .opening-label {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--gold); padding-top: 0.4rem;
+    }
+    .opening-quote {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 400; font-style: italic;
+      line-height: 1.55; color: var(--text);
+    }
+    .opening-quote::before {
+      content: '\201C';
+      color: var(--gold-light); margin-right: 0.1em;
+    }
+    .opening-quote::after {
+      content: '\201D';
+      color: var(--gold-light);
+    }
+
+    /* Two-column editorial row */
+    .editorial-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border-soft);
+      align-items: center;
+    }
+    .editorial-row.reverse { direction: rtl; }
+    .editorial-row.reverse > * { direction: ltr; }
+
+    .editorial-section-label {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .editorial-section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border-soft); max-width: 40px;
+    }
+    .editorial-h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 400; color: var(--text);
+      line-height: 1.3; margin-bottom: 1.2rem;
+    }
+    .editorial-h2 em { font-style: italic; color: var(--gold-dark); }
+    .editorial-body {
+      font-family: var(--font-display);
+      font-size: 1.05rem; line-height: 1.95; color: var(--text-dim);
+    }
+    .editorial-body p { margin-bottom: 1em; }
+    .editorial-body p:last-child { margin-bottom: 0; }
+
+    /* Image panel for editorial rows */
+    .editorial-image {
+      aspect-ratio: 3/4;
+      background:
+        repeating-linear-gradient(-45deg,
+          rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
+          transparent 1px, transparent 12px),
+        linear-gradient(160deg, var(--bg-dark), var(--bg));
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .editorial-image img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .editorial-image-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.2rem;
+      background: linear-gradient(transparent, rgba(44,26,14,0.45));
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ═══════════════════════════════════════ PROVENANCE STRIP */
+    .provenance-strip {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .provenance-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-card);
+    }
+    .provenance-item {
+      padding: 2rem 1.8rem;
+      border-right: 1px solid var(--border-soft);
+      position: relative;
+      transition: background 0.3s;
+    }
+    .provenance-item:last-child { border-right: none; }
+    .provenance-item:hover { background: var(--bg-dark); }
+    .provenance-key {
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.7rem;
+    }
+    .provenance-val {
+      font-family: var(--font-heading);
+      font-size: 1.05rem; font-weight: 400;
+      color: var(--text); line-height: 1.3;
+    }
+    .provenance-sub {
+      font-family: var(--font-display);
+      font-size: 0.85rem; color: var(--text-light);
+      margin-top: 0.2rem;
+    }
+
+    /* ═══════════════════════════════════════ CRAFT TIMELINE */
+    .craft-section {
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .craft-header {
+      display: grid; grid-template-columns: 1fr 3fr; gap: 3rem;
+      margin-bottom: 3.5rem;
+    }
+    .craft-steps {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--border-soft);
+      border: 1px solid var(--border-soft);
+    }
+    .craft-step {
+      background: var(--bg-card);
+      padding: 2rem 1.6rem;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .craft-step:hover { background: var(--bg); }
+    .craft-step-num {
+      font-family: var(--font-deco);
+      font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 0.6rem;
+    }
+    .craft-step-title {
+      font-family: var(--font-heading);
+      font-size: 1rem; font-weight: 500;
+      color: var(--text); margin-bottom: 0.6rem;
+    }
+    .craft-step-body {
+      font-family: var(--font-display);
+      font-size: 0.9rem; line-height: 1.75; color: var(--text-dim);
+    }
+    .craft-step::before {
+      content: '';
+      position: absolute; top: 2rem; left: 0;
+      width: 2px; height: 28px;
+      background: var(--gold-light);
+    }
+
+    /* ═══════════════════════════════════════ SPECS TABLE */
+    .specs-section {
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .specs-header {
+      display: grid; grid-template-columns: 1fr 3fr; gap: 3rem;
+      margin-bottom: 2.5rem; align-items: start;
+    }
+    .specs-table {
+      width: 100%; border-collapse: collapse;
+    }
+    .specs-table tr {
+      border-bottom: 1px solid var(--border-soft);
+      transition: background 0.25s;
+    }
+    .specs-table tr:hover { background: var(--bg-dark); }
+    .specs-table tr:last-child { border-bottom: none; }
+    .specs-table td {
+      padding: 1rem 1.2rem;
+      font-family: var(--font-display);
+      font-size: 0.96rem; line-height: 1.4;
+    }
+    .specs-table td:first-child {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); width: 35%;
+      padding-left: 0;
+    }
+    .specs-table td:last-child { color: var(--text); }
+
+    /* ═══════════════════════════════════════ REVIEWS */
+    .reviews-section {
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .reviews-header {
+      display: grid; grid-template-columns: 1fr 3fr; gap: 3rem;
+      margin-bottom: 2.5rem;
+    }
+    .reviews-grid { display: flex; flex-direction: column; gap: 1px; }
+    .review-card {
+      background: var(--bg-card);
+      border-left: 2px solid var(--gold-light);
+      padding: 1.8rem 2rem;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 1rem; align-items: start;
+      transition: background 0.3s;
+    }
+    .review-card:hover { background: var(--bg); }
+    .review-text {
+      font-family: var(--font-display);
+      font-size: 1.02rem; font-style: italic;
+      line-height: 1.85; color: var(--text-dim);
+    }
+    .review-author-block { text-align: right; flex-shrink: 0; }
+    .review-author-name {
+      font-family: var(--font-heading);
+      font-size: 0.92rem; font-weight: 500;
+      color: var(--text);
+    }
+    .review-author-meta {
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-light); margin-top: 0.2rem;
+    }
+    .reviews-empty {
+      font-family: var(--font-display);
+      font-size: 0.95rem; font-style: italic;
+      color: var(--text-light); padding: 2rem 0;
+    }
+
+    /* ═══════════════════════════════════════ CTA CLOSE */
+    .piece-cta {
+      padding: 6rem 0 2rem;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
+    }
+    .cta-eyebrow {
+      font-family: var(--font-deco);
+      font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold);
+    }
+    .cta-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 400; color: var(--text); line-height: 1.2;
+    }
+    .cta-heading em { font-style: italic; color: var(--gold-dark); }
+    .cta-sub {
+      font-family: var(--font-display);
+      font-size: 1.05rem; line-height: 1.8; color: var(--text-dim);
+      max-width: 560px;
+    }
+    .cta-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 1rem;
+    }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      background: #25D366; color: #fff;
+      padding: 0.95rem 2.2rem;
+      font-family: var(--font-deco);
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .btn-wa:hover { background: #1ebe5d; transform: translateY(-2px); }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      color: var(--text-dim); border: 1px solid var(--border);
+      padding: 0.95rem 2.2rem;
+      font-family: var(--font-deco);
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none; background: transparent;
+      transition: var(--transition);
+    }
+    .btn-back:hover { border-color: var(--gold); color: var(--gold-dark); transform: translateY(-2px); }
+
+    /* ═══════════════════════════════════════ LIKE PILL */
+    .like-pill {
+      position: fixed; bottom: 2.5rem; right: 2.5rem; z-index: 500;
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.7rem 1.2rem;
+      box-shadow: 0 4px 24px rgba(44,26,14,0.12);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-deco);
+      font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-dim);
+      animation: pillRise 0.6s ease 1.2s both;
+    }
+    @keyframes pillRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .like-pill:hover { border-color: var(--gold-light); color: var(--gold-dark); background: var(--bg-dark); }
+    .like-pill.liked { border-color: #c0392b; color: #c0392b; }
+    .like-pill svg { width: 14px; height: 14px; transition: transform 0.3s; }
+    .like-pill:hover svg { transform: scale(1.2); }
+    .like-pill.liked svg { fill: #c0392b; stroke: #c0392b; }
+
+    /* ═══════════════════════════════════════ ERROR STATE */
+    .error-state {
+      min-height: 60vh; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.5rem; text-align: center; padding: 4rem;
+    }
+    .error-state h2 {
+      font-family: var(--font-heading);
+      font-size: 1.8rem; font-weight: 400; color: var(--text);
+    }
+    .error-state p {
+      font-family: var(--font-display);
+      font-size: 1rem; color: var(--text-dim);
+    }
+
+    /* ═══════════════════════════════════════ RESPONSIVE */
+    @media (max-width: 900px) {
+      .piece-nav { padding: 0 1.5rem; }
+      .nav-code { display: none; }
+      .piece-hero-content { padding: 3rem 1.5rem; }
+      .hero-name { font-size: 2.5rem; }
+      .piece-body { padding: 0 1.5rem 6rem; }
+      .piece-opening,
+      .editorial-row,
+      .craft-header,
+      .specs-header,
+      .reviews-header { grid-template-columns: 1fr; gap: 1.5rem; }
+      .editorial-row.reverse { direction: ltr; }
+      .editorial-image { aspect-ratio: 4/3; }
+      .provenance-grid { grid-template-columns: repeat(2,1fr); }
+      .provenance-item:nth-child(2) { border-right: none; }
+      .provenance-item:nth-child(3),
+      .provenance-item:nth-child(4) { border-top: 1px solid var(--border-soft); }
+      .craft-steps { grid-template-columns: 1fr; }
+      .like-pill { bottom: 1.5rem; right: 1.5rem; }
+    }
+
+    /* Page-enter animation for sections */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-wordmark">বুনন</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+  <div class="loading-sub">Reading the story&hellip;</div>
+</div>
+
+<!-- NAV -->
+<nav class="piece-nav" id="pieceNav">
+  <a href="index.html#collection" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back to Collection
+  </a>
+  <a href="index.html" class="nav-wordmark">বুনন</a>
+  <span class="nav-code" id="navCode">&nbsp;</span>
+</nav>
+
+<!-- MAIN CONTENT (populated by JS) -->
+<main id="pieceMain" style="padding-top:68px;"></main>
+
+<!-- LIKE PILL (populated by JS) -->
+<button class="like-pill" id="likePill" style="display:none;" onclick="handleLike()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+  <span id="likePillCount">0</span>
+  <span>liked</span>
+</button>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
+    authDomain: "bunan-4fd57.firebaseapp.com",
+    projectId: "bunan-4fd57",
+    storageBucket: "bunan-4fd57.firebasestorage.app",
+    messagingSenderId: "612151786648",
+    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
+  };
+
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  window.__db = db;
+
+  // Parse ?id= from URL
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+
+  function hideLoader() {
+    const ls = document.getElementById('loading-screen');
+    ls.classList.add('fade-out');
+    setTimeout(() => ls.remove(), 700);
+  }
+
+  if (!productId) {
+    hideLoader();
+    renderError('No piece selected.', 'Please return to the collection and choose a piece.');
+  } else {
+    try {
+      const snap = await getDoc(doc(db, 'products', productId));
+      hideLoader();
+      if (!snap.exists()) {
+        renderError('Piece not found.', 'This piece may have been removed. Return to the collection to explore others.');
+      } else {
+        const product = { id: snap.id, ...snap.data() };
+        renderPiece(product);
+        window.__currentProduct = product;
+
+        // Like handler exposed globally
+        window.handleLike = async function() {
+          const pill = document.getElementById('likePill');
+          if (pill.classList.contains('liked')) return;
+          pill.classList.add('liked');
+          window.__currentProduct.likes = (window.__currentProduct.likes || 0) + 1;
+          document.getElementById('likePillCount').textContent = window.__currentProduct.likes;
+          try {
+            await updateDoc(doc(db, 'products', productId), { likes: increment(1) });
+          } catch(e) { console.warn('Like failed:', e); }
+        };
+      }
+    } catch(err) {
+      hideLoader();
+      console.error('Firestore error:', err);
+      renderError('Could not load this piece.', 'Please check your connection and try again.');
+    }
+  }
+
+  function driveThumb(url, size = 'w800') {
+    const m = url?.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}` : '';
+  }
+
+  function renderError(title, msg) {
+    document.getElementById('pieceMain').innerHTML = `
+      <div class="error-state">
+        <h2>${title}</h2>
+        <p>${msg}</p>
+        <a href="index.html#collection" class="btn-back">Back to Collection</a>
+      </div>`;
+  }
+
+  function craftSteps(p) {
+    // Derive craft steps from karigari + fabric + timeTaken
+    const steps = {
+      'Jamdani': [
+        { title: 'Warping the Loom', body: 'Hundreds of silk threads are measured, aligned and tensioned across the wooden frame by hand — a process that takes an entire day before a single motif is woven.' },
+        { title: 'Designing the Motif', body: 'The jamdani pattern exists only in the weaver\'s memory and a hand-drawn chart. No machine prints it. Each floral figure is plotted thread by thread on graph paper.' },
+        { title: 'Supplementary Weft Weaving', body: 'Using a fine bamboo stick, the weaver manually lifts select warp threads to insert the gold or coloured supplementary weft — creating the floating motif. Each row of pattern takes minutes; each repeat, hours.' },
+      ],
+      'Kantha Stitch': [
+        { title: 'Layering the Cloth', body: 'Old cotton saris are stacked and stretched taut across a frame. The layers become one — soft, slightly padded, alive with the memory of prior use.' },
+        { title: 'Drawing the Story', body: 'The artisan sketches the design freehand in chalk or pencil directly onto the fabric — birds, rivers, mythological scenes, the patterns of a lived life.' },
+        { title: 'Running the Stitch', body: 'Using a needle and thread, thousands of running stitches fill the surface. The stitch itself creates the texture — the piece ripples with life when held to light.' },
+      ],
+      'Block Print': [
+        { title: 'Carving the Block', body: 'Artisans carve intricate patterns into teak or sheesham wood blocks. A single detailed block can take weeks to carve and is used for years.' },
+        { title: 'Preparing Natural Dye', body: 'Roots, bark, flowers and minerals are boiled into mordant-set colours that bond permanently with the fabric — no synthetics, no shortcuts.' },
+        { title: 'Printing by Hand', body: 'The inked block is pressed onto the cloth with careful alignment. Each stamp must be placed true — a millimetre off and the pattern breaks.' },
+      ],
+      'Nakshi': [
+        { title: 'Preparing the Ground', body: 'The khadi base is hand-washed, sun-dried and ironed flat before embroidery begins — a clean ground is sacred to the nakshi tradition.' },
+        { title: 'Transferring the Pattern', body: 'Geometric motifs passed down through generations are traced or memorised. No two nakshi pieces carry identical patterns.' },
+        { title: 'Embroidering the Surface', body: 'Satin stitch, chain stitch, and mirror work fill the surface with colour. The needle moves in rhythm — an artisan in flow is the only machine that matters here.' },
+      ],
+      'Zari Work': [
+        { title: 'Preparing the Zari Thread', body: 'Pure gold or silver wire is drawn to hair-thin filament and wound around a silk or cotton core. Real zari work uses genuine metal — its weight is the test.' },
+        { title: 'Setting the Loom', body: 'The fabric is set onto a Jacquard or throw-shuttle loom with the zari thread loaded alongside the base weft. The intersection of silk and gold begins.' },
+        { title: 'Weaving the Border', body: 'The zari thread is woven in alongside the cloth — not stitched on later. It catches light at every angle, shifting from pale gold to deep amber as you move.' },
+      ],
+    };
+    return steps[p.karigari] || [
+      { title: 'Preparing the Yarn', body: 'The raw fibre — cotton, silk, or khadi — is washed, combed and wound onto bobbins. The loom is dressed and tensioned by hand.' },
+      { title: 'Setting the Pattern', body: 'Warp threads are counted and threaded through the heddles according to the pattern. This alone can take a full day for complex designs.' },
+      { title: 'Weaving', body: 'The shuttle passes back and forth, building the cloth row by row. A skilled weaver produces only a few metres per day — every centimetre is intentional.' },
+    ];
+  }
+
+  function buildStory(p) {
+    const stories = {
+      'Saree': `A saree is not merely worn — it is inhabited. The ${p.name} begins as raw ${p.fabric?.toLowerCase() || 'thread'} in the hands of a weaver in ${p.origin || 'rural Bengal'}, where the loom has stood for generations. What you hold is not a product. It is the record of days — patient, unhurried days — in which a woman sat at her craft and gave it everything.`,
+      'Kantha': `Kantha is the oldest form of Bengali recycling — and one of the most poetic. Old cloth is layered, stitched and reborn. The ${p.name} carries ${p.timeTaken || 'countless'} of meticulous work from ${p.origin || 'a village workshop'}, its surface alive with thousands of running stitches that create texture, story, and a kind of warmth no machine can replicate.`,
+      'Punjabi': `A handloom punjabi is a quiet declaration. The ${p.name}, woven from ${p.fabric?.toLowerCase() || 'natural fibre'} in ${p.origin || 'West Bengal'}, carries the grain and breath of handmade cloth — the slight unevenness that is not a flaw, but proof of a human hand. It drapes differently from anything machine-made. It settles into the body.`,
+      'Dupatta': `The dupatta has always been more than an accessory — it is punctuation. The ${p.name} in ${p.colour?.toLowerCase() || 'its chosen hue'} is finished with ${p.karigari || 'handwoven detail'} that took ${p.timeTaken || 'patient hours'} to complete. Draped across a shoulder or let fall, it changes everything it touches.`,
+      'Shawl': `The ${p.name} was woven in ${p.origin || 'the north-east'} from ${p.fabric?.toLowerCase() || 'rare silk'} — a fibre prized for its natural lustre and extraordinary durability. A shawl that is truly handmade becomes softer with every wearing. This one will outlast trends, seasons, and perhaps its first owner.`,
+    };
+    return stories[p.category] || `The ${p.name} arrived from ${p.origin || 'a village workshop'} after ${p.timeTaken || 'days'} of labour. It was made slowly, by someone who knew exactly what they were making.`;
+  }
+
+  function weaverNote(p) {
+    const origins = {
+      'Murshidabad': 'Murshidabad has been weaving silk since the Mughal era. The district\'s soil, climate, and centuries of institutional knowledge produce silk with a drape that cannot be replicated anywhere else. The weaver who made this piece inherited their loom — and their skill — from their mother.',
+      'Bolpur': 'Bolpur sits at the edge of Shantiniketan, where Rabindranath Tagore imagined a union of art and craft. The kantha artisans here see their work as painting — not with a brush, but with a needle. Each stitch is placed with intention.',
+      'Shantiniketan': 'Shantiniketan\'s textile tradition is inseparable from its philosophy: that handmade things carry a human dignity that industrial production cannot. The artisans here are not just craftspeople — they are inheritors of a cultural argument about what things are worth making.',
+      'Dhaniakhali': 'Dhaniakhali tant is woven on pit looms that require the weaver to sit below floor level, legs extended, working a treadle with their feet while their hands throw the shuttle. It is a full-body practice, and the cloth that emerges — fine, breathable, strong — reflects the discipline of the body that made it.',
+      'Sualkuchi': 'Sualkuchi is called the Manchester of Assam — a village where nearly every household owns a loom and weaves muga or endi silk. The golden muga silk produced here has a natural lustre that synthetics cannot replicate, and it becomes more beautiful with age.',
+    };
+    const origin = p.origin || '';
+    for (const key of Object.keys(origins)) {
+      if (origin.includes(key)) return origins[key];
+    }
+    return `The weaver who made this piece works from ${p.origin || 'a village workshop'}, where the craft is practised the way it has always been practised — slowly, by hand, with full attention. Every piece that leaves their loom carries their name, even if it is never written down.`;
+  }
+
+  function renderPiece(p) {
+    const WA = '917501929425';
+    const waMsg = encodeURIComponent(`Hello, I would like to enquire about ${p.name} (Code: ${p.saleCode}).`);
+    const imgSrc  = driveThumb(p.driveLink, 'w800');
+    const imgSrc2 = driveThumb(p.driveLink, 'w600');
+    const imgHtml  = imgSrc  ? `<img src="${imgSrc}"  alt="${p.name}" />` : '';
+    const imgHtml2 = imgSrc2 ? `<img src="${imgSrc2}" alt="${p.name} detail" />` : '';
+
+    // Update page title and nav code
+    document.title = `${p.name} — Bunan`;
+    document.getElementById('navCode').textContent = p.saleCode || '';
+
+    // Like pill
+    const pill = document.getElementById('likePill');
+    pill.style.display = 'flex';
+    document.getElementById('likePillCount').textContent = p.likes || 0;
+
+    const steps = craftSteps(p);
+    const reviewsHtml = (p.reviews || []).length > 0
+      ? (p.reviews.map(r => {
+          const parts = (r.author || '').split(',');
+          return `<div class="review-card reveal">
+            <div class="review-text">&ldquo;${r.text}&rdquo;</div>
+            <div class="review-author-block">
+              <div class="review-author-name">${parts[0] || ''}</div>
+              ${parts[1] ? `<div class="review-author-meta">${parts[1].trim()}</div>` : ''}
+            </div>
+          </div>`;
+        }).join(''))
+      : `<p class="reviews-empty">Be the first to share your experience with this piece.</p>`;
+
+    document.getElementById('pieceMain').innerHTML = `
+
+      <!-- HERO -->
+      <section class="piece-hero">
+        <div class="piece-hero-image">${imgHtml}</div>
+        <div class="piece-hero-veil"></div>
+        <div class="piece-hero-content">
+          <div class="hero-eyebrow">${p.category || ''} &nbsp;&middot;&nbsp; ${p.karigari || ''}</div>
+          <h1 class="hero-name">${p.name.replace(/(\w+)$/, '<em>$1</em>')}</h1>
+          <div class="hero-name-bn">${p.nameBn || ''}</div>
+          <div class="hero-meta-row">
+            ${p.isNew      ? '<span class="hero-badge">New Arrival</span>' : ''}
+            ${p.isBestSeller ? '<span class="hero-badge gold">Best Seller</span>' : ''}
+            <span class="hero-badge">${p.saleCode || ''}</span>
+          </div>
+        </div>
+        <div class="hero-scroll-hint">
+          <div class="hero-scroll-line"></div>
+          Scroll
+        </div>
+      </section>
+
+      <div class="piece-body">
+
+        <!-- OPENING QUOTE / INTRO -->
+        <div class="piece-opening reveal">
+          <div class="opening-label">The Story</div>
+          <blockquote class="opening-quote">${buildStory(p)}</blockquote>
+        </div>
+
+        <!-- ORIGIN — editorial row -->
+        <div class="editorial-row reveal">
+          <div>
+            <div class="editorial-section-label">Origin</div>
+            <h2 class="editorial-h2">Born in <em>${(p.origin || 'Bengal').split(',')[0]}</em></h2>
+            <div class="editorial-body">
+              <p>${weaverNote(p)}</p>
+              <p>This piece travelled ${p.timeTaken ? `${p.timeTaken} of labour` : 'days of patient work'} before it reached you. That distance — from loom to hands — is the distance between a commodity and something that matters.</p>
+            </div>
+          </div>
+          <div class="editorial-image">
+            ${imgHtml2}
+            ${imgSrc2 ? `<div class="editorial-image-caption">${p.origin || 'Handwoven'}</div>` : ''}
+          </div>
+        </div>
+
+        <!-- PROVENANCE STRIP -->
+        <div class="provenance-strip reveal">
+          <div class="provenance-grid">
+            <div class="provenance-item">
+              <div class="provenance-key">Fabric</div>
+              <div class="provenance-val">${p.fabric || '—'}</div>
+              <div class="provenance-sub">${p.material || ''}</div>
+            </div>
+            <div class="provenance-item">
+              <div class="provenance-key">Craft</div>
+              <div class="provenance-val">${p.karigari || '—'}</div>
+              <div class="provenance-sub">Traditional technique</div>
+            </div>
+            <div class="provenance-item">
+              <div class="provenance-key">Time to Make</div>
+              <div class="provenance-val">${p.timeTaken || '—'}</div>
+              <div class="provenance-sub">By a single artisan</div>
+            </div>
+            <div class="provenance-item">
+              <div class="provenance-key">Origin</div>
+              <div class="provenance-val">${(p.origin || '—').split(',')[0]}</div>
+              <div class="provenance-sub">${(p.origin || '').split(',').slice(1).join(',').trim() || ''}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRAFT STEPS -->
+        <div class="craft-section reveal">
+          <div class="craft-header">
+            <div class="editorial-section-label">The Making</div>
+            <div>
+              <h2 class="editorial-h2">How <em>${p.karigari || 'this'}</em> is made</h2>
+              <p class="editorial-body" style="margin-top:0.5rem;">Every karigari is a discipline. The steps below are not simply a process — they are a practice, passed from teacher to student without a manual.</p>
+            </div>
+          </div>
+          <div class="craft-steps">
+            ${steps.map((s, i) => `
+              <div class="craft-step reveal">
+                <div class="craft-step-num">Step 0${i+1}</div>
+                <div class="craft-step-title">${s.title}</div>
+                <p class="craft-step-body">${s.body}</p>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- SPECS -->
+        <div class="specs-section reveal">
+          <div class="specs-header">
+            <div class="editorial-section-label">Details</div>
+            <h2 class="editorial-h2">What you <em>should know</em></h2>
+          </div>
+          <table class="specs-table">
+            ${[
+              ['Material',  p.material || p.fabric],
+              ['Colour',    p.colour],
+              ['Occasion',  p.occasion],
+              ['Size',      p.size],
+              ['Karigari',  p.karigari],
+              ['Origin',    p.origin],
+              ['Time Taken',p.timeTaken],
+              ['Sale Code', p.saleCode],
+            ].filter(([,v]) => v).map(([k,v]) => `
+              <tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+
+        <!-- REVIEWS -->
+        <div class="reviews-section reveal">
+          <div class="reviews-header">
+            <div class="editorial-section-label">Reviews</div>
+            <h2 class="editorial-h2">What people <em>say</em></h2>
+          </div>
+          <div class="reviews-grid">${reviewsHtml}</div>
+        </div>
+
+        <!-- CTA -->
+        <div class="piece-cta reveal">
+          <div class="cta-eyebrow">Make it yours</div>
+          <h2 class="cta-heading">Enquire about <em>${p.name.split(' ')[0]}</em></h2>
+          <p class="cta-sub">Every piece ships with the weaver's name, village, and the time taken to create it. When you wear Bunan, you carry a story.</p>
+          <div class="cta-actions">
+            <a href="https://wa.me/${WA}?text=${waMsg}" target="_blank" class="btn-wa">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Enquire on WhatsApp
+            </a>
+            <a href="index.html#collection" class="btn-back">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back to Collection
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /piece-body -->
+    `;
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('pieceNav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+  }
+</script>
+
+</body>
+</html>
