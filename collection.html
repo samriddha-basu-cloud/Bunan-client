@@ -220,14 +220,57 @@
     display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
   }
-  .card-image img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-  .product-card:hover .card-image img { transform: scale(1.04); }
   .card-image-placeholder {
     width: 60px; height: 60px; opacity: 0.12;
     color: var(--gold-dark);
+  }
+
+  /* Card carousel */
+  .card-carousel { width: 100%; height: 100%; position: relative; overflow: hidden; }
+  .card-carousel-track {
+    display: flex; width: 100%; height: 100%;
+    transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: transform;
+  }
+  .card-carousel-slide {
+    flex: 0 0 100%; width: 100%; height: 100%; overflow: hidden;
+  }
+  .card-carousel-slide img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.6s ease;
+  }
+  .product-card:hover .card-carousel-slide.active img { transform: scale(1.04); }
+
+  .card-carousel-btn {
+    position: absolute; top: 50%; z-index: 5;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    background: rgba(250,246,240,0.88);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+  }
+  .card-carousel:hover .card-carousel-btn { opacity: 1; }
+  .card-carousel-btn:hover { background: var(--bg-card); border-color: var(--gold-light); }
+  .card-carousel-btn svg { width: 11px; height: 11px; color: var(--text-dim); }
+  .card-carousel-prev { left: 0.5rem; }
+  .card-carousel-next { right: 0.5rem; }
+  .card-carousel-btn.hidden { opacity: 0 !important; pointer-events: none; }
+
+  .card-carousel-dots {
+    position: absolute; bottom: 0.6rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 0.3rem; z-index: 5;
+  }
+  .card-carousel-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(250,246,240,0.5);
+    border: none; padding: 0; cursor: pointer; transition: all 0.25s;
+  }
+  .card-carousel-dot.active {
+    background: var(--gold-light); transform: scale(1.4);
   }
 
   /* Overlay on hover */
@@ -601,9 +644,7 @@
   }
 
   function productCard(p) {
-    const imgHtml = p.driveLink
-      ? `<img src="${driveThumb(p.driveLink)}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'" />`
-      : placeholderSVG;
+    const imgHtml = buildCardCarousel(getImageUrls(p), p.name);
 
     const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}).`);
 
@@ -645,9 +686,79 @@
 
   // ═══ Google Drive thumbnail
   function driveThumb(url) {
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const match = url?.match(/\/d\/([a-zA-Z0-9_-]+)/);
     return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400` : url;
   }
+
+  // Normalise: driveLinks[] array OR legacy driveLink string
+  function getImageUrls(p) {
+    if (Array.isArray(p.driveLinks) && p.driveLinks.length) return p.driveLinks;
+    if (p.driveLink) return [p.driveLink];
+    return [];
+  }
+
+  function buildCardCarousel(urls, name) {
+    const thumbs = urls.map(driveThumb).filter(Boolean);
+    if (!thumbs.length) return placeholderSVG;
+
+    if (thumbs.length === 1) {
+      return `<div class="card-carousel">
+        <div class="card-carousel-track">
+          <div class="card-carousel-slide active">
+            <img src="${thumbs[0]}" alt="${name}" loading="lazy" onerror="this.style.display='none'"/>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    const slides = thumbs.map((t, i) =>
+      `<div class="card-carousel-slide${i===0?' active':''}">
+        <img src="${t}" alt="${name} ${i+1}" loading="${i===0?'eager':'lazy'}" onerror="this.style.display='none'"/>
+      </div>`
+    ).join('');
+
+    const dots = thumbs.map((_, i) =>
+      `<button class="card-carousel-dot${i===0?' active':''}" onclick="event.stopPropagation();cardCarouselGo(this,${i})"></button>`
+    ).join('');
+
+    return `<div class="card-carousel" data-current="0" data-total="${thumbs.length}">
+      <div class="card-carousel-track">${slides}</div>
+      <button class="card-carousel-btn card-carousel-prev hidden" onclick="event.stopPropagation();cardCarouselGo(this,-1,true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="card-carousel-btn card-carousel-next" onclick="event.stopPropagation();cardCarouselGo(this,1,true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div class="card-carousel-dots">${dots}</div>
+    </div>`;
+  }
+
+  // Shared card carousel controller — works for both dot clicks and arrow clicks
+  window.cardCarouselGo = function(el, idxOrDelta, isDelta) {
+    var carousel = el.closest('.card-carousel');
+    if (!carousel) return;
+    var total    = parseInt(carousel.dataset.total);
+    var current  = parseInt(carousel.dataset.current);
+    var next     = isDelta ? current + idxOrDelta : idxOrDelta;
+    next = Math.max(0, Math.min(next, total - 1));
+    if (next === current) return;
+
+    var track  = carousel.querySelector('.card-carousel-track');
+    var slides = carousel.querySelectorAll('.card-carousel-slide');
+    var dots   = carousel.querySelectorAll('.card-carousel-dot');
+    var prev   = carousel.querySelector('.card-carousel-prev');
+    var nxt    = carousel.querySelector('.card-carousel-next');
+
+    slides[current].classList.remove('active');
+    if (dots[current]) dots[current].classList.remove('active');
+    slides[next].classList.add('active');
+    if (dots[next]) dots[next].classList.add('active');
+    track.style.transform = 'translateX(-' + (next * 100) + '%)';
+    carousel.dataset.current = next;
+
+    if (prev) prev.classList.toggle('hidden', next === 0);
+    if (nxt)  nxt.classList.toggle('hidden',  next === total - 1);
+  };
 
   // ═══ Open modal
   // ── Navigate to piece story page with exit animation ─────────────────
