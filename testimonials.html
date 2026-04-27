@@ -1,813 +1,549 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>বুনন — Stories from Our Customers</title>
-  <link rel="icon" type="image/png" href="logo.png"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+Bengali:wght@300;400;500&family=Cinzel:wght@300;400&display=swap" rel="stylesheet"/>
+<!-- ══════════════════════════════════════════════════════════════════
+     BUNAN — TESTIMONIALS MODULE  (testimonials.html)
+     HTML FRAGMENT — loaded via fetch() into index.html as innerHTML.
+     No <html>, <head>, <body>. Inherits CSS vars + fonts from parent.
+     Reads 'testimonials' collection from window.__db (Firebase Firestore).
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ─── SECTION ──────────────────────────────────────────────── */
+  #testimonials {
+    padding: 7rem 3rem;
+    scroll-margin-top: 80px;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-soft);
+  }
 
-  <style>
-    :root {
-      --bg:          #FAF6F0;
-      --bg-dark:     #F2EAE0;
-      --bg-card:     #FFFFFF;
-      --text:        #2C1A0E;
-      --text-dim:    #7A5C44;
-      --text-light:  #A07858;
-      --gold:        #8B6914;
-      --gold-light:  #C4993A;
-      --gold-dark:   #6B4F0E;
-      --gold-pale:   #E8D5A3;
-      --border:      rgba(139,105,20,0.18);
-      --border-soft: rgba(139,105,20,0.09);
-      --shadow-card: 0 8px 40px rgba(44,26,14,0.10);
-      --font-heading:'Playfair Display', Georgia, serif;
-      --font-display:'EB Garamond', Georgia, serif;
-      --font-bengali:'Noto Serif Bengali', serif;
-      --font-deco:   'Cinzel', Georgia, serif;
-    }
+  /* ─── HEADER ───────────────────────────────────────────────── */
+  .test-header { text-align: center; margin-bottom: 5rem; }
+  .test-tag {
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); display: block; margin-bottom: 1rem;
+  }
+  .test-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--text); font-weight: 400;
+  }
+  .test-subtitle {
+    font-family: var(--font-bengali);
+    font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem;
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: var(--font-display); min-height: 100vh; overflow-x: hidden;
-    }
-    body::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
-    }
+  /* ─── RATING BAND ──────────────────────────────────────────── */
+  .test-rating-band {
+    max-width: 900px; margin: 0 auto 5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-top: 3px solid var(--gold-light);
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 3rem; padding: 2.5rem 3rem;
+    box-shadow: var(--shadow-card);
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+  .test-rating-band.test-in { opacity: 1; transform: translateY(0); }
+  .test-rating-big { text-align: center; }
+  .test-rating-num {
+    font-family: var(--font-heading);
+    font-size: 3.8rem; color: var(--gold-dark); line-height: 1;
+  }
+  .test-rating-stars {
+    font-size: 1.1rem; color: var(--gold);
+    letter-spacing: 0.08em; margin: 0.3rem 0;
+  }
+  .test-rating-count {
+    font-family: var(--font-deco);
+    font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .test-rating-bars { display: flex; flex-direction: column; gap: 0.5rem; }
+  .test-bar-row { display: flex; align-items: center; gap: 0.75rem; }
+  .test-bar-lbl {
+    font-family: var(--font-deco);
+    font-size: 0.5rem; color: var(--gold);
+    width: 12px; text-align: right;
+  }
+  .test-bar-track {
+    flex: 1; height: 4px; background: var(--bg-dark); overflow: hidden;
+  }
+  .test-bar-fill {
+    height: 100%; background: var(--gold-light);
+    width: 0%; transition: width 1.2s ease 0.3s;
+  }
+  .test-bar-count {
+    font-family: var(--font-deco);
+    font-size: 0.46rem; color: var(--text-light); width: 20px;
+  }
+  .test-rating-aside { text-align: center; }
+  .test-aside-num {
+    font-family: var(--font-heading);
+    font-size: 2.4rem; color: var(--gold-dark); line-height: 1;
+  }
+  .test-aside-lbl {
+    font-family: var(--font-deco);
+    font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-light); margin-top: 0.3rem;
+  }
 
-    /* ── LOADING ──────────────────────────────────── */
-    #stateLoading {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 1.4rem;
-      z-index: 500; transition: opacity 0.6s ease;
-    }
-    #stateLoading.out { opacity: 0; pointer-events: none; }
-    .spinner {
-      width: 30px; height: 30px;
-      border: 1px solid var(--border);
-      border-top-color: var(--gold-light);
-      border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .spinner-label {
-      font-family: var(--font-deco); font-size: 0.52rem;
-      letter-spacing: 0.36em; text-transform: uppercase; color: var(--text-light);
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+  /* ─── FEATURED QUOTE ───────────────────────────────────────── */
+  .test-featured-wrap {
+    max-width: 820px; margin: 0 auto 5rem; text-align: center; position: relative;
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 0.85s ease, transform 0.85s ease;
+  }
+  .test-featured-wrap.test-in { opacity: 1; transform: translateY(0); }
+  .test-featured-wrap::before {
+    content: '\201C';
+    font-family: var(--font-heading);
+    font-size: 8rem; line-height: 0.6;
+    color: rgba(139,105,20,0.09);
+    position: absolute; top: 0; left: -1rem;
+    pointer-events: none;
+  }
+  .test-featured-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+    font-style: italic; line-height: 1.85;
+    color: var(--text-dim);
+    position: relative; z-index: 1;
+  }
+  .test-featured-author {
+    margin-top: 1.5rem;
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+  }
+  .fq-line { width: 40px; height: 1px; background: var(--gold-light); opacity: 0.5; }
+  .fq-name {
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-dark);
+  }
+  .fq-place {
+    font-family: var(--font-display);
+    font-size: 0.85rem; color: var(--text-light); font-style: italic;
+  }
+  .fq-stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; margin-top: 0.25rem; }
+  .fq-product {
+    font-family: var(--font-deco);
+    font-size: 0.44rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--border-soft);
+    padding: 0.18rem 0.6rem; display: inline-block; margin-top: 0.5rem;
+  }
 
-    /* ── NAV ─────────────────────────────────────── */
-    nav {
-      position: sticky; top: 0; z-index: 200;
-      background: rgba(250,246,240,0.94); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-soft);
-      padding: 1.1rem 3rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: var(--font-bengali);
-      font-size: 1.6rem; color: var(--gold-dark);
-      text-decoration: none;
-    }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-family: var(--font-deco);
-      font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim); text-decoration: none; transition: color 0.3s;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--gold-dark); }
+  /* ─── FILTER BAR ───────────────────────────────────────────── */
+  .test-filter-bar {
+    display: flex; gap: 0.45rem; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 3.5rem;
+  }
+  .test-filter-btn {
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-dim); background: transparent;
+    border: 1px solid var(--border); padding: 0.45rem 1.1rem;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .test-filter-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
+  .test-filter-btn.test-active {
+    background: var(--gold-dark); color: #FAF6F0;
+    border-color: var(--gold-dark);
+  }
 
-    /* ── HERO ────────────────────────────────────── */
-    .hero {
-      padding: 8rem 3rem 6rem;
-      text-align: center;
-      background: var(--bg-dark);
-      border-bottom: 1px solid var(--border-soft);
-      position: relative; overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: repeating-linear-gradient(
-        -45deg, rgba(139,105,20,0.025) 0px, rgba(139,105,20,0.025) 1px,
-        transparent 1px, transparent 16px
-      );
-    }
-    .hero-eyebrow {
-      font-family: var(--font-deco);
-      font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
-      color: var(--gold); display: block; margin-bottom: 1.5rem;
-      animation: fadeUp 0.8s ease both;
-    }
-    .hero-title {
-      font-family: var(--font-heading);
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      color: var(--text); font-weight: 400; line-height: 1.1;
-      margin-bottom: 1.2rem;
-      animation: fadeUp 0.8s ease 0.12s both;
-    }
-    .hero-title em { font-style: italic; color: var(--gold-dark); }
-    .hero-subtitle {
-      font-family: var(--font-bengali);
-      font-size: 1.15rem; color: var(--text-dim);
-      margin-bottom: 2rem;
-      animation: fadeUp 0.8s ease 0.22s both;
-    }
-    .hero-lead {
-      font-family: var(--font-display);
-      font-size: clamp(1rem, 1.8vw, 1.15rem);
-      line-height: 2; color: var(--text-dim);
-      max-width: 680px; margin: 0 auto;
-      animation: fadeUp 0.8s ease 0.32s both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+  /* ─── MOSAIC GRID ──────────────────────────────────────────── */
+  .test-mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px; max-width: 1200px; margin: 0 auto 4rem;
+    border: 1px solid var(--border-soft);
+  }
 
-    /* ── RATING SUMMARY BAND ─────────────────────── */
-    .rating-band {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-soft);
-      padding: 3rem;
-    }
-    .rating-inner {
-      max-width: 900px; margin: 0 auto;
-      display: grid; grid-template-columns: auto 1fr auto;
-      gap: 3rem; align-items: center;
-    }
-    .rating-big {
-      text-align: center;
-    }
-    .rating-num {
-      font-family: var(--font-heading);
-      font-size: 4rem; color: var(--gold-dark); line-height: 1;
-    }
-    .rating-stars-big {
-      font-size: 1.2rem; color: var(--gold);
-      letter-spacing: 0.08em; margin: 0.3rem 0;
-    }
-    .rating-count {
-      font-family: var(--font-deco);
-      font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--text-light);
-    }
-    .rating-bars {
-      display: flex; flex-direction: column; gap: 0.55rem;
-    }
-    .rating-bar-row {
-      display: flex; align-items: center; gap: 0.8rem;
-    }
-    .rating-bar-label {
-      font-family: var(--font-deco);
-      font-size: 0.5rem; letter-spacing: 0.1em;
-      color: var(--text-light); width: 14px; text-align: right;
-      color: var(--gold);
-    }
-    .rating-bar-track {
-      flex: 1; height: 4px; background: var(--bg-dark); overflow: hidden;
-    }
-    .rating-bar-fill {
-      height: 100%; background: var(--gold-light);
-      width: 0%; transition: width 1.2s ease;
-    }
-    .rating-bar-count {
-      font-family: var(--font-deco);
-      font-size: 0.48rem; color: var(--text-light); width: 20px;
-    }
-    .rating-aside {
-      text-align: center;
-    }
-    .rating-aside-num {
-      font-family: var(--font-heading);
-      font-size: 2.4rem; color: var(--gold-dark); line-height: 1;
-    }
-    .rating-aside-label {
-      font-family: var(--font-deco);
-      font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--text-light); margin-top: 0.3rem;
-    }
+  .test-card {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 2rem;
+    position: relative;
+    opacity: 0; transform: translateY(22px);
+  }
+  .test-card.test-in {
+    opacity: 1; transform: translateY(0);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .test-card:hover {
+    background: var(--bg);
+    transform: translateY(-3px) !important;
+    box-shadow: var(--shadow-card);
+    z-index: 2;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease !important;
+  }
+  .test-card.test-span2 { grid-column: span 2; background: var(--bg); }
 
-    /* ── FEATURED QUOTE ──────────────────────────── */
-    .featured-section {
-      padding: 6rem 3rem;
-      background: var(--bg-dark);
-    }
-    .featured-quote {
-      max-width: 820px; margin: 0 auto;
-      text-align: center; position: relative;
-    }
-    .featured-quote::before {
-      content: '"';
-      font-family: var(--font-heading);
-      font-size: 9rem; line-height: 0.55;
-      color: rgba(139,105,20,0.1);
-      position: absolute; top: 0; left: -1rem;
-      pointer-events: none;
-    }
-    .featured-quote-text {
-      font-family: var(--font-display);
-      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-      font-style: italic; line-height: 1.9;
-      color: var(--text-dim);
-      position: relative; z-index: 1;
-    }
-    .featured-quote-author {
-      margin-top: 2rem;
-      display: flex; align-items: center; justify-content: center; gap: 1.2rem;
-    }
-    .fq-line { width: 40px; height: 1px; background: var(--gold-light); opacity: 0.5; }
-    .fq-name {
-      font-family: var(--font-deco);
-      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold-dark);
-    }
-    .fq-place {
-      font-family: var(--font-display);
-      font-size: 0.88rem; color: var(--text-light); font-style: italic;
-    }
-    .fq-stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.1em; margin-top: 0.3rem; }
-    .fq-product {
-      font-family: var(--font-deco);
-      font-size: 0.44rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--gold); border: 1px solid var(--border-soft);
-      padding: 0.2rem 0.65rem; display: inline-block; margin-top: 0.6rem;
-    }
+  .test-stars {
+    color: var(--gold); font-size: 0.85rem;
+    letter-spacing: 0.12em; margin-bottom: 1rem;
+  }
+  .test-star-empty { color: rgba(139,105,20,0.2); }
 
-    /* ── FILTER + SORT BAR ───────────────────────── */
-    .controls-bar {
-      padding: 2rem 3rem;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border-soft);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem; flex-wrap: wrap;
-    }
-    .filter-group {
-      display: flex; gap: 0.4rem; flex-wrap: wrap;
-    }
-    .filter-btn {
-      font-family: var(--font-deco);
-      font-size: 0.48rem; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--text-dim); background: transparent;
-      border: 1px solid var(--border); padding: 0.45rem 1rem;
-      cursor: pointer; transition: all 0.25s ease;
-    }
-    .filter-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
-    .filter-btn.active {
-      background: var(--gold-dark); color: #fff; border-color: var(--gold-dark);
-    }
-    .sort-select {
-      font-family: var(--font-deco);
-      font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-dim); background: var(--bg);
-      border: 1px solid var(--border); padding: 0.45rem 0.9rem;
-      cursor: pointer; outline: none; appearance: none;
-      transition: border 0.25s;
-    }
-    .sort-select:focus { border-color: var(--gold); }
+  .test-product {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    font-family: var(--font-deco);
+    font-size: 0.44rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--border-soft);
+    padding: 0.18rem 0.55rem;
+    max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
 
-    /* ── MOSAIC GRID ─────────────────────────────── */
-    .mosaic-section {
-      padding: 4rem 3rem 6rem;
-      background: var(--bg);
-    }
-    .test-mosaic {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px; max-width: 1200px; margin: 0 auto;
-      border: 1px solid var(--border-soft);
-    }
+  .test-occasion {
+    font-family: var(--font-deco);
+    font-size: 0.44rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 0.85rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .test-occasion::before {
+    content: ''; width: 12px; height: 1px;
+    background: var(--gold-light); flex-shrink: 0;
+  }
 
-    .test-card {
-      background: var(--bg-card);
-      border-right: 1px solid var(--border-soft);
-      border-bottom: 1px solid var(--border-soft);
-      padding: 2rem;
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-      opacity: 0; transform: translateY(24px);
-    }
-    .test-card.revealed {
-      opacity: 1; transform: translateY(0);
-    }
-    .test-card:hover {
-      background: var(--bg);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-card);
-      z-index: 2;
-    }
-    .test-card.span-2 { grid-column: span 2; }
+  .test-text {
+    font-family: var(--font-display);
+    font-size: 0.97rem; font-style: italic;
+    line-height: 1.85; color: var(--text-dim);
+    margin-bottom: 1.5rem;
+  }
+  .test-card.test-span2 .test-text { font-size: 1.05rem; }
 
-    /* Stars */
-    .test-stars {
-      color: var(--gold); font-size: 0.85rem;
-      letter-spacing: 0.1em; margin-bottom: 0.8rem;
-    }
-    .test-stars .star-empty { color: rgba(139,105,20,0.2); }
+  .test-author-row { display: flex; align-items: center; gap: 1rem; }
+  .test-avatar {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(139,105,20,0.12), var(--bg-dark));
+  }
+  .test-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .test-avatar-init {
+    font-family: var(--font-bengali);
+    font-size: 1.15rem; color: var(--gold-dark);
+  }
+  .test-name {
+    font-family: var(--font-display);
+    font-size: 0.95rem; font-weight: 600; color: var(--text);
+  }
+  .test-meta {
+    font-family: var(--font-deco);
+    font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-light); margin-top: 0.2rem;
+  }
+  .test-verified {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-family: var(--font-deco);
+    font-size: 0.42rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold-dark); margin-top: 0.25rem;
+  }
+  .test-verified svg { width: 10px; height: 10px; }
 
-    /* Product tag */
-    .test-product {
-      position: absolute; top: 1.5rem; right: 1.5rem;
-      font-family: var(--font-deco);
-      font-size: 0.45rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--gold); border: 1px solid var(--border-soft);
-      padding: 0.2rem 0.6rem;
-      max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
+  /* ─── CTA BAND ─────────────────────────────────────────────── */
+  .test-cta {
+    max-width: 700px; margin: 0 auto;
+    text-align: center; padding: 4rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold-light);
+    box-shadow: var(--shadow-card);
+  }
+  .test-cta h3 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: var(--text); font-weight: 400; margin-bottom: 0.5rem;
+  }
+  .test-cta .cta-bn {
+    font-family: var(--font-bengali);
+    font-size: 1rem; color: var(--text-dim); margin-bottom: 1.5rem;
+  }
+  .test-cta p {
+    font-family: var(--font-display);
+    font-size: 0.98rem; line-height: 1.85; color: var(--text-dim);
+    margin-bottom: 2rem;
+  }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-cta-primary {
+    display: inline-flex; align-items: center;
+    background: var(--gold-dark); color: #fff;
+    padding: 0.85rem 2rem;
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid var(--gold-dark);
+  }
+  .btn-cta-primary:hover {
+    background: var(--gold); border-color: var(--gold);
+    transform: translateY(-2px); box-shadow: var(--shadow-card);
+  }
+  .btn-wa-main {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: #25D366; color: #fff;
+    padding: 0.85rem 2rem;
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .btn-wa-main:hover { background: #1ebe5d; transform: translateY(-2px); }
 
-    /* Review text */
-    .test-text {
-      font-family: var(--font-display);
-      font-size: 0.97rem; font-style: italic;
-      line-height: 1.9; color: var(--text-dim);
-      margin-bottom: 1.4rem;
-    }
-    .test-card.span-2 .test-text { font-size: 1.05rem; }
+  /* ─── SKELETON ─────────────────────────────────────────────── */
+  .test-skel {
+    background: linear-gradient(90deg, var(--bg-dark) 25%, var(--bg) 50%, var(--bg-dark) 75%);
+    background-size: 200% 100%;
+    animation: testShimmer 1.4s infinite;
+    border-radius: 2px;
+  }
+  @keyframes testShimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
 
-    /* Occasion */
-    .test-occasion {
-      font-family: var(--font-deco);
-      font-size: 0.44rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-light); margin-bottom: 1rem;
-      display: flex; align-items: center; gap: 0.4rem;
-    }
-    .test-occasion::before {
-      content: '';
-      width: 12px; height: 1px; background: var(--gold-light); display: inline-block;
-    }
+  /* ─── RESPONSIVE ───────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    #testimonials { padding: 4rem 1.5rem; }
+    .test-rating-band { grid-template-columns: 1fr; gap: 1.5rem; padding: 2rem; }
+    .test-rating-aside { display: none; }
+    .test-mosaic { grid-template-columns: 1fr; }
+    .test-card.test-span2 { grid-column: span 1; }
+    .test-featured-wrap::before { display: none; }
+    .cta-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
 
-    /* Author row */
-    .test-author-row {
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .test-avatar {
-      width: 46px; height: 46px; flex-shrink: 0;
-      border: 1px solid var(--border);
-      overflow: hidden; position: relative;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, rgba(139,105,20,0.1), var(--bg-dark));
-    }
-    .test-avatar img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    .test-avatar-initials {
-      font-family: var(--font-bengali);
-      font-size: 1.1rem; color: var(--gold-dark);
-    }
-    .test-name {
-      font-family: var(--font-display);
-      font-size: 0.95rem; font-weight: 600; color: var(--text);
-    }
-    .test-meta {
-      font-family: var(--font-deco);
-      font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--text-light); margin-top: 0.2rem;
-    }
-    .test-verified {
-      display: inline-flex; align-items: center; gap: 0.3rem;
-      font-family: var(--font-deco);
-      font-size: 0.43rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--gold-dark); margin-top: 0.3rem;
-    }
-    .test-verified svg { width: 10px; height: 10px; stroke: var(--gold-dark); fill: none; }
+<section id="testimonials">
 
-    /* Empty state */
-    .empty-state {
-      grid-column: 1 / -1; text-align: center;
-      padding: 5rem 2rem;
-      font-family: var(--font-heading);
-      font-size: 1.5rem; font-style: italic;
-      color: var(--text-dim);
-    }
+  <div class="test-header">
+    <span class="test-tag">Words from Our Family</span>
+    <h2 class="test-title">What They Say</h2>
+    <p class="test-subtitle">যারা বুনন পরেছেন, তারা কী বলেন</p>
+  </div>
 
-    /* ── CTA ─────────────────────────────────────── */
-    .cta-section {
-      padding: 6rem 3rem;
-      background: var(--bg-dark);
-      border-top: 1px solid var(--border-soft);
-    }
-    .cta-box {
-      max-width: 720px; margin: 0 auto; text-align: center;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--gold-light);
-      padding: 4rem 3rem;
-      box-shadow: var(--shadow-card);
-    }
-    .cta-box h3 {
-      font-family: var(--font-heading);
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      color: var(--text); font-weight: 400; margin-bottom: 0.5rem;
-    }
-    .cta-bn {
-      font-family: var(--font-bengali);
-      font-size: 1rem; color: var(--text-dim); margin-bottom: 1.5rem;
-    }
-    .cta-body {
-      font-family: var(--font-display);
-      font-size: 1rem; line-height: 1.9; color: var(--text-dim); margin-bottom: 2.5rem;
-    }
-    .cta-buttons {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    }
-    .btn-primary {
-      display: inline-flex; align-items: center;
-      background: var(--gold-dark); color: #fff;
-      padding: 0.85rem 2rem;
-      font-family: var(--font-deco);
-      font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      border: 1px solid var(--gold-dark);
-    }
-    .btn-primary:hover {
-      background: var(--gold); border-color: var(--gold);
-      transform: translateY(-2px); box-shadow: var(--shadow-card);
-    }
-    .btn-wa {
-      display: inline-flex; align-items: center; gap: 0.7rem;
-      background: #25D366; color: #fff;
-      padding: 0.85rem 2rem;
-      font-family: var(--font-deco);
-      font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-    .btn-wa:hover { background: #1ebe5d; transform: translateY(-2px); }
-
-    /* ── FOOTER ──────────────────────────────────── */
-    footer {
-      background: var(--bg-dark);
-      border-top: 1px solid var(--border-soft);
-      padding: 3rem;
-      text-align: center;
-    }
-    .footer-logo {
-      font-family: var(--font-bengali);
-      font-size: 2rem; color: var(--gold-dark); margin-bottom: 0.6rem;
-    }
-    .footer-copy {
-      font-family: var(--font-deco);
-      font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-light);
-    }
-
-    @media (max-width: 900px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { gap: 1.2rem; }
-      .hero { padding: 5rem 1.5rem 4rem; }
-      .controls-bar { padding: 1.5rem; }
-      .mosaic-section { padding: 3rem 1.5rem 5rem; }
-      .featured-section { padding: 4rem 1.5rem; }
-      .rating-band { padding: 2.5rem 1.5rem; }
-      .rating-inner { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
-      .rating-aside { display: none; }
-      .test-mosaic { grid-template-columns: 1fr; }
-      .test-card.span-2 { grid-column: span 1; }
-      .featured-quote::before { display: none; }
-      .cta-section { padding: 4rem 1.5rem; }
-      .cta-box { padding: 3rem 1.5rem; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- Loading -->
-<div id="stateLoading">
-  <div class="spinner"></div>
-  <div class="spinner-label">Loading Stories</div>
-</div>
-
-<!-- Nav -->
-<nav>
-  <a href="index.html" class="nav-logo">বুনন</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="index.html#collection">Collection</a></li>
-    <li><a href="weavers.html">Weavers</a></li>
-    <li><a href="testimonials.html" class="active">Stories</a></li>
-  </ul>
-</nav>
-
-<!-- Hero -->
-<div class="hero">
-  <span class="hero-eyebrow">Words from Our Family</span>
-  <h1 class="hero-title">What They <em>Say</em></h1>
-  <p class="hero-subtitle">যারা বুনন পরেছেন, তারা কী বলেন</p>
-  <p class="hero-lead">
-    Every review here is a story. A wedding morning. A gift that crossed continents.
-    A saree worn again after years. These are the moments বুনন lives for.
-  </p>
-</div>
-
-<!-- Rating Band -->
-<div class="rating-band" id="ratingBand" style="display:none;">
-  <div class="rating-inner">
-    <div class="rating-big">
-      <div class="rating-num" id="avgRatingNum">5.0</div>
-      <div class="rating-stars-big" id="avgRatingStars">★★★★★</div>
-      <div class="rating-count" id="ratingCount">— reviews</div>
+  <!-- Rating summary — populated by JS, hidden until data arrives -->
+  <div class="test-rating-band" id="testRatingBand" style="display:none;">
+    <div class="test-rating-big">
+      <div class="test-rating-num" id="testAvgNum">5.0</div>
+      <div class="test-rating-stars" id="testAvgStars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="test-rating-count" id="testCount">— reviews</div>
     </div>
-    <div class="rating-bars" id="ratingBars"></div>
-    <div class="rating-aside">
-      <div class="rating-aside-num" id="fiveStar">—</div>
-      <div class="rating-aside-label">Five Star Reviews</div>
+    <div class="test-rating-bars" id="testBars"></div>
+    <div class="test-rating-aside">
+      <div class="test-aside-num" id="testFiveStar">—</div>
+      <div class="test-aside-lbl">Five Star Reviews</div>
       <div style="margin-top:1.2rem;">
-        <div class="rating-aside-num" id="featuredCount">—</div>
-        <div class="rating-aside-label">Featured Stories</div>
+        <div class="test-aside-num" id="testFeatCount">—</div>
+        <div class="test-aside-lbl">Featured Stories</div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Featured Quote -->
-<div class="featured-section" id="featuredSection" style="display:none;">
-  <div class="featured-quote" id="featuredQuote"></div>
-</div>
-
-<!-- Controls -->
-<div class="controls-bar">
-  <div class="filter-group" id="filterGroup">
-    <button class="filter-btn active" data-filter="all" onclick="applyFilter('all',this)">All Reviews</button>
-    <button class="filter-btn" data-filter="5" onclick="applyFilter('5',this)">5 Stars</button>
-    <button class="filter-btn" data-filter="4" onclick="applyFilter('4',this)">4 Stars</button>
-    <button class="filter-btn" data-filter="featured" onclick="applyFilter('featured',this)">Featured</button>
-    <button class="filter-btn" data-filter="verified" onclick="applyFilter('verified',this)">Verified</button>
+  <!-- Featured quote — populated by JS, hidden until data arrives -->
+  <div class="test-featured-wrap" id="testFeatWrap" style="display:none;">
+    <!-- JS fills this -->
   </div>
-  <select class="sort-select" id="sortSelect" onchange="applySort(this.value)">
-    <option value="newest">Newest First</option>
-    <option value="top">Top Rated</option>
-    <option value="featured">Featured First</option>
-  </select>
-</div>
 
-<!-- Mosaic -->
-<div class="mosaic-section">
-  <div class="test-mosaic" id="testMosaic"></div>
-</div>
+  <!-- Filter bar -->
+  <div class="test-filter-bar" id="testFilterBar">
+    <button class="test-filter-btn test-active" onclick="testFilter('all',this)">All Reviews</button>
+    <button class="test-filter-btn" onclick="testFilter('5',this)">5 Stars</button>
+    <button class="test-filter-btn" onclick="testFilter('4',this)">4 Stars</button>
+    <button class="test-filter-btn" onclick="testFilter('featured',this)">Featured</button>
+    <button class="test-filter-btn" onclick="testFilter('verified',this)">Verified</button>
+  </div>
 
-<!-- CTA -->
-<div class="cta-section">
-  <div class="cta-box">
+  <!-- Mosaic — skeletons while loading -->
+  <div class="test-mosaic" id="testMosaic">
+    <div class="test-card test-in" style="pointer-events:none">
+      <div class="test-skel" style="height:0.85rem;width:40%;margin-bottom:1rem;"></div>
+      <div class="test-skel" style="height:5rem;margin-bottom:1.5rem;"></div>
+      <div style="display:flex;gap:1rem;align-items:center;">
+        <div class="test-skel" style="width:44px;height:44px;flex-shrink:0;"></div>
+        <div style="flex:1"><div class="test-skel" style="height:0.9rem;width:60%;margin-bottom:0.4rem;"></div><div class="test-skel" style="height:0.7rem;width:40%;"></div></div>
+      </div>
+    </div>
+    <div class="test-card test-in" style="pointer-events:none">
+      <div class="test-skel" style="height:0.85rem;width:40%;margin-bottom:1rem;"></div>
+      <div class="test-skel" style="height:5rem;margin-bottom:1.5rem;"></div>
+      <div style="display:flex;gap:1rem;align-items:center;">
+        <div class="test-skel" style="width:44px;height:44px;flex-shrink:0;"></div>
+        <div style="flex:1"><div class="test-skel" style="height:0.9rem;width:55%;margin-bottom:0.4rem;"></div><div class="test-skel" style="height:0.7rem;width:38%;"></div></div>
+      </div>
+    </div>
+    <div class="test-card test-in" style="pointer-events:none">
+      <div class="test-skel" style="height:0.85rem;width:40%;margin-bottom:1rem;"></div>
+      <div class="test-skel" style="height:5rem;margin-bottom:1.5rem;"></div>
+      <div style="display:flex;gap:1rem;align-items:center;">
+        <div class="test-skel" style="width:44px;height:44px;flex-shrink:0;"></div>
+        <div style="flex:1"><div class="test-skel" style="height:0.9rem;width:62%;margin-bottom:0.4rem;"></div><div class="test-skel" style="height:0.7rem;width:42%;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="test-cta">
     <h3>Ready to Experience বুনন?</h3>
     <p class="cta-bn">আজই আপনার পছন্দের পোশাক খুঁজুন</p>
-    <p class="cta-body">
+    <p>
       Every piece ships with its weaver's name, village, and the time taken to create it.
       Because when you wear বুনন, you carry a story — and every story deserves to be known.
     </p>
     <div class="cta-buttons">
-      <a href="index.html#collection" class="btn-primary">Explore the Collection</a>
-      <a href="https://wa.me/919999999999?text=নমস্কার%2C%20আমি%20বুনন%20থেকে%20কেনাকাটা%20করতে%20আগ্রহী।"
-         target="_blank" class="btn-wa">
+      <a href="#collection" class="btn-cta-primary">Explore the Collection</a>
+      <a href="https://wa.me/917501929425?text=নমস্কার%2C%20আমি%20বুনন%20থেকে%20কেনাকাটা%20করতে%20আগ্রহী।"
+         target="_blank" class="btn-wa-main">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp Enquiry
       </a>
     </div>
   </div>
-</div>
 
-<!-- Footer -->
-<footer>
-  <div class="footer-logo">বুনন</div>
-  <div class="footer-copy">&copy; 2024 Bunan — Handwoven with love</div>
-</footer>
-
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
-    authDomain: "bunan-4fd57.firebaseapp.com",
-    projectId: "bunan-4fd57",
-    storageBucket: "bunan-4fd57.firebasestorage.app",
-    messagingSenderId: "612151786648",
-    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-
-  try {
-    const snap = await getDocs(collection(db, 'testimonials'));
-    window.__testimonials = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch(e) {
-    window.__testimonials = [];
-  }
-
-  window.initTestimonials();
-</script>
+</section>
 
 <script>
-  let allTestimonials = [];
-  let activeFilter    = 'all';
-  let activeSort      = 'newest';
+(function(){
+  var _all    = [];
+  var _active = 'all';
 
-  function driveThumb(url, size = 'w200') {
-    if (!url) return '';
-    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}`;
-    return '';
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function thumb(u){ if(!u)return''; var m=u.match(/\/d\/([a-zA-Z0-9_-]+)/); return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w200':''; }
+  function stars(n,emptyClass){
+    var s=''; for(var i=1;i<=5;i++) s+='<span'+(i>n?' class="'+(emptyClass||'test-star-empty')+'"':'')+'>&#9733;</span>';
+    return s;
+  }
+  function initials(name){ return (name||'?').split(' ').map(function(w){return w[0]||'';}).filter(Boolean).slice(0,2).join('').toUpperCase(); }
+
+  /* ── load ────────────────────────────────────────────────── */
+  function load(){
+    var db=window.__db;
+    if(!db){ window.addEventListener('firebase-ready',load,{once:true}); return; }
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+      .then(function(fs){ return fs.getDocs(fs.collection(db,'testimonials')); })
+      .then(function(snap){
+        _all=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+        buildRatingBand();
+        buildFeatured();
+        render(_all);
+      })
+      .catch(function(){ render([]); });
   }
 
-  function escHtml(s) {
-    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  function starsHtml(n) {
-    const filled = Math.round(n || 5);
-    return Array.from({length:5}, (_,i) =>
-      `<span class="${i < filled ? '' : 'star-empty'}">&#9733;</span>`
-    ).join('');
-  }
-
-  function getInitials(name) {
-    return (name||'?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-  }
-
-  window.initTestimonials = function() {
-    allTestimonials = window.__testimonials || [];
-    buildRatingBand();
-    buildFeaturedQuote();
-    renderMosaic(getFiltered());
-    hideLoader();
-  };
-
-  function hideLoader() {
-    const el = document.getElementById('stateLoading');
-    el.classList.add('out');
-    setTimeout(() => el.style.display = 'none', 700);
-  }
-
-  function buildRatingBand() {
-    if (!allTestimonials.length) return;
-    const avg = (allTestimonials.reduce((a,t)=>a+(t.stars||5),0)/allTestimonials.length).toFixed(1);
-    const fiveStar = allTestimonials.filter(t=>(t.stars||5)===5).length;
-    const featured = allTestimonials.filter(t=>t.isFeatured).length;
-
-    document.getElementById('avgRatingNum').textContent  = avg;
-    document.getElementById('ratingCount').textContent   = `${allTestimonials.length} reviews`;
-    document.getElementById('fiveStar').textContent      = fiveStar;
-    document.getElementById('featuredCount').textContent = featured;
-
-    const starsNum = parseFloat(avg);
-    const avgStarsEl = document.getElementById('avgRatingStars');
-    avgStarsEl.innerHTML = Array.from({length:5},(_,i)=>
-      `<span style="${i<Math.round(starsNum)?'':'opacity:0.2'}">★</span>`
-    ).join('');
-
-    // Build bar chart
-    const bars = document.getElementById('ratingBars');
-    bars.innerHTML = '';
-    [5,4,3,2,1].forEach(n => {
-      const count = allTestimonials.filter(t=>(t.stars||5)===n).length;
-      const pct   = allTestimonials.length ? (count/allTestimonials.length*100) : 0;
-      bars.innerHTML += `
-        <div class="rating-bar-row">
-          <div class="rating-bar-label">${n}</div>
-          <div class="rating-bar-track">
-            <div class="rating-bar-fill" data-pct="${pct.toFixed(1)}"></div>
-          </div>
-          <div class="rating-bar-count">${count}</div>
-        </div>`;
+  /* ── rating band ─────────────────────────────────────────── */
+  function buildRatingBand(){
+    if(!_all.length)return;
+    var avg=(_all.reduce(function(a,t){return a+(t.stars||5);},0)/_all.length);
+    var avgFixed=avg.toFixed(1);
+    var five=_all.filter(function(t){return(t.stars||5)===5;}).length;
+    var feat=_all.filter(function(t){return t.isFeatured;}).length;
+    document.getElementById('testAvgNum').textContent=avgFixed;
+    document.getElementById('testCount').textContent=_all.length+' reviews';
+    document.getElementById('testFiveStar').textContent=five;
+    document.getElementById('testFeatCount').textContent=feat;
+    document.getElementById('testAvgStars').innerHTML=stars(Math.round(avg));
+    var bars=document.getElementById('testBars');
+    bars.innerHTML='';
+    [5,4,3,2,1].forEach(function(n){
+      var cnt=_all.filter(function(t){return(t.stars||5)===n;}).length;
+      var pct=_all.length?((cnt/_all.length)*100).toFixed(1):0;
+      bars.innerHTML+='<div class="test-bar-row"><div class="test-bar-lbl">'+n+'</div><div class="test-bar-track"><div class="test-bar-fill" data-pct="'+pct+'"></div></div><div class="test-bar-count">'+cnt+'</div></div>';
     });
-    document.getElementById('ratingBand').style.display = 'block';
-
-    // Animate bars on scroll
-    const obs = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      document.querySelectorAll('.rating-bar-fill').forEach(el => {
-        el.style.width = el.dataset.pct + '%';
-      });
+    var band=document.getElementById('testRatingBand');
+    band.style.display='grid';
+    /* animate bars + reveal on scroll */
+    var obs=new IntersectionObserver(function(en){
+      if(!en[0].isIntersecting)return;
+      band.classList.add('test-in');
+      document.querySelectorAll('.test-bar-fill').forEach(function(el){el.style.width=el.dataset.pct+'%';});
       obs.disconnect();
-    }, { threshold: 0.3 });
-    obs.observe(document.getElementById('ratingBand'));
+    },{threshold:0.2});
+    obs.observe(band);
   }
 
-  function buildFeaturedQuote() {
-    const featured = allTestimonials.filter(t => t.isFeatured);
-    if (!featured.length) return;
-    // Pick the first featured one
-    const t = featured[0];
-    const metaParts = [t.designation, t.location].filter(Boolean).join(' · ');
-
-    document.getElementById('featuredQuote').innerHTML = `
-      <p class="featured-quote-text">${escHtml(t.review || '')}</p>
-      <div class="featured-quote-author">
-        <div class="fq-line"></div>
-        <div>
-          <div class="fq-name">${escHtml(t.name || 'Anonymous')}</div>
-          ${metaParts ? `<div class="fq-place">${escHtml(metaParts)}</div>` : ''}
-          <div class="fq-stars">${starsHtml(t.stars || 5)}</div>
-          ${t.productSaleCode ? `<div class="fq-product">${escHtml(t.productSaleCode)}</div>` : ''}
-        </div>
-        <div class="fq-line"></div>
-      </div>`;
-    document.getElementById('featuredSection').style.display = 'block';
-
-    // Animate in
-    const fq = document.querySelector('.featured-quote');
-    fq.style.opacity = '0';
-    fq.style.transform = 'translateY(20px)';
-    fq.style.transition = 'opacity 0.9s ease, transform 0.9s ease';
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        fq.style.opacity = '1';
-        fq.style.transform = 'translateY(0)';
-        obs.disconnect();
-      }
-    }, { threshold: 0.2 });
-    obs.observe(fq);
+  /* ── featured quote ──────────────────────────────────────── */
+  function buildFeatured(){
+    var list=_all.filter(function(t){return t.isFeatured;});
+    if(!list.length)return;
+    var t=list[0];
+    var meta=[t.designation,t.location].filter(Boolean).join(' · ');
+    var wrap=document.getElementById('testFeatWrap');
+    wrap.innerHTML=
+      '<p class="test-featured-text">&#8220;'+esc(t.review||'')+'&#8221;</p>'+
+      '<div class="test-featured-author">'+
+        '<div class="fq-line"></div>'+
+        '<div>'+
+          '<div class="fq-name">'+esc(t.name||'Anonymous')+'</div>'+
+          (meta?'<div class="fq-place">'+esc(meta)+'</div>':'')+
+          '<div class="fq-stars">'+stars(t.stars||5)+'</div>'+
+          (t.productSaleCode?'<div class="fq-product">'+esc(t.productSaleCode)+'</div>':'')+
+        '</div>'+
+        '<div class="fq-line"></div>'+
+      '</div>';
+    wrap.style.display='block';
+    var obs=new IntersectionObserver(function(en){
+      if(en[0].isIntersecting){wrap.classList.add('test-in');obs.unobserve(wrap);}
+    },{threshold:0.2});
+    obs.observe(wrap);
   }
 
-  function getFiltered() {
-    let list = [...allTestimonials];
-
-    if (activeFilter === 'featured') list = list.filter(t => t.isFeatured);
-    else if (activeFilter === 'verified') list = list.filter(t => t.isVerified);
-    else if (activeFilter === '5') list = list.filter(t => (t.stars||5) === 5);
-    else if (activeFilter === '4') list = list.filter(t => (t.stars||5) === 4);
-
-    if (activeSort === 'top') list.sort((a,b) => (b.stars||5)-(a.stars||5));
-    else if (activeSort === 'featured') list.sort((a,b) => (b.isFeatured?1:0)-(a.isFeatured?1:0));
-    // newest: Firestore order (default)
-
-    return list;
-  }
-
-  window.applyFilter = function(filter, btn) {
-    activeFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderMosaic(getFiltered());
+  /* ── filter ──────────────────────────────────────────────── */
+  window.testFilter=function(f,btn){
+    _active=f;
+    document.querySelectorAll('.test-filter-btn').forEach(function(b){b.classList.remove('test-active');});
+    if(btn)btn.classList.add('test-active');
+    var list;
+    if(f==='featured') list=_all.filter(function(t){return t.isFeatured;});
+    else if(f==='verified') list=_all.filter(function(t){return t.isVerified;});
+    else if(f==='5') list=_all.filter(function(t){return(t.stars||5)===5;});
+    else if(f==='4') list=_all.filter(function(t){return(t.stars||5)===4;});
+    else list=_all;
+    render(list);
   };
 
-  window.applySort = function(sort) {
-    activeSort = sort;
-    renderMosaic(getFiltered());
-  };
-
-  function renderMosaic(list) {
-    const mosaic = document.getElementById('testMosaic');
-    mosaic.innerHTML = '';
-
-    if (!list.length) {
-      mosaic.innerHTML = `<div class="empty-state">No reviews match your filter.</div>`;
+  /* ── render mosaic ───────────────────────────────────────── */
+  function render(list){
+    var g=document.getElementById('testMosaic'); if(!g)return;
+    g.innerHTML='';
+    if(!list.length){
+      g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:5rem 2rem;font-family:var(--font-heading);font-size:1.4rem;font-style:italic;color:var(--text-dim);">No reviews match this filter.</div>';
       return;
     }
-
-    list.forEach((t, i) => {
-      const card = document.createElement('div');
-      // Make first featured card and every 5th span 2 columns for variety
-      const isSpan = t.isFeatured && i === 0;
-      card.className = 'test-card' + (isSpan ? ' span-2' : '');
-      card.style.transitionDelay = `${i * 0.06}s`;
-
-      const stars    = t.stars || 5;
-      const metaParts = [t.designation, t.location].filter(Boolean).join(' · ');
-      const photoUrl  = driveThumb(t.photoLink);
-      const initials  = getInitials(t.name);
-
-      card.innerHTML = `
-        ${t.productSaleCode ? `<div class="test-product">${escHtml(t.productSaleCode)}</div>` : ''}
-        <div class="test-stars">${starsHtml(stars)}</div>
-        ${t.occasion ? `<div class="test-occasion">${escHtml(t.occasion)}</div>` : ''}
-        <p class="test-text">"${escHtml(t.review || '')}"</p>
-        <div class="test-author-row">
-          <div class="test-avatar">
-            ${photoUrl
-              ? `<img src="${photoUrl}" alt="${escHtml(t.name)}" loading="lazy" />`
-              : `<div class="test-avatar-initials">${initials}</div>`}
-          </div>
-          <div>
-            <div class="test-name">${escHtml(t.name || 'Anonymous')}</div>
-            ${metaParts ? `<div class="test-meta">${escHtml(metaParts)}</div>` : ''}
-            ${t.isVerified ? `
-              <div class="test-verified">
-                <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                Verified Purchase
-              </div>` : ''}
-          </div>
-        </div>`;
-
-      mosaic.appendChild(card);
-
-      // Stagger reveal via IntersectionObserver
-      const obs = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) {
-          card.classList.add('revealed');
+    list.forEach(function(t,i){
+      var card=document.createElement('div');
+      var span=t.isFeatured&&i===0;
+      card.className='test-card'+(span?' test-span2':'');
+      var n=t.stars||5;
+      var meta=[t.designation,t.location].filter(Boolean).join(' · ');
+      var ph=thumb(t.photoLink);
+      var init=initials(t.name);
+      card.innerHTML=
+        (t.productSaleCode?'<div class="test-product">'+esc(t.productSaleCode)+'</div>':'')+
+        '<div class="test-stars">'+stars(n)+'</div>'+
+        (t.occasion?'<div class="test-occasion">'+esc(t.occasion)+'</div>':'')+
+        '<p class="test-text">&#8220;'+esc(t.review||'')+'&#8221;</p>'+
+        '<div class="test-author-row">'+
+          '<div class="test-avatar">'+
+            (ph?'<img src="'+esc(ph)+'" alt="'+esc(t.name||'')+'" loading="lazy" />':
+                '<div class="test-avatar-init">'+esc(init)+'</div>')+
+          '</div>'+
+          '<div>'+
+            '<div class="test-name">'+esc(t.name||'Anonymous')+'</div>'+
+            (meta?'<div class="test-meta">'+esc(meta)+'</div>':'')+
+            (t.isVerified?'<div class="test-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Verified Purchase</div>':'')+
+          '</div>'+
+        '</div>';
+      g.appendChild(card);
+      /* stagger reveal */
+      var obs=new IntersectionObserver(function(en){
+        if(en[0].isIntersecting){
+          setTimeout(function(){card.classList.add('test-in');},i*70);
           obs.unobserve(card);
         }
-      }, { threshold: 0.08 });
+      },{threshold:0.07});
       obs.observe(card);
     });
   }
+
+  /* ── boot ────────────────────────────────────────────────── */
+  if(window.__db){ load(); }
+  else{ window.addEventListener('firebase-ready',load,{once:true}); }
+})();
 </script>
-</body>
-</html>
