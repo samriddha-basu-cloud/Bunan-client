@@ -9,162 +9,200 @@
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
-    padding-top: 80px;
-    background: var(--bg);
+    padding-top: 0;
   }
 
-  /* Woven grid pattern background */
+  /* Full-bleed Hero.JPG */
   .hero-bg {
     position: absolute; inset: 0;
-    background:
-      repeating-linear-gradient(
-        0deg,
-        rgba(139,105,20,0.05) 0px, rgba(139,105,20,0.05) 1px,
-        transparent 1px, transparent 48px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        rgba(139,105,20,0.05) 0px, rgba(139,105,20,0.05) 1px,
-        transparent 1px, transparent 48px
-      ),
-      radial-gradient(ellipse 70% 55% at 55% 50%, rgba(139,105,20,0.06) 0%, transparent 70%),
-      linear-gradient(160deg, #F5EFE4 0%, #FAF6F0 40%, #F2EAE0 100%);
-    animation: weaveShift 25s ease-in-out infinite alternate;
+    background: url('Hero.JPG') center center / cover no-repeat;
+    transform: scale(1.04);
+    animation: heroZoom 22s ease-in-out infinite alternate;
+    will-change: transform;
   }
-  @keyframes weaveShift {
-    from { background-position: 0 0, 0 0, center; }
-    to   { background-position: 48px 48px, 48px 48px, center; }
+  @keyframes heroZoom {
+    from { transform: scale(1.04); }
+    to   { transform: scale(1.10); }
   }
 
-  /* Diagonal cloth-fold overlay */
-  .hero-cloth {
+  /* Deep layered overlay — warm shadow at bottom, darken top edges, let centre breathe */
+  .hero-overlay {
     position: absolute; inset: 0;
     background:
-      repeating-linear-gradient(
-        -45deg,
-        transparent 0px, transparent 22px,
-        rgba(139,105,20,0.025) 22px, rgba(139,105,20,0.025) 24px
-      );
+      linear-gradient(to bottom,
+        rgba(20,12,4,0.55)   0%,
+        rgba(20,12,4,0.18)  38%,
+        rgba(20,12,4,0.22)  62%,
+        rgba(10,6,2,0.72)  100%
+      ),
+      radial-gradient(ellipse 80% 60% at 50% 42%, transparent 40%, rgba(10,6,2,0.28) 100%);
     pointer-events: none;
   }
 
+  /* Glassy cloth weave — very subtle texture on top of photo */
+  .hero-cloth {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        transparent 0px, transparent 28px,
+        rgba(255,255,255,0.012) 28px, rgba(255,255,255,0.012) 30px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0px, transparent 28px,
+        rgba(255,255,255,0.008) 28px, rgba(255,255,255,0.008) 30px
+      );
+  }
+
+  /* Gold vignette corners */
+  .hero-vignette {
+    position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 160px rgba(139,105,20,0.09);
+  }
+
+  /* Glassy content card — frosted panel */
   .hero-content {
     position: relative; z-index: 2;
     text-align: center;
-    padding: 2rem;
-    animation: heroFadeIn 1.6s ease forwards;
+    padding: 3.5rem 4rem;
+    max-width: 780px;
+    animation: heroFadeIn 1.6s cubic-bezier(0.19,1,0.22,1) forwards;
+
+    /* Glass morphism */
+    background: rgba(20,12,4,0.28);
+    backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
+    border: 1px solid rgba(201,168,76,0.18);
+    border-top: 1px solid rgba(255,255,255,0.09);
+    border-left: 1px solid rgba(255,255,255,0.07);
+    box-shadow:
+      0 32px 80px rgba(10,6,2,0.45),
+      0 0 0 1px rgba(139,105,20,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.06);
   }
   @keyframes heroFadeIn {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Horizontal gold rule at top of glass card */
+  .hero-content::before {
+    content: '';
+    position: absolute; top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.55), transparent);
+  }
+
   .hero-eyebrow {
     font-family: var(--font-deco);
-    font-size: 0.62rem; letter-spacing: 0.38em;
+    font-size: 0.58rem; letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1.8rem;
+    color: rgba(201,168,76,0.9);
+    margin-bottom: 1.6rem;
     opacity: 0;
-    animation: heroFadeIn 1s ease 0.3s forwards;
+    animation: heroFadeIn 1s ease 0.35s forwards;
   }
 
   .hero-title {
     font-family: var(--font-bengali);
-    font-size: clamp(4rem, 10vw, 9rem);
+    font-size: clamp(4.5rem, 11vw, 10rem);
     font-weight: 300;
-    color: var(--gold-dark);
+    color: #F5EFE4;
     text-shadow:
-      0 0 60px rgba(139,105,20,0.18),
-      0 2px 8px rgba(44,26,14,0.1);
+      0 0 80px rgba(201,168,76,0.35),
+      0 4px 16px rgba(10,6,2,0.6);
     line-height: 1;
     letter-spacing: 0.04em;
     opacity: 0;
-    animation: heroFadeIn 1.2s ease 0.5s forwards;
+    animation: heroFadeIn 1.2s ease 0.55s forwards;
   }
 
   .hero-divider {
     display: flex; align-items: center; justify-content: center;
-    gap: 1.2rem; margin: 1.8rem auto;
-    max-width: 360px;
+    gap: 1.2rem; margin: 1.6rem auto;
+    max-width: 320px;
     opacity: 0;
-    animation: heroFadeIn 1s ease 0.8s forwards;
+    animation: heroFadeIn 1s ease 0.85s forwards;
   }
   .hero-divider::before,
   .hero-divider::after {
     content: '';
     flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.55), transparent);
   }
   .hero-divider-icon {
-    color: var(--gold); font-size: 0.9rem; line-height: 1;
+    color: rgba(201,168,76,0.8); font-size: 0.82rem; line-height: 1;
     font-family: var(--font-deco);
     letter-spacing: 0.2em;
   }
 
   .hero-motto {
     font-family: var(--font-bengali);
-    font-size: clamp(1rem, 2.5vw, 1.4rem);
-    color: var(--text-dim);
+    font-size: clamp(1rem, 2.4vw, 1.35rem);
+    color: rgba(245,239,228,0.82);
     font-style: italic;
     letter-spacing: 0.06em;
     opacity: 0;
-    animation: heroFadeIn 1s ease 1s forwards;
+    animation: heroFadeIn 1s ease 1.05s forwards;
   }
 
   .hero-subtitle {
     font-family: var(--font-display);
-    font-size: clamp(0.85rem, 1.5vw, 1rem);
-    color: var(--text-light);
-    letter-spacing: 0.22em;
+    font-size: clamp(0.78rem, 1.4vw, 0.92rem);
+    color: rgba(201,168,76,0.65);
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    margin-top: 0.8rem;
+    margin-top: 0.7rem;
     opacity: 0;
-    animation: heroFadeIn 1s ease 1.2s forwards;
+    animation: heroFadeIn 1s ease 1.25s forwards;
   }
 
   .hero-cta-group {
     display: flex; gap: 1.2rem; justify-content: center;
-    margin-top: 3rem;
+    margin-top: 2.8rem;
     opacity: 0;
-    animation: heroFadeIn 1s ease 1.4s forwards;
+    animation: heroFadeIn 1s ease 1.45s forwards;
   }
 
   .btn-primary {
     font-family: var(--font-deco);
-    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--bg);
-    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-dark) 100%);
-    padding: 0.9rem 2.4rem;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #1A0F04;
+    background: linear-gradient(135deg, #D4A84B 0%, #9B7420 100%);
+    padding: 0.95rem 2.6rem;
     text-decoration: none;
     border: none; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(139,105,20,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    box-shadow: 0 6px 28px rgba(139,105,20,0.38), inset 0 1px 0 rgba(255,255,255,0.22);
     transition: all 0.35s ease;
     position: relative; overflow: hidden;
   }
   .btn-primary::before {
     content: '';
     position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
     transition: left 0.5s ease;
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,105,20,0.35); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 38px rgba(139,105,20,0.5); }
   .btn-primary:hover::before { left: 100%; }
 
   .btn-ghost {
     font-family: var(--font-deco);
-    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold-dark);
-    background: transparent;
-    padding: 0.9rem 2.4rem;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(245,239,228,0.88);
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0.95rem 2.6rem;
     text-decoration: none;
-    border: 1px solid rgba(139,105,20,0.4);
+    border: 1px solid rgba(201,168,76,0.35);
     cursor: pointer;
     transition: all 0.35s ease;
   }
   .btn-ghost:hover {
-    background: rgba(139,105,20,0.06);
-    border-color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    border-color: rgba(201,168,76,0.65);
+    color: #F5EFE4;
     transform: translateY(-2px);
   }
 
@@ -173,17 +211,17 @@
     position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
     opacity: 0;
-    animation: heroFadeIn 1s ease 2s forwards;
-    cursor: pointer;
+    animation: heroFadeIn 1s ease 2.1s forwards;
+    cursor: pointer; z-index: 3;
   }
   .hero-scroll span {
     font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--text-light);
+    font-size: 0.55rem; letter-spacing: 0.36em; text-transform: uppercase;
+    color: rgba(245,239,228,0.5);
   }
   .hero-scroll-line {
     width: 1px; height: 46px;
-    background: linear-gradient(180deg, var(--gold-light) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(201,168,76,0.7) 0%, transparent 100%);
     animation: scrollDrop 2s ease-in-out infinite;
   }
   @keyframes scrollDrop {
@@ -193,20 +231,29 @@
     100% { transform: scaleY(0); transform-origin: bottom; }
   }
 
-  /* Floating geometric motifs */
+  /* Corner accent lines — decorative framing */
+  .hero-corner {
+    position: absolute; z-index: 3; pointer-events: none;
+    width: 60px; height: 60px;
+  }
+  .hero-corner--tl { top: 24px; left: 24px; border-top: 1px solid rgba(201,168,76,0.28); border-left: 1px solid rgba(201,168,76,0.28); }
+  .hero-corner--tr { top: 24px; right: 24px; border-top: 1px solid rgba(201,168,76,0.28); border-right: 1px solid rgba(201,168,76,0.28); }
+  .hero-corner--bl { bottom: 24px; left: 24px; border-bottom: 1px solid rgba(201,168,76,0.28); border-left: 1px solid rgba(201,168,76,0.28); }
+  .hero-corner--br { bottom: 24px; right: 24px; border-bottom: 1px solid rgba(201,168,76,0.28); border-right: 1px solid rgba(201,168,76,0.28); }
+
+  /* Floating geometric motifs — keep as subtle ring overlays */
   .hero-motif {
     position: absolute;
-    width: 200px; height: 200px;
-    border: 1px solid rgba(139,105,20,0.08);
+    border: 1px solid rgba(201,168,76,0.07);
     border-radius: 50%;
     pointer-events: none;
   }
-  .hero-motif:nth-child(1) { top: 15%; left: 8%; animation: floatMotif 18s ease-in-out infinite; }
-  .hero-motif:nth-child(2) { bottom: 20%; right: 8%; width: 280px; height: 280px; animation: floatMotif 22s ease-in-out infinite reverse; }
-  .hero-motif:nth-child(3) { top: 50%; left: 3%; width: 120px; height: 120px; animation: floatMotif 14s ease-in-out 3s infinite; }
+  .hero-motif:nth-child(5) { width: 320px; height: 320px; top: 10%; left: 5%; animation: floatMotif 20s ease-in-out infinite; }
+  .hero-motif:nth-child(6) { width: 420px; height: 420px; bottom: 12%; right: 4%; animation: floatMotif 26s ease-in-out infinite reverse; }
+  .hero-motif:nth-child(7) { width: 160px; height: 160px; top: 55%; left: 2%; animation: floatMotif 15s ease-in-out 2s infinite; }
   @keyframes floatMotif {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.35; }
-    50%       { transform: translate(10px, -15px) rotate(8deg); opacity: 0.7; }
+    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.4; }
+    50%       { transform: translate(12px, -18px) rotate(7deg); opacity: 0.75; }
   }
 
   /* ─── CATEGORY STRIPS ───────────────────────────────────────── */
