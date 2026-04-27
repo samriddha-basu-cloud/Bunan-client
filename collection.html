@@ -1,564 +1,738 @@
 <!-- ══════════════════════════════════════════════════════════════════
-     BUNAN — COLLECTION MODULE  (collection.html)
-     Product catalogue with filters, Firebase Firestore integration
+     BUNAN — COLLECTION MODULE  (collection.html)  — REDESIGNED
      ══════════════════════════════════════════════════════════════════ -->
 <style>
-  /* ─── COLLECTION SECTION ──────────────────────────────────── */
-  #collection {
-    padding: 7rem 3rem;
-    scroll-margin-top: 80px;
-    max-width: 1600px; margin: 0 auto;
-    background: var(--bg);
-  }
+/* ══ COLLECTION SECTION ══════════════════════════════════════════ */
+#collection {
+  scroll-margin-top: 80px;
+  background: var(--bg);
+  min-height: 100vh;
+}
 
-  .collection-header {
-    text-align: center; margin-bottom: 4rem;
-  }
-  .collection-tag {
-    font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase;
-    color: var(--gold); display: block; margin-bottom: 1rem;
-  }
-  .collection-title {
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    color: var(--text);
-    font-weight: 400;
-  }
-  .collection-sub {
-    font-family: var(--font-bengali);
-    font-size: 1rem; color: var(--text-dim);
-    margin-top: 0.5rem;
-  }
+/* ── Section header ── */
+.coll-header {
+  text-align: center;
+  padding: 6rem 3rem 4rem;
+  border-bottom: 1px solid var(--border-soft);
+  position: relative; overflow: hidden;
+}
+.coll-header::before {
+  content: 'সংগ্রহ';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-bengali);
+  font-size: clamp(6rem, 14vw, 14rem);
+  color: rgba(139,105,20,0.04);
+  white-space: nowrap; pointer-events: none; user-select: none; line-height: 1;
+}
+.coll-tag {
+  font-family: var(--font-deco);
+  font-size: 0.56rem; letter-spacing: 0.36em; text-transform: uppercase;
+  color: var(--gold); display: flex; align-items: center;
+  justify-content: center; gap: 1rem; margin-bottom: 1.2rem;
+}
+.coll-tag::before, .coll-tag::after {
+  content: ''; display: block; width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-light));
+}
+.coll-tag::after { background: linear-gradient(90deg, var(--gold-light), transparent); }
+.coll-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  color: var(--text); font-weight: 400; line-height: 1.1; position: relative;
+}
+.coll-sub {
+  font-family: var(--font-bengali);
+  font-size: 1.05rem; color: var(--text-dim); margin-top: 0.6rem; position: relative;
+}
 
-  /* ─── FILTER PANEL ──────────────────────────────────────── */
-  .filter-bar {
-    background: var(--bg-card);
-    border: 1px solid var(--border-soft);
-    padding: 1.5rem 2rem;
-    margin-bottom: 3rem;
-    box-shadow: var(--shadow-card);
-  }
+/* ── Sticky Toolbar ── */
+.coll-toolbar {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.9rem 2.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-soft);
+  position: sticky; top: 80px; z-index: 50;
+  backdrop-filter: blur(12px);
+}
+.toolbar-search-wrap { flex: 1; position: relative; }
+.toolbar-search-wrap svg {
+  position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%);
+  width: 13px; height: 13px; color: var(--text-light); pointer-events: none;
+}
+.toolbar-search {
+  width: 100%; padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+  background: var(--bg); border: 1px solid var(--border-soft);
+  color: var(--text); font-family: var(--font-display); font-size: 0.88rem;
+  outline: none; transition: border-color 0.25s;
+}
+.toolbar-search:focus { border-color: var(--gold); }
+.toolbar-search::placeholder { color: var(--text-light); }
+.toolbar-sep { width: 1px; height: 24px; background: var(--border-soft); flex-shrink: 0; }
+.btn-filter-toggle {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-family: var(--font-deco);
+  font-size: 0.54rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-dim); background: transparent;
+  border: 1px solid var(--border); padding: 0.5rem 0.9rem;
+  cursor: pointer; transition: all 0.22s; white-space: nowrap; position: relative;
+}
+.btn-filter-toggle svg { width: 12px; height: 12px; }
+.btn-filter-toggle:hover, .btn-filter-toggle.active {
+  border-color: var(--gold-light); color: var(--gold-dark);
+  background: rgba(139,105,20,0.05);
+}
+.filter-dot {
+  position: absolute; top: -3px; right: -3px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); display: none; border: 1px solid var(--bg-card);
+}
+.filter-dot.show { display: block; }
+.toolbar-chips { display: flex; gap: 0.35rem; }
+.chip {
+  font-family: var(--font-deco);
+  font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.35rem 0.8rem; border: 1px solid var(--border-soft);
+  color: var(--text-dim); background: transparent;
+  cursor: pointer; transition: all 0.22s; white-space: nowrap;
+}
+.chip:hover { border-color: var(--border); color: var(--text); }
+.chip.active { background: var(--gold-dark); border-color: var(--gold-dark); color: #fff; }
+.sort-wrap { display: flex; align-items: center; gap: 0.45rem; flex-shrink: 0; }
+.sort-lbl {
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-light);
+}
+.sort-sel {
+  background: var(--bg); border: 1px solid var(--border-soft); color: var(--text-dim);
+  padding: 0.42rem 1.5rem 0.42rem 0.6rem;
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.08em;
+  outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238B6914'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.45rem center;
+  transition: border-color 0.22s;
+}
+.sort-sel:focus { border-color: var(--gold); }
+.sort-sel option { background: var(--bg-card); }
+.results-txt {
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-light); flex-shrink: 0; margin-left: auto;
+}
 
-  .filter-row {
-    display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end;
-  }
+/* ── Filter Drawer ── */
+.filter-drawer {
+  background: var(--bg-card); border-bottom: 1px solid var(--border-soft);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1);
+  position: sticky; top: calc(80px + 50px); z-index: 49;
+}
+.filter-drawer.open { max-height: 380px; }
+.filter-drawer-grid {
+  padding: 1.4rem 2.5rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem 1.5rem;
+}
+.fd-group { display: flex; flex-direction: column; gap: 0.38rem; }
+.fd-lbl {
+  font-family: var(--font-deco); font-size: 0.48rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--gold-dark);
+}
+.fd-sel {
+  background: var(--bg); border: 1px solid var(--border-soft); color: var(--text);
+  padding: 0.52rem 1.8rem 0.52rem 0.65rem;
+  font-family: var(--font-display); font-size: 0.84rem;
+  outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238B6914'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.65rem center;
+  transition: border-color 0.22s;
+}
+.fd-sel:focus { border-color: var(--gold); }
+.fd-sel option { background: var(--bg-card); color: var(--text); }
+.filter-drawer-foot {
+  padding: 0.6rem 2.5rem 1.1rem;
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+}
+.af-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-family: var(--font-deco); font-size: 0.46rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.2rem 0.55rem;
+  background: rgba(139,105,20,0.07); border: 1px solid rgba(139,105,20,0.18);
+  color: var(--gold-dark);
+}
+.af-pill button {
+  background: none; border: none; cursor: pointer;
+  color: var(--gold-dark); font-size: 0.75rem; line-height: 1; padding: 0; opacity: 0.6;
+}
+.af-pill button:hover { opacity: 1; }
+.btn-clear {
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-dim); background: transparent;
+  border: 1px solid var(--border-soft); padding: 0.32rem 0.8rem;
+  cursor: pointer; transition: all 0.22s; margin-left: auto;
+}
+.btn-clear:hover { border-color: var(--gold); color: var(--gold-dark); }
 
-  .filter-group {
-    display: flex; flex-direction: column; gap: 0.4rem;
-    flex: 1; min-width: 130px;
-  }
-  .filter-label {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--gold-dark);
-  }
-  .filter-select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.6rem 0.8rem;
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238B6914'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.8rem center;
-    padding-right: 2rem;
-    transition: all 0.3s ease;
-  }
-  .filter-select:focus { border-color: var(--gold); }
-  .filter-select option { background: var(--bg-card); color: var(--text); }
+/* ── Grid area ── */
+.coll-body { padding: 2rem 2.5rem 5rem; }
 
-  .filter-search {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.6rem 0.8rem;
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    width: 100%;
-    outline: none;
-    transition: all 0.3s ease;
-  }
-  .filter-search::placeholder { color: var(--text-light); }
-  .filter-search:focus { border-color: var(--gold); }
+/* ── Product Grid ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 1px; background: var(--border-soft);
+  border: 1px solid var(--border-soft);
+}
 
-  .filter-chips {
-    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;
-  }
-  .filter-chip {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.3rem 0.9rem;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.25s ease;
-    background: transparent;
-  }
-  .filter-chip.active,
-  .filter-chip:hover {
-    background: rgba(139,105,20,0.08);
-    border-color: var(--gold-light);
-    color: var(--gold-dark);
-  }
+/* ── Product Card ── */
+.product-card {
+  background: var(--bg-card); position: relative; overflow: hidden;
+  cursor: pointer; transition: background 0.3s, box-shadow 0.3s;
+  display: flex; flex-direction: column;
+  animation: cardIn 0.4s ease both;
+}
+@keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.product-card:hover { background: var(--bg); z-index: 2; box-shadow: 0 0 0 1px var(--border) inset; }
 
-  .filter-actions {
-    display: flex; gap: 0.8rem; align-items: flex-end; flex-shrink: 0;
-  }
-  .btn-filter-reset {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-dim);
-    background: transparent;
-    border: 1px solid var(--border);
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .btn-filter-reset:hover { border-color: var(--gold); color: var(--gold-dark); }
+/* Badges */
+.card-badges {
+  position: absolute; top: 0.8rem; left: 0.8rem; z-index: 3;
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.badge {
+  display: inline-block; font-family: var(--font-deco);
+  font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+}
+.badge-new     { background: #2c5f4a; color: rgba(255,255,255,0.92); }
+.badge-best    { background: var(--gold-dark); color: rgba(255,255,255,0.92); }
+.badge-limited { background: var(--text); color: rgba(255,255,255,0.7); }
 
-  /* Sort & View toggles */
-  .filter-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  .results-count {
-    font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-light);
-  }
-  .sort-group {
-    display: flex; align-items: center; gap: 0.8rem;
-  }
-  .sort-label {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-light);
-  }
-  .sort-btn {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--text-dim);
-    background: transparent;
-    border: 1px solid var(--border-soft);
-    padding: 0.35rem 0.8rem;
-    cursor: pointer;
-    transition: all 0.25s;
-  }
-  .sort-btn.active { border-color: var(--gold-light); color: var(--gold-dark); background: rgba(139,105,20,0.05); }
+/* Like button */
+.card-like {
+  position: absolute; top: 0.8rem; right: 0.8rem; z-index: 3;
+  background: rgba(250,246,240,0.88); backdrop-filter: blur(6px);
+  border: 1px solid var(--border-soft); width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  cursor: pointer; transition: all 0.22s; line-height: 1;
+}
+.card-like svg { width: 12px; height: 12px; color: var(--text-dim); transition: all 0.22s; }
+.card-like-count {
+  font-family: var(--font-deco); font-size: 0.4rem;
+  color: var(--text-light); letter-spacing: 0; margin-top: 1px;
+}
+.card-like:hover { border-color: var(--gold-light); background: var(--bg-card); }
+.card-like:hover svg { color: var(--gold-dark); }
+.card-like.liked svg { fill: #c0392b; stroke: #c0392b; }
+.card-like.liked .card-like-count { color: #c0392b; }
+@keyframes likePop { 0%{transform:scale(1)} 50%{transform:scale(1.55)} 100%{transform:scale(1)} }
 
-  /* ─── PRODUCT GRID ──────────────────────────────────────── */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1px;
-    border: 1px solid var(--border-soft);
-  }
+/* Image */
+.card-img-wrap {
+  aspect-ratio: 3/4; overflow: hidden; position: relative;
+  background: repeating-linear-gradient(-45deg, rgba(139,105,20,0.03) 0, rgba(139,105,20,0.03) 1px, transparent 1px, transparent 9px),
+              linear-gradient(160deg, var(--bg-dark, #efe7d8), var(--bg));
+  flex-shrink: 0;
+}
+.card-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+}
+.product-card:hover .card-img-wrap img { transform: scale(1.05); }
+.card-img-ph {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.card-img-ph svg { width: 52px; height: 52px; opacity: 0.09; color: var(--gold-dark); }
 
-  /* ─── PRODUCT CARD ──────────────────────────────────────── */
-  .product-card {
-    background: var(--bg-card);
-    border-right: 1px solid var(--border-soft);
-    border-bottom: 1px solid var(--border-soft);
-    position: relative; overflow: hidden;
-    cursor: pointer;
-    transition: all 0.4s ease;
-    display: flex; flex-direction: column;
-  }
-  .product-card:hover {
-    background: var(--bg);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(44,26,14,0.12);
-    z-index: 1;
-  }
+/* Overlay */
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(30,18,8,0.6) 100%);
+  opacity: 0; transition: opacity 0.32s; display: flex; align-items: flex-end;
+  padding: 0.8rem; z-index: 2;
+}
+.product-card:hover .card-overlay { opacity: 1; }
+.ov-actions { display: flex; gap: 0.4rem; width: 100%; }
+.ov-btn {
+  flex: 1; font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text); background: var(--bg);
+  border: none; cursor: pointer; padding: 0.55rem 0.6rem; transition: background 0.22s;
+  transform: translateY(5px); opacity: 0;
+  transition: transform 0.32s 0.04s, opacity 0.32s 0.04s, background 0.2s;
+}
+.ov-wa {
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #fff; background: #1a5c38;
+  border: none; cursor: pointer; padding: 0.55rem 0.65rem;
+  display: flex; align-items: center; gap: 0.25rem; text-decoration: none;
+  transform: translateY(5px); opacity: 0;
+  transition: transform 0.32s 0.08s, opacity 0.32s 0.08s, background 0.2s;
+}
+.product-card:hover .ov-btn,
+.product-card:hover .ov-wa { transform: translateY(0); opacity: 1; }
+.ov-btn:hover { background: var(--bg-card); }
+.ov-wa:hover { background: #16502f; }
 
-  /* Badges */
-  .card-badges {
-    position: absolute; top: 1rem; left: 1rem; z-index: 2;
-    display: flex; flex-direction: column; gap: 0.4rem;
-  }
-  .badge {
-    display: inline-block;
-    font-family: var(--font-deco);
-    font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase;
-    padding: 0.25rem 0.6rem;
-  }
-  .badge-new { background: var(--accent); color: #fff; }
-  .badge-best { background: var(--gold-dark); color: #fff; }
+/* Card body */
+.card-body { padding: 1rem 1.1rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+.card-eyebrow {
+  font-family: var(--font-deco); font-size: 0.46rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+}
+.card-name { font-family: var(--font-heading); font-size: 1rem; font-weight: 500; color: var(--text); line-height: 1.3; }
+.card-name-bn { font-family: var(--font-bengali); font-size: 0.8rem; color: var(--text-dim); }
+.card-tagline { font-family: var(--font-display); font-size: 0.78rem; font-style: italic; color: var(--text-light); line-height: 1.5; margin-top: 0.15rem; }
+.card-attrs { display: flex; flex-wrap: wrap; gap: 0.28rem; margin-top: 0.35rem; }
+.card-attr {
+  font-family: var(--font-deco); font-size: 0.44rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-light); border: 1px solid var(--border-soft); padding: 0.16rem 0.48rem;
+}
+.card-attr.hi { border-color: rgba(139,105,20,0.25); color: var(--gold-dark); }
 
-  /* Like button */
-  .card-like {
-    position: absolute; top: 1rem; right: 1rem; z-index: 2;
-    background: rgba(250,246,240,0.85);
-    border: 1px solid var(--border);
-    width: 34px; height: 34px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    backdrop-filter: blur(4px);
-  }
-  .card-like:hover { background: var(--bg-dark); border-color: var(--gold-light); color: var(--gold-dark); }
-  .card-like.liked { color: #c0392b; }
+/* Card footer */
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 1.1rem; border-top: 1px solid var(--border-soft); margin-top: auto;
+}
+.card-code { font-family: var(--font-deco); font-size: 0.46rem; letter-spacing: 0.14em; color: var(--gold); }
+.card-foot-r { display: flex; align-items: center; gap: 0.55rem; }
+.card-likes-txt {
+  font-family: var(--font-deco); font-size: 0.46rem; letter-spacing: 0.08em;
+  color: var(--text-light); display: flex; align-items: center; gap: 0.22rem;
+}
+.card-likes-txt svg { width: 9px; height: 9px; }
+.card-arrow {
+  width: 20px; height: 20px; border: 1px solid var(--border-soft);
+  display: flex; align-items: center; justify-content: center; color: var(--text-light);
+  transition: all 0.22s;
+}
+.card-arrow svg { width: 9px; height: 9px; }
+.product-card:hover .card-arrow { border-color: var(--gold-light); color: var(--gold-dark); background: rgba(139,105,20,0.05); }
 
-  /* Image area */
-  .card-image {
-    aspect-ratio: 3/4;
-    background:
-      repeating-linear-gradient(
-        -45deg,
-        rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
-        transparent 1px, transparent 10px
-      ),
-      linear-gradient(160deg, var(--bg-dark), var(--bg));
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  .card-image-placeholder {
-    width: 60px; height: 60px; opacity: 0.12;
-    color: var(--gold-dark);
-  }
+/* ── Loading / Empty ── */
+.coll-state {
+  grid-column: 1/-1; text-align: center; padding: 6rem 2rem;
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+}
+.coll-ring {
+  width: 34px; height: 34px; border: 1.5px solid var(--border-soft);
+  border-top-color: var(--gold-light); border-radius: 50%;
+  animation: spin 1s linear infinite; margin: 0 auto 1.3rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.coll-loading-txt { font-family: var(--font-display); font-size: 0.92rem; color: var(--text-light); font-style: italic; }
+.coll-empty-ornament { font-family: var(--font-heading); font-size: 3.5rem; color: var(--gold-pale); line-height: 1; margin-bottom: 0.8rem; user-select: none; }
+.coll-empty-txt { font-family: var(--font-bengali); font-size: 0.98rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+.coll-empty-hint { font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); }
+.btn-empty-reset {
+  margin-top: 1.1rem; display: inline-block; font-family: var(--font-deco);
+  font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-dark);
+  background: transparent; border: 1px solid var(--border); padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.22s;
+}
+.btn-empty-reset:hover { border-color: var(--gold); background: rgba(139,105,20,0.05); }
 
-  /* Card carousel */
-  .card-carousel { width: 100%; height: 100%; position: relative; overflow: hidden; }
-  .card-carousel-track {
-    display: flex; width: 100%; height: 100%;
-    transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1);
-    will-change: transform;
-  }
-  .card-carousel-slide {
-    flex: 0 0 100%; width: 100%; height: 100%; overflow: hidden;
-  }
-  .card-carousel-slide img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform 0.6s ease;
-  }
-  .product-card:hover .card-carousel-slide.active img { transform: scale(1.04); }
+/* ══ MODAL ═══════════════════════════════════════════════════════ */
+.product-modal-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(30,18,8,0.7); backdrop-filter: blur(10px) saturate(0.9);
+  display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+  opacity: 0; pointer-events: none; transition: opacity 0.32s;
+}
+.product-modal-overlay.open { opacity: 1; pointer-events: all; }
 
-  .card-carousel-btn {
-    position: absolute; top: 50%; z-index: 5;
-    transform: translateY(-50%);
-    width: 28px; height: 28px;
-    background: rgba(250,246,240,0.88);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s;
-    backdrop-filter: blur(4px);
-    opacity: 0;
-  }
-  .card-carousel:hover .card-carousel-btn { opacity: 1; }
-  .card-carousel-btn:hover { background: var(--bg-card); border-color: var(--gold-light); }
-  .card-carousel-btn svg { width: 11px; height: 11px; color: var(--text-dim); }
-  .card-carousel-prev { left: 0.5rem; }
-  .card-carousel-next { right: 0.5rem; }
-  .card-carousel-btn.hidden { opacity: 0 !important; pointer-events: none; }
+.product-modal {
+  background: var(--bg-card); border: 1px solid var(--border);
+  max-width: 960px; width: 100%; max-height: 90vh;
+  display: grid; grid-template-columns: 42% 1fr;
+  transform: translateY(20px) scale(0.99);
+  transition: transform 0.38s cubic-bezier(0.22,1,0.36,1);
+  box-shadow: 0 40px 80px rgba(30,18,8,0.28); position: relative; overflow: hidden;
+}
+.product-modal-overlay.open .product-modal { transform: translateY(0) scale(1); }
 
-  .card-carousel-dots {
-    position: absolute; bottom: 0.6rem; left: 50%;
-    transform: translateX(-50%);
-    display: flex; gap: 0.3rem; z-index: 5;
-  }
-  .card-carousel-dot {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: rgba(250,246,240,0.5);
-    border: none; padding: 0; cursor: pointer; transition: all 0.25s;
-  }
-  .card-carousel-dot.active {
-    background: var(--gold-light); transform: scale(1.4);
-  }
+/* Image col */
+.modal-img-col {
+  position: relative; overflow: hidden;
+  background: repeating-linear-gradient(-45deg, rgba(139,105,20,0.03) 0, rgba(139,105,20,0.03) 1px, transparent 1px, transparent 9px),
+              linear-gradient(160deg, var(--bg-dark, #efe7d8), var(--bg));
+  display: flex; align-items: center; justify-content: center; min-height: 420px;
+}
+.modal-img-col img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal-img-badges { position: absolute; top: 0.9rem; left: 0.9rem; z-index: 2; display: flex; flex-direction: column; gap: 0.3rem; }
+.modal-img-ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.modal-img-ph svg { width: 70px; height: 70px; opacity: 0.09; color: var(--gold-dark); }
 
-  /* Overlay on hover */
-  .card-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(44,26,14,0.55) 100%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    display: flex; align-items: flex-end;
-    padding: 1rem;
-  }
-  .product-card:hover .card-overlay { opacity: 1; }
-  .overlay-btn {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: #fff;
-    background: var(--gold-dark);
-    border: none; cursor: pointer;
-    padding: 0.55rem 1rem;
-    width: 100%;
-    transition: all 0.3s;
-  }
-  .overlay-btn:hover { background: var(--gold); }
+/* Detail col */
+.modal-detail-col {
+  overflow-y: auto; max-height: 90vh;
+  scrollbar-width: thin; scrollbar-color: var(--gold-pale) transparent;
+  display: flex; flex-direction: column;
+}
 
-  /* Card body */
-  .card-body {
-    padding: 1.2rem;
-    display: flex; flex-direction: column; gap: 0.5rem;
-    flex: 1;
-  }
-  .card-category {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold);
-  }
-  .card-name {
-    font-family: var(--font-heading);
-    font-size: 1.05rem; font-weight: 500;
-    color: var(--text);
-    line-height: 1.3;
-  }
-  .card-name-bn {
-    font-family: var(--font-bengali);
-    font-size: 0.88rem; color: var(--text-dim);
-    margin-top: 0.1rem;
-  }
-  .card-meta {
-    display: flex; flex-wrap: wrap; gap: 0.4rem;
-    margin-top: 0.5rem;
-  }
-  .meta-tag {
-    font-family: var(--font-deco);
-    font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-light);
-    border: 1px solid var(--border-soft);
-    padding: 0.2rem 0.5rem;
-  }
+.modal-header {
+  padding: 1.8rem 1.8rem 1.1rem; border-bottom: 1px solid var(--border-soft);
+  position: sticky; top: 0; background: var(--bg-card); z-index: 5;
+}
+.modal-eyebrow {
+  font-family: var(--font-deco); font-size: 0.48rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem;
+}
+.modal-name { font-family: var(--font-heading); font-size: clamp(1.3rem,2.2vw,1.8rem); font-weight: 500; color: var(--text); line-height: 1.2; margin-bottom: 0.2rem; }
+.modal-name-bn { font-family: var(--font-bengali); font-size: 0.95rem; color: var(--text-dim); }
+.modal-tagline { font-family: var(--font-display); font-size: 0.85rem; font-style: italic; color: var(--text-dim); line-height: 1.6; margin-top: 0.4rem; }
 
-  /* Card footer */
-  .card-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.8rem 1.2rem;
-    border-top: 1px solid var(--border-soft);
-  }
-  .card-likes {
-    display: flex; align-items: center; gap: 0.4rem;
-    font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.1em;
-    color: var(--text-light);
-  }
-  .card-code {
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.15em;
-    color: var(--gold);
-  }
-  .card-wa-btn {
-    background: #25D366;
-    color: #fff;
-    border: none; cursor: pointer;
-    padding: 0.4rem 0.8rem;
-    font-family: var(--font-deco);
-    font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase;
-    display: flex; align-items: center; gap: 0.3rem;
-    transition: all 0.3s;
-    text-decoration: none;
-  }
-  .card-wa-btn:hover { background: #1ebe5d; }
+.modal-body { padding: 1.3rem 1.8rem; flex: 1; }
 
+.modal-meta-strip {
+  display: flex; gap: 1.5rem; padding: 0.75rem 0;
+  border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 1.2rem; flex-wrap: wrap;
+}
+.mms-item { }
+.mms-lbl { font-family: var(--font-deco); font-size: 0.42rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.18rem; }
+.mms-val { font-family: var(--font-deco); font-size: 0.66rem; letter-spacing: 0.14em; color: var(--gold-dark); }
+.mms-val.plain { font-family: var(--font-display); font-size: 0.86rem; letter-spacing: 0.02em; color: var(--text-dim); }
 
-  /* Loading / empty states */
-  .products-loading {
-    grid-column: 1/-1;
-    text-align: center; padding: 5rem;
-    color: var(--text-light);
-    font-family: var(--font-display);
-    font-size: 1.05rem; letter-spacing: 0.1em;
-  }
-  .products-loading-spinner {
-    display: block;
-    width: 32px; height: 32px;
-    border: 2px solid var(--border);
-    border-top-color: var(--gold-light);
-    border-radius: 50%;
-    margin: 0 auto 1.2rem;
-    animation: spin 1.2s linear infinite;
-  }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.modal-desc { font-family: var(--font-display); font-size: 0.94rem; line-height: 1.88; color: var(--text-dim); margin-bottom: 1.3rem; }
 
-  .products-empty {
-    grid-column: 1/-1; text-align: center; padding: 5rem;
-  }
-  .products-empty p {
-    font-family: var(--font-bengali);
-    font-size: 1.1rem; color: var(--text-dim);
-  }
+/* Weaver */
+.modal-weaver {
+  background: var(--bg); border: 1px solid var(--border-soft); border-left: 3px solid var(--gold-light);
+  padding: 0.9rem 1.1rem; margin-bottom: 1.3rem;
+  display: flex; gap: 0.9rem; align-items: flex-start;
+}
+.modal-weaver-av {
+  width: 38px; height: 38px; flex-shrink: 0; border: 1px solid var(--border);
+  background: var(--bg-dark, #efe7d8); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading); font-size: 1rem; color: var(--gold-pale);
+}
+.mw-name { font-family: var(--font-heading); font-size: 0.92rem; font-weight: 500; color: var(--text); margin-bottom: 0.1rem; }
+.mw-village { font-family: var(--font-deco); font-size: 0.44rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem; }
+.mw-story { font-family: var(--font-display); font-size: 0.82rem; font-style: italic; color: var(--text-dim); line-height: 1.7; }
 
-  @media (max-width: 900px) {
-    #collection { padding: 4rem 1rem; }
-    .filter-row { flex-direction: column; }
-    .filter-group { min-width: 100%; }
-    .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-  }
+/* Specs */
+.modal-specs-title { font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; }
+.modal-specs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border-soft); margin-bottom: 1.3rem; }
+.spec-row { display: contents; }
+.spec-row:nth-child(odd) .spec-k,
+.spec-row:nth-child(odd) .spec-v { background: rgba(139,105,20,0.025); }
+.spec-k, .spec-v { padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border-soft); }
+.spec-row:last-child .spec-k, .spec-row:last-child .spec-v { border-bottom: none; }
+.spec-k { font-family: var(--font-deco); font-size: 0.44rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); border-right: 1px solid var(--border-soft); display: flex; align-items: center; }
+.spec-v { font-family: var(--font-display); font-size: 0.86rem; color: var(--text); }
 
-  /* ── PAGE TRANSITION ─────────────────────────────── */
-  body {
-    animation: pageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  @keyframes pageIn {
-    from { opacity: 0; transform: translateX(32px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  body.exit {
-    animation: pageOut 0.35s cubic-bezier(0.55, 0, 0.7, 0.4) forwards;
-    pointer-events: none;
-  }
-  @keyframes pageOut {
-    from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(-32px); }
-  }
+/* Tags */
+.modal-tags { display: flex; flex-wrap: wrap; gap: 0.28rem; margin-bottom: 1.3rem; }
+.modal-tag { font-family: var(--font-display); font-size: 0.74rem; color: var(--text-dim); background: var(--bg); border: 1px solid var(--border-soft); padding: 0.16rem 0.55rem; border-radius: 12px; }
+
+/* Reviews */
+.modal-reviews-title { font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; }
+.modal-review { padding: 0.9rem 0; border-bottom: 1px solid var(--border-soft); }
+.modal-review:first-of-type { border-top: 1px solid var(--border-soft); }
+.modal-review-stars { color: var(--gold-light); font-size: 0.65rem; letter-spacing: 0.1em; margin-bottom: 0.35rem; }
+.modal-review-text { font-family: var(--font-display); font-size: 0.88rem; font-style: italic; color: var(--text-dim); line-height: 1.75; margin-bottom: 0.35rem; }
+.modal-review-author { display: flex; align-items: center; gap: 0.55rem; }
+.mra-line { width: 16px; height: 1px; background: var(--border); }
+.mra-name { font-family: var(--font-deco); font-size: 0.44rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-light); }
+.modal-no-reviews { font-family: var(--font-display); font-size: 0.86rem; font-style: italic; color: var(--text-light); padding: 0.7rem 0; }
+
+/* Modal footer */
+.modal-footer {
+  padding: 1.1rem 1.8rem; border-top: 1px solid var(--border-soft);
+  display: flex; gap: 0.6rem;
+  position: sticky; bottom: 0; background: var(--bg-card); z-index: 5;
+}
+.modal-wa-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+  background: #1a5c38; color: rgba(255,255,255,0.92); padding: 0.8rem 1.1rem;
+  font-family: var(--font-deco); font-size: 0.54rem; letter-spacing: 0.16em;
+  text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: background 0.22s;
+}
+.modal-wa-btn:hover { background: #16502f; }
+.modal-piece-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  border: 1px solid var(--border); color: var(--text-dim); padding: 0.8rem 1rem;
+  font-family: var(--font-deco); font-size: 0.54rem; letter-spacing: 0.16em;
+  text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.22s; background: transparent; white-space: nowrap;
+}
+.modal-piece-btn:hover { border-color: var(--gold-light); color: var(--gold-dark); background: rgba(139,105,20,0.04); }
+.modal-piece-btn svg { width: 11px; height: 11px; }
+.modal-like-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+  border: 1px solid var(--border); color: var(--text-dim); padding: 0.8rem 0.9rem;
+  font-family: var(--font-deco); font-size: 0.5rem; letter-spacing: 0.1em;
+  cursor: pointer; transition: all 0.22s; background: transparent; flex-shrink: 0;
+}
+.modal-like-btn:hover { border-color: var(--gold-light); color: var(--gold-dark); }
+.modal-like-btn.liked { border-color: #c0392b; color: #c0392b; }
+.modal-like-btn svg { width: 12px; height: 12px; }
+.modal-like-btn.liked svg { fill: #c0392b; stroke: #c0392b; }
+
+.modal-close {
+  position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;
+  width: 28px; height: 28px; background: var(--bg); border: 1px solid var(--border-soft);
+  color: var(--text-dim); font-size: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.22s; font-family: var(--font-deco);
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold-dark); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .coll-header { padding: 4rem 1.5rem 2.5rem; }
+  .coll-toolbar { padding: 0.7rem 1rem; top: 60px; flex-wrap: wrap; }
+  .toolbar-chips, .sort-wrap { display: none; }
+  .results-txt { margin-left: 0; }
+  .filter-drawer { top: calc(60px + 46px); }
+  .filter-drawer-grid { grid-template-columns: 1fr 1fr; }
+  .coll-body { padding: 1rem 0.8rem 4rem; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .product-modal { grid-template-columns: 1fr; }
+  .modal-img-col { min-height: 260px; }
+  .modal-specs { grid-template-columns: 1fr; }
+  .spec-k { border-right: none; border-bottom: 1px solid var(--border-soft); }
+  .modal-footer { flex-direction: column; }
+}
+@media (max-width: 480px) {
+  .filter-drawer-grid { grid-template-columns: 1fr; }
+  .product-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
 
+<!-- ══ HTML ═══════════════════════════════════════════════════ -->
 <section id="collection">
-  <div class="collection-header">
-    <span class="collection-tag">Handpicked for You</span>
-    <h2 class="collection-title">Our Collection</h2>
-    <p class="collection-sub">আমাদের সংগ্রহ — হৃদয় থেকে হাতে বোনা</p>
+
+  <!-- Header -->
+  <div class="coll-header">
+    <div class="coll-tag">Handpicked for You</div>
+    <h2 class="coll-title">Our Collection</h2>
+    <p class="coll-sub">আমাদের সংগ্রহ — হৃদয় থেকে হাতে বোনা</p>
   </div>
 
-  <!-- FILTERS -->
-  <div class="filter-bar">
-    <div class="filter-row">
-      <div class="filter-group" style="flex:2;min-width:200px;">
-        <label class="filter-label">Search</label>
-        <input type="text" class="filter-search" id="searchInput" placeholder="Search by name, code, description..." oninput="applyFilters()" />
-      </div>
-      <div class="filter-group">
-        <label class="filter-label">Category</label>
-        <select class="filter-select" id="filterCategory" onchange="applyFilters()">
+  <!-- Sticky Toolbar -->
+  <div class="coll-toolbar">
+    <div class="toolbar-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="toolbar-search" type="text" id="searchInput"
+             placeholder="Search by name, code, karigari, origin…" oninput="applyFilters()" />
+    </div>
+    <div class="toolbar-sep"></div>
+    <button class="btn-filter-toggle" id="filterToggle" onclick="toggleDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
+      </svg>
+      Filters
+      <div class="filter-dot" id="filterDot"></div>
+    </button>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-chips">
+      <button class="chip active" data-quick="" onclick="quickFilter(this,'')">All</button>
+      <button class="chip" data-quick="new" onclick="quickFilter(this,'new')">New</button>
+      <button class="chip" data-quick="bestseller" onclick="quickFilter(this,'bestseller')">Best Sellers</button>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="sort-wrap">
+      <span class="sort-lbl">Sort</span>
+      <select class="sort-sel" id="sortSelect" onchange="setSort(this.value)">
+        <option value="relevance">Most Loved</option>
+        <option value="newest">Newest</option>
+        <option value="az">A – Z</option>
+      </select>
+    </div>
+    <span class="results-txt" id="resultsCount"></span>
+  </div>
+
+  <!-- Filter Drawer -->
+  <div class="filter-drawer" id="filterDrawer">
+    <div class="filter-drawer-grid">
+      <div class="fd-group">
+        <label class="fd-lbl">Category</label>
+        <select class="fd-sel" id="filterCategory" onchange="applyFilters()">
           <option value="">All Categories</option>
           <option>Saree</option><option>Punjabi</option><option>Kantha</option>
           <option>Dupatta</option><option>Kurta</option><option>Shawl</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label class="filter-label">Fabric</label>
-        <select class="filter-select" id="filterFabric" onchange="applyFilters()">
+      <div class="fd-group">
+        <label class="fd-lbl">Fabric</label>
+        <select class="fd-sel" id="filterFabric" onchange="applyFilters()">
           <option value="">All Fabrics</option>
           <option>Cotton</option><option>Silk</option><option>Muslin</option>
           <option>Linen</option><option>Khadi</option><option>Zari</option>
           <option>Georgette</option><option>Organza</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label class="filter-label">Occasion</label>
-        <select class="filter-select" id="filterOccasion" onchange="applyFilters()">
+      <div class="fd-group">
+        <label class="fd-lbl">Occasion</label>
+        <select class="fd-sel" id="filterOccasion" onchange="applyFilters()">
           <option value="">All Occasions</option>
           <option>Casual</option><option>Wedding</option><option>Festival</option>
           <option>Formal</option><option>Daily Wear</option><option>Gifting</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label class="filter-label">Colour</label>
-        <select class="filter-select" id="filterColour" onchange="applyFilters()">
+      <div class="fd-group">
+        <label class="fd-lbl">Colour</label>
+        <select class="fd-sel" id="filterColour" onchange="applyFilters()">
           <option value="">All Colours</option>
           <option>Red</option><option>Blue</option><option>Green</option>
           <option>White</option><option>Black</option><option>Yellow</option>
-          <option>Orange</option><option>Purple</option><option>Beige</option>
-          <option>Multicolour</option>
+          <option>Orange</option><option>Purple</option><option>Beige</option><option>Multicolour</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label class="filter-label">Karigari</label>
-        <select class="filter-select" id="filterKarigari" onchange="applyFilters()">
+      <div class="fd-group">
+        <label class="fd-lbl">Karigari</label>
+        <select class="fd-sel" id="filterKarigari" onchange="applyFilters()">
           <option value="">All Karigari</option>
           <option>Jamdani</option><option>Kantha Stitch</option><option>Block Print</option>
           <option>Batik</option><option>Embroidery</option><option>Zari Work</option>
           <option>Nakshi</option><option>Plain Handloom</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label class="filter-label">Size</label>
-        <select class="filter-select" id="filterSize" onchange="applyFilters()">
+      <div class="fd-group">
+        <label class="fd-lbl">Size</label>
+        <select class="fd-sel" id="filterSize" onchange="applyFilters()">
           <option value="">All Sizes</option>
           <option>XS</option><option>S</option><option>M</option>
           <option>L</option><option>XL</option><option>XXL</option><option>Free Size</option>
         </select>
       </div>
-      <div class="filter-actions">
-        <button class="btn-filter-reset" onclick="resetFilters()">Reset</button>
+    </div>
+    <div class="filter-drawer-foot">
+      <div id="afRow"></div>
+      <button class="btn-clear" onclick="resetFilters()">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="coll-body">
+    <div class="product-grid" id="productGrid">
+      <div class="coll-state">
+        <div class="coll-ring"></div>
+        <div class="coll-loading-txt">Gathering our weavers' work…</div>
       </div>
     </div>
-
-    <!-- Quick chips -->
-    <div class="filter-chips" id="quickChips">
-      <button class="filter-chip active" data-quick="" onclick="quickFilter(this, '')">All</button>
-      <button class="filter-chip" data-quick="new" onclick="quickFilter(this, 'new')">New Arrivals</button>
-      <button class="filter-chip" data-quick="bestseller" onclick="quickFilter(this, 'bestseller')">Best Sellers</button>
-    </div>
   </div>
 
-  <!-- Sort & count bar -->
-  <div class="filter-meta">
-    <span class="results-count" id="resultsCount">Loading...</span>
-    <div class="sort-group">
-      <span class="sort-label">Sort:</span>
-      <button class="sort-btn active" onclick="setSort('relevance', this)">Relevance</button>
-      <button class="sort-btn" onclick="setSort('newest', this)">Newest</button>
-      <button class="sort-btn" onclick="setSort('az', this)">A–Z</button>
-    </div>
-  </div>
-
-  <!-- PRODUCT GRID -->
-  <div class="product-grid" id="productGrid">
-    <div class="products-loading">
-      <span class="products-loading-spinner"></span>
-      Loading collection from our weavers...
-    </div>
-  </div>
 </section>
 
+<!-- ══ MODAL ════════════════════════════════════════ -->
+<div class="product-modal-overlay" id="productModal" onclick="closeModal(event)">
+  <div class="product-modal">
+    <button class="modal-close" onclick="closeModal()">&#215;</button>
+    <div class="modal-img-col" id="modalImgCol">
+      <div class="modal-img-badges" id="modalImgBadges"></div>
+      <div class="modal-img-ph" id="modalImgPh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8">
+          <path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+    </div>
+    <div class="modal-detail-col" id="modalDetailCol">
+      <div class="modal-header" id="modalHeader"></div>
+      <div class="modal-body"   id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
   </div>
 </div>
 
+<script type="module">
+  // ══════════════════════════════════════════════════════
+  //  Firebase initialiser — runs as ES module so dynamic
+  //  import() is fully supported in all modern browsers
+  // ══════════════════════════════════════════════════════
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore as gFS, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
+    authDomain: "bunan-4fd57.firebaseapp.com",
+    projectId: "bunan-4fd57",
+    storageBucket: "bunan-4fd57.firebasestorage.app",
+    messagingSenderId: "612151786648",
+    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
+  };
 
+  try {
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    window.__db = db;
+
+    const snapshot = await getDocs(collection(db, 'products'));
+    const products = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    console.log("✅ Firestore: loaded", products.length, "products");
+
+    // Hand off to the UI layer
+    if (typeof window.__bunanOnProducts === 'function') {
+      window.__bunanOnProducts(products, db);
+    } else {
+      window.__bunanProducts = products; // store for when UI is ready
+    }
+  } catch (err) {
+    console.error("❌ Firestore load failed:", err);
+    // Signal UI layer to show demo data
+    if (typeof window.__bunanOnProducts === 'function') {
+      window.__bunanOnProducts(null, null);
+    } else {
+      window.__bunanProducts = null;
+    }
+  }
+</script>
 <script>
 (function () {
+  /* ── state ── */
+  let allProducts      = [];
+  let filteredProducts = [];
+  let currentSort      = 'relevance';
+  let quickMode        = '';
+  let drawerOpen       = false;
+  const WA = window.BUNAN_WA || '917501929425';
 
-  // ═══════════════════════════════════════════════════════════
-  //  STATE
-  // ═══════════════════════════════════════════════════════════
-  var allProducts      = [];
-  var filteredProducts = [];
-  var currentSort      = 'relevance';
-  var quickMode        = '';
-  var WA_NUM           = window.BUNAN_WA || '919999999999';
-
-  // Placeholder SVG — declared as var at top so productCard can always access it
-  var placeholderSVG = '<svg class="card-image-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d=\'M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z\'/><circle cx=\'12\' cy=\'12\' r=\'3\'/></svg>';
-
-  // ═══════════════════════════════════════════════════════════
-  //  DEMO PRODUCTS  (shown instantly; replaced when Firestore loads)
-  // ═══════════════════════════════════════════════════════════
-  var demoProducts = [
-    { id:'demo1', serialNumber:'BN-001', saleCode:'SAR-JMD-001', name:'Jamdani Silk Saree', nameBn:'জামদানি রেশম শাড়ি', category:'Saree', fabric:'Silk', colour:'White', occasion:'Wedding', karigari:'Jamdani', size:'Free Size', description:'An exquisite jamdani weave in pure Murshidabad silk.', material:'Pure Murshidabad Silk, Zari border', timeTaken:'72 hours', origin:'Murshidabad, West Bengal', driveLink:'', likes:142, isNew:true, isBestSeller:true, reviews:[{text:'Wore this to my wedding — every guest asked where I got it.',author:'Priya M., Kolkata'}] },
-    { id:'demo2', serialNumber:'BN-002', saleCode:'KNT-CTN-002', name:'Kantha Stitch Stole', nameBn:'কাঁথা সেলাই উত্তরীয়', category:'Kantha', fabric:'Cotton', colour:'Multicolour', occasion:'Casual', karigari:'Kantha Stitch', size:'Free Size', description:'Hand-stitched by artisans of Bolpur village.', material:'Organic cotton, natural dyes', timeTaken:'15 days', origin:'Bolpur, Birbhum', driveLink:'', likes:89, isNew:false, isBestSeller:true, reviews:[] },
-    { id:'demo3', serialNumber:'BN-003', saleCode:'PNJ-KHD-003', name:'Khadi Punjabi with Nakshi', nameBn:'নকশি খাদি পাঞ্জাবি', category:'Punjabi', fabric:'Khadi', colour:'Beige', occasion:'Festival', karigari:'Nakshi', size:'M', description:'Handspun khadi from Shantiniketan.', material:'Handspun Khadi cotton', timeTaken:'10 days', origin:'Shantiniketan, West Bengal', driveLink:'', likes:67, isNew:true, isBestSeller:false, reviews:[] },
-    { id:'demo4', serialNumber:'BN-004', saleCode:'SAR-MSL-004', name:'Tant Cotton Saree', nameBn:'তাঁত সুতি শাড়ি', category:'Saree', fabric:'Cotton', colour:'Red', occasion:'Daily Wear', karigari:'Plain Handloom', size:'Free Size', description:'The everyday elegance of Bengali tant.', material:'100% cotton tant', timeTaken:'8 hours', origin:'Dhaniakhali, Hooghly', driveLink:'', likes:211, isNew:false, isBestSeller:true, reviews:[] },
-    { id:'demo5', serialNumber:'BN-005', saleCode:'DPT-ORG-005', name:'Organza Dupatta with Zari', nameBn:'জরি অর্গান্ডি দোপাট্টা', category:'Dupatta', fabric:'Organza', colour:'Purple', occasion:'Wedding', karigari:'Zari Work', size:'Free Size', description:'Sheer organza with hand-woven pure zari border.', material:'Organza, pure zari', timeTaken:'20 hours', origin:'Varanasi collaboration × Bengal', driveLink:'', likes:54, isNew:true, isBestSeller:false, reviews:[] },
-    { id:'demo6', serialNumber:'BN-006', saleCode:'SHL-SLK-006', name:'Muga Silk Shawl', nameBn:'মুগা রেশম শাল', category:'Shawl', fabric:'Silk', colour:'Yellow', occasion:'Gifting', karigari:'Plain Handloom', size:'Free Size', description:'Woven from the golden Muga silk of Assam.', material:'Muga silk from Assam', timeTaken:'3 days', origin:'Sualkuchi, Assam', driveLink:'', likes:33, isNew:false, isBestSeller:false, reviews:[] }
+  /* ── demo data ── */
+  const demoProducts = [
+    { id:'demo1', serialNumber:'BN-001', saleCode:'SAR-JMD-001', name:'Jamdani Silk Saree', nameBn:'জামদানি রেশম শাড়ি', tagline:'Six metres of woven daylight.', category:'Saree', fabric:'Silk', colour:'White', occasion:'Wedding', karigari:'Jamdani', size:'Free Size', description:'An exquisite jamdani weave in pure Murshidabad silk. Each motif is woven directly into the cloth by hand — no embroidery, no printing.', material:'Pure Murshidabad Silk, Zari border', timeTaken:'72 hours', origin:'Murshidabad, West Bengal', weaverName:'Sumaitra Hansda', weaverVillage:'Jiaganj, Murshidabad', weaverStory:'Sumaitra has been weaving since she was fourteen. Each saree she makes takes three full days of devoted work.', driveLink:'', likes:142, isNew:true, isBestSeller:true, tags:['handwoven','wedding','jamdani'], reviews:[{text:'Wore this to my wedding — every guest asked where I got it.',author:'Priya M., Kolkata'}] },
+    { id:'demo2', serialNumber:'BN-002', saleCode:'KNT-CTN-002', name:'Kantha Stitch Stole', nameBn:'কাঁথা সেলাই উত্তরীয়', tagline:'Warmth and memory, stitched together.', category:'Kantha', fabric:'Cotton', colour:'Multicolour', occasion:'Casual', karigari:'Kantha Stitch', size:'Free Size', description:'Hand-stitched by artisans of Bolpur village. Every thread carries a story of patience.', material:'Organic cotton, natural dyes', timeTaken:'15 days', origin:'Bolpur, Birbhum', driveLink:'', likes:89, isNew:false, isBestSeller:true, tags:['kantha','cotton'], reviews:[] },
+    { id:'demo3', serialNumber:'BN-003', saleCode:'PNJ-KHD-003', name:'Khadi Punjabi', nameBn:'নকশি খাদি পাঞ্জাবি', tagline:'Handspun, unhurried, honest.', category:'Punjabi', fabric:'Khadi', colour:'Beige', occasion:'Festival', karigari:'Nakshi', size:'M', description:'Handspun khadi from Shantiniketan — light on the body, significant in origin.', material:'Handspun Khadi cotton', timeTaken:'10 days', origin:'Shantiniketan, West Bengal', driveLink:'', likes:67, isNew:true, isBestSeller:false, tags:['khadi','festival'], reviews:[] },
+    { id:'demo4', serialNumber:'BN-004', saleCode:'SAR-MSL-004', name:'Tant Cotton Saree', nameBn:'তাঁত সুতি শাড়ি', tagline:'The everyday saree, made extraordinary.', category:'Saree', fabric:'Cotton', colour:'Red', occasion:'Daily Wear', karigari:'Plain Handloom', size:'Free Size', description:'The everyday elegance of Bengali tant. Breathable, luminous, and deeply Bengali.', material:'100% cotton tant', timeTaken:'8 hours', origin:'Dhaniakhali, Hooghly', driveLink:'', likes:211, isNew:false, isBestSeller:true, tags:['tant','cotton'], reviews:[] },
+    { id:'demo5', serialNumber:'BN-005', saleCode:'DPT-ORG-005', name:'Organza Dupatta', nameBn:'জরি অর্গান্ডি দোপাট্টা', tagline:'Light enough to float, precious enough to keep.', category:'Dupatta', fabric:'Organza', colour:'Purple', occasion:'Wedding', karigari:'Zari Work', size:'Free Size', description:'Sheer organza with hand-woven pure zari border. Catches the light like nothing else.', material:'Organza, pure zari', timeTaken:'20 hours', origin:'Varanasi collaboration × Bengal', driveLink:'', likes:54, isNew:true, isBestSeller:false, tags:['organza','zari','wedding'], reviews:[] },
+    { id:'demo6', serialNumber:'BN-006', saleCode:'SHL-SLK-006', name:'Muga Silk Shawl', nameBn:'মুগা রেশম শাল', tagline:'Gold that you can wear.', category:'Shawl', fabric:'Silk', colour:'Yellow', occasion:'Gifting', karigari:'Plain Handloom', size:'Free Size', description:'Woven from the golden Muga silk of Assam — one of the rarest natural fabrics in the world.', material:'Muga silk from Assam', timeTaken:'3 days', origin:'Sualkuchi, Assam', driveLink:'', likes:33, isNew:false, isBestSeller:false, tags:['muga','silk','gifting'], reviews:[] }
   ];
 
-  // ═══════════════════════════════════════════════════════════
-  //  ALL FUNCTIONS DEFINED FIRST (so nothing calls before defined)
-  // ═══════════════════════════════════════════════════════════
+  /* ── firebase handoff ── */
+  window.__bunanOnProducts = function (products, db) {
+    if (products && products.length > 0) {
+      allProducts = products;
+      allProducts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    }
+    applyFilters();
+  };
+  allProducts = [...demoProducts];
+  applyFilters();
+  if (window.__bunanProducts !== undefined) {
+    window.__bunanOnProducts(window.__bunanProducts, window.__db);
+  }
 
+  /* ── drawer ── */
+  window.toggleDrawer = function () {
+    drawerOpen = !drawerOpen;
+    document.getElementById('filterDrawer').classList.toggle('open', drawerOpen);
+    document.getElementById('filterToggle').classList.toggle('active', drawerOpen);
+  };
+
+  /* ── filters ── */
   function applyFilters() {
-    var search   = (document.getElementById('searchInput')   || {}).value  || '';
-    var category = (document.getElementById('filterCategory')|| {}).value  || '';
-    var fabric   = (document.getElementById('filterFabric')  || {}).value  || '';
-    var occasion = (document.getElementById('filterOccasion')|| {}).value  || '';
-    var colour   = (document.getElementById('filterColour')  || {}).value  || '';
-    var karigari = (document.getElementById('filterKarigari')|| {}).value  || '';
-    var size     = (document.getElementById('filterSize')    || {}).value  || '';
-    search = search.toLowerCase();
+    const search   = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const category = document.getElementById('filterCategory')?.value || '';
+    const fabric   = document.getElementById('filterFabric')?.value || '';
+    const occasion = document.getElementById('filterOccasion')?.value || '';
+    const colour   = document.getElementById('filterColour')?.value || '';
+    const karigari = document.getElementById('filterKarigari')?.value || '';
+    const size     = document.getElementById('filterSize')?.value || '';
 
-    filteredProducts = allProducts.filter(function(p) {
-      if (quickMode === 'new'        && !p.isNew)       return false;
+    filteredProducts = allProducts.filter(p => {
+      if (quickMode === 'new'        && !p.isNew)        return false;
       if (quickMode === 'bestseller' && !p.isBestSeller) return false;
       if (category && p.category !== category) return false;
       if (fabric   && p.fabric   !== fabric)   return false;
@@ -567,263 +741,329 @@
       if (karigari && p.karigari !== karigari) return false;
       if (size     && p.size     !== size)     return false;
       if (search) {
-        var hay = ((p.name||'') + ' ' + (p.nameBn||'') + ' ' + (p.saleCode||'') + ' ' + (p.description||'') + ' ' + (p.fabric||'')).toLowerCase();
-        if (hay.indexOf(search) === -1) return false;
+        const hay = [p.name,p.nameBn,p.saleCode,p.description,p.fabric,p.karigari,p.origin,...(p.tags||[])].join(' ').toLowerCase();
+        if (!hay.includes(search)) return false;
       }
       return true;
     });
-    sortProducts();
-    renderGrid();
+    sortProducts(); renderGrid();
+    updateDot(category,fabric,occasion,colour,karigari,size,search,quickMode);
+    updatePills(category,fabric,occasion,colour,karigari,size);
   }
-
-  // expose so HTML onchange= attributes can call it
   window.applyFilters = applyFilters;
 
   function sortProducts() {
-    if (currentSort === 'relevance') filteredProducts.sort((a,b) => (b.likes||0) - (a.likes||0));
-    else if (currentSort === 'newest') filteredProducts.sort((a,b) => (b.isNew?1:0) - (a.isNew?1:0));
-    else if (currentSort === 'az') filteredProducts.sort((a,b) => a.name.localeCompare(b.name));
+    if (currentSort === 'relevance') filteredProducts.sort((a,b) => (b.likes||0)-(a.likes||0));
+    else if (currentSort === 'newest') filteredProducts.sort((a,b) => (b.isNew?1:0)-(a.isNew?1:0));
+    else if (currentSort === 'az') filteredProducts.sort((a,b) => (a.name||'').localeCompare(b.name||''));
   }
 
-  window.setSort = function(type, btn) {
-    currentSort = type;
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    sortProducts(); renderGrid();
-  };
+  window.setSort = function (val) { currentSort = val; sortProducts(); renderGrid(); };
 
-  window.quickFilter = function(btn, mode) {
+  window.quickFilter = function (btn, mode) {
     quickMode = mode;
-    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     applyFilters();
   };
 
-  window.resetFilters = function() {
-    ['filterCategory','filterFabric','filterOccasion','filterColour','filterKarigari','filterSize'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
+  window.resetFilters = function () {
+    ['filterCategory','filterFabric','filterOccasion','filterColour','filterKarigari','filterSize']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     const si = document.getElementById('searchInput');
     if (si) si.value = '';
     quickMode = '';
-    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-    document.querySelector('.filter-chip[data-quick=""]')?.classList.add('active');
+    document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+    document.querySelector('.chip[data-quick=""]')?.classList.add('active');
     applyFilters();
   };
 
-  // ═══ Expose for hero category clicks
-  window.__filterCategory = function(cat) {
-    document.getElementById('filterCategory').value = cat;
+  window.__filterCategory = function (cat) {
+    const el = document.getElementById('filterCategory');
+    if (el) el.value = cat;
     quickMode = '';
-    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-    document.querySelector('.filter-chip[data-quick=""]')?.classList.add('active');
+    document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+    document.querySelector('.chip[data-quick=""]')?.classList.add('active');
     applyFilters();
     document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
   };
 
-  // ═══ Placeholder SVG for items without images
-
-
-  // ═══ Render grid
-  function renderGrid() {
-    const grid = document.getElementById('productGrid');
-    const count = document.getElementById('resultsCount');
-
-    if (!grid) return;
-    grid.innerHTML = "";
-
-    if (count) count.textContent = `${filteredProducts.length} piece${filteredProducts.length !== 1 ? 's' : ''} found`;
-
-    if (filteredProducts.length === 0) {
-      grid.innerHTML = `<div class="products-empty"><p>No products found. Please adjust your filters.</p></div>`;
-      return;
-    }
-
-    grid.innerHTML = filteredProducts.map(p => productCard(p)).join('');
+  function updateDot(cat,fab,occ,col,kar,siz,srch,qm) {
+    const has = !!(cat||fab||occ||col||kar||siz||srch||qm);
+    document.getElementById('filterDot')?.classList.toggle('show', has);
   }
 
-  function productCard(p) {
-    const imgHtml = buildCardCarousel(getImageUrls(p), p.name);
+  function updatePills(cat,fab,occ,col,kar,siz) {
+    const row = document.getElementById('afRow');
+    if (!row) return;
+    row.innerHTML = '';
+    const add = (val, id) => {
+      if (!val) return;
+      const p = document.createElement('div');
+      p.className = 'af-pill';
+      p.innerHTML = `${val} <button onclick="document.getElementById('${id}').value='';applyFilters()">&times;</button>`;
+      row.appendChild(p);
+    };
+    add(cat,'filterCategory'); add(fab,'filterFabric');
+    add(occ,'filterOccasion'); add(col,'filterColour');
+    add(kar,'filterKarigari'); add(siz,'filterSize');
+  }
 
-    const waMsg = encodeURIComponent(`Hello, I would like to know more about ${p.name} (Code: ${p.saleCode}).`);
+  /* ── image helpers ── */
+  function driveThumb(url, sz='w600') {
+    if (!url) return null;
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=${sz}` : null;
+  }
+  function getMainImg(p) {
+    if (Array.isArray(p.driveLinks) && p.driveLinks.length) return driveThumb(p.driveLinks[0]);
+    if (p.driveLink) return driveThumb(p.driveLink);
+    return null;
+  }
+  const phSVG = `<div class="card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg></div>`;
 
-    return `
-    <div class="product-card" onclick="navigateToPiece('${p.id}')">
+  /* ── render grid ── */
+  function renderGrid() {
+    const grid  = document.getElementById('productGrid');
+    const count = document.getElementById('resultsCount');
+    if (!grid) return;
+    if (count) count.textContent = `${filteredProducts.length} piece${filteredProducts.length!==1?'s':''}`;
+    if (!filteredProducts.length) {
+      grid.innerHTML = `<div class="coll-state">
+        <div class="coll-empty-ornament">&#12539;</div>
+        <div class="coll-empty-txt">কোনো পোশাক পাওয়া যায়নি</div>
+        <div class="coll-empty-hint">No pieces match your current filters.</div>
+        <button class="btn-empty-reset" onclick="resetFilters()">Clear Filters</button>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = filteredProducts.map((p,i) => cardHTML(p,i)).join('');
+  }
+
+  function cardHTML(p, i) {
+    const thumb = getMainImg(p);
+    const waMsg = encodeURIComponent(`নমস্কার, আমি ${p.name} (Code: ${p.saleCode}) সম্পর্কে জানতে চাই।`);
+    const delay = Math.min(i*35,360);
+    return `<div class="product-card" style="animation-delay:${delay}ms" onclick="openModal('${p.id}')">
       <div class="card-badges">
-        ${p.isNew      ? '<span class="badge badge-new">New</span>' : ''}
+        ${p.isNew        ? '<span class="badge badge-new">New</span>' : ''}
         ${p.isBestSeller ? '<span class="badge badge-best">Best Seller</span>' : ''}
+        ${p.isLimited    ? '<span class="badge badge-limited">Limited</span>' : ''}
       </div>
-      <button class="card-like" onclick="event.stopPropagation(); likeProduct('${p.id}', this)" title="Like">
-        &#9825; <span class="like-count">${p.likes||0}</span>
+      <button class="card-like" id="like-${p.id}" onclick="event.stopPropagation();likeProduct('${p.id}',this)" title="Love this">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span class="card-like-count">${p.likes||0}</span>
       </button>
-      <div class="card-image">${imgHtml}</div>
-      <div class="card-overlay">
-        <button class="overlay-btn" onclick="event.stopPropagation(); navigateToPiece('${p.id}')">View Details</button>
+      <div class="card-img-wrap">
+        ${thumb ? `<img src="${thumb}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='${phSVG.replace(/"/g,"'")}'" />` : phSVG}
+        <div class="card-overlay">
+          <div class="ov-actions">
+            <button class="ov-btn" onclick="event.stopPropagation();openModal('${p.id}')">View Details</button>
+            <a class="ov-wa" href="https://wa.me/${WA}?text=${waMsg}" target="_blank" onclick="event.stopPropagation()">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Enquire
+            </a>
+          </div>
+        </div>
       </div>
       <div class="card-body">
-        <div class="card-category">${p.category}</div>
-        <div class="card-name">${p.name}</div>
-        <div class="card-name-bn">${p.nameBn || ''}</div>
-        <div class="card-meta">
-          ${p.fabric   ? `<span class="meta-tag">${p.fabric}</span>` : ''}
-          ${p.karigari ? `<span class="meta-tag">${p.karigari}</span>` : ''}
-          ${p.occasion ? `<span class="meta-tag">${p.occasion}</span>` : ''}
+        <div class="card-eyebrow">${p.category||''}</div>
+        <div class="card-name">${p.name||''}</div>
+        ${p.nameBn  ? `<div class="card-name-bn">${p.nameBn}</div>` : ''}
+        ${p.tagline ? `<div class="card-tagline">${p.tagline}</div>` : ''}
+        <div class="card-attrs">
+          ${p.karigari ? `<span class="card-attr hi">${p.karigari}</span>` : ''}
+          ${p.fabric   ? `<span class="card-attr">${p.fabric}</span>` : ''}
+          ${p.colour   ? `<span class="card-attr">${p.colour}</span>` : ''}
         </div>
       </div>
       <div class="card-footer">
-        <div>
-          <div class="card-code">${p.saleCode}</div>
-          <div class="card-likes">&#9825; ${p.likes||0} liked</div>
+        <div class="card-code">${p.saleCode||''}</div>
+        <div class="card-foot-r">
+          <span class="card-likes-txt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            ${p.likes||0}
+          </span>
+          <div class="card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </div>
         </div>
-        <a class="card-wa-btn" href="https://wa.me/${WA_NUM}?text=${waMsg}" target="_blank" onclick="event.stopPropagation()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Enquire
-        </a>
       </div>
     </div>`;
   }
 
-  // ═══ Google Drive thumbnail
-  function driveThumb(url) {
-    const match = url?.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400` : url;
-  }
-
-  // Normalise: driveLinks[] array OR legacy driveLink string
-  function getImageUrls(p) {
-    if (Array.isArray(p.driveLinks) && p.driveLinks.length) return p.driveLinks;
-    if (p.driveLink) return [p.driveLink];
-    return [];
-  }
-
-  function buildCardCarousel(urls, name) {
-    const thumbs = urls.map(driveThumb).filter(Boolean);
-    if (!thumbs.length) return placeholderSVG;
-
-    if (thumbs.length === 1) {
-      return `<div class="card-carousel">
-        <div class="card-carousel-track">
-          <div class="card-carousel-slide active">
-            <img src="${thumbs[0]}" alt="${name}" loading="lazy" onerror="this.style.display='none'"/>
-          </div>
-        </div>
-      </div>`;
-    }
-
-    const slides = thumbs.map((t, i) =>
-      `<div class="card-carousel-slide${i===0?' active':''}">
-        <img src="${t}" alt="${name} ${i+1}" loading="${i===0?'eager':'lazy'}" onerror="this.style.display='none'"/>
-      </div>`
-    ).join('');
-
-    const dots = thumbs.map((_, i) =>
-      `<button class="card-carousel-dot${i===0?' active':''}" onclick="event.stopPropagation();cardCarouselGo(this,${i})"></button>`
-    ).join('');
-
-    return `<div class="card-carousel" data-current="0" data-total="${thumbs.length}">
-      <div class="card-carousel-track">${slides}</div>
-      <button class="card-carousel-btn card-carousel-prev hidden" onclick="event.stopPropagation();cardCarouselGo(this,-1,true)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button class="card-carousel-btn card-carousel-next" onclick="event.stopPropagation();cardCarouselGo(this,1,true)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
-      <div class="card-carousel-dots">${dots}</div>
-    </div>`;
-  }
-
-  // Shared card carousel controller — works for both dot clicks and arrow clicks
-  window.cardCarouselGo = function(el, idxOrDelta, isDelta) {
-    var carousel = el.closest('.card-carousel');
-    if (!carousel) return;
-    var total    = parseInt(carousel.dataset.total);
-    var current  = parseInt(carousel.dataset.current);
-    var next     = isDelta ? current + idxOrDelta : idxOrDelta;
-    next = Math.max(0, Math.min(next, total - 1));
-    if (next === current) return;
-
-    var track  = carousel.querySelector('.card-carousel-track');
-    var slides = carousel.querySelectorAll('.card-carousel-slide');
-    var dots   = carousel.querySelectorAll('.card-carousel-dot');
-    var prev   = carousel.querySelector('.card-carousel-prev');
-    var nxt    = carousel.querySelector('.card-carousel-next');
-
-    slides[current].classList.remove('active');
-    if (dots[current]) dots[current].classList.remove('active');
-    slides[next].classList.add('active');
-    if (dots[next]) dots[next].classList.add('active');
-    track.style.transform = 'translateX(-' + (next * 100) + '%)';
-    carousel.dataset.current = next;
-
-    if (prev) prev.classList.toggle('hidden', next === 0);
-    if (nxt)  nxt.classList.toggle('hidden',  next === total - 1);
-  };
-
-  // ═══ Open modal
-  // ── Navigate to piece story page with exit animation ─────────────────
-  window.navigateToPiece = function(id) {
-    document.body.classList.add('exit');
-    setTimeout(function() {
-      window.location.href = 'piece.html?id=' + id;
-    }, 340);
-  };
-
-
-  // ═══ Like product
-  window.likeProduct = function(id, btn) {
+  /* ── modal ── */
+  window.openModal = function (id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
-    p.likes = (p.likes || 0) + 1;
-    btn.classList.add('liked');
-    btn.querySelector('.like-count').textContent = p.likes;
+    const waMsg = encodeURIComponent(`নমস্কার, আমি ${p.name} (Code: ${p.saleCode}) সম্পর্কে জানতে চাই।`);
+    const thumb = getMainImg(p);
 
+    /* Image col */
+    const ic = document.getElementById('modalImgCol');
+    ic.innerHTML = '';
+    const ib = document.createElement('div'); ib.className = 'modal-img-badges';
+    if (p.isNew)        ib.innerHTML += '<span class="badge badge-new">New</span>';
+    if (p.isBestSeller) ib.innerHTML += '<span class="badge badge-best">Best Seller</span>';
+    if (p.isLimited)    ib.innerHTML += '<span class="badge badge-limited">Limited</span>';
+    ic.appendChild(ib);
+    if (thumb) {
+      const img = document.createElement('img');
+      img.src = thumb; img.alt = p.name; img.loading = 'eager';
+      img.onerror = () => {
+        const ph = document.createElement('div'); ph.className = 'modal-img-ph';
+        ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        ic.appendChild(ph);
+      };
+      ic.appendChild(img);
+    } else {
+      const ph = document.createElement('div'); ph.className = 'modal-img-ph';
+      ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+      ic.appendChild(ph);
+    }
+
+    /* Header */
+    document.getElementById('modalHeader').innerHTML = `
+      <div class="modal-eyebrow">${p.category||''}${p.occasion?' &middot; '+p.occasion:''}</div>
+      <div class="modal-name">${p.name||''}</div>
+      ${p.nameBn  ? `<div class="modal-name-bn">${p.nameBn}</div>` : ''}
+      ${p.tagline ? `<div class="modal-tagline">"${p.tagline}"</div>` : ''}`;
+
+    /* Specs */
+    const specs = [
+      ['Material',    p.material||p.fabric],
+      ['Karigari',    p.karigari],
+      ['Fabric',      p.fabric],
+      ['Colour',      p.colour],
+      ['Size',        p.size],
+      ['Time to Weave', p.timeTaken],
+      ['Dimensions',  p.dimensions],
+      ['Weight',      p.weight],
+      ['Origin',      p.origin],
+      ['Occasion',    p.occasion],
+    ].filter(r => r[1]);
+
+    const weaver = (p.weaverName||p.weaverVillage||p.weaverStory) ? `
+      <div class="modal-weaver">
+        <div class="modal-weaver-av">${(p.weaverName||'?')[0]}</div>
+        <div>
+          <div class="mw-name">${p.weaverName||'Artisan'}</div>
+          ${p.weaverVillage ? `<div class="mw-village">${p.weaverVillage}</div>` : ''}
+          ${p.weaverStory   ? `<div class="mw-story">"${p.weaverStory}"</div>` : ''}
+        </div>
+      </div>` : '';
+
+    const tagsHTML = (Array.isArray(p.tags)&&p.tags.length)
+      ? `<div class="modal-tags">${p.tags.map(t=>`<span class="modal-tag">${t}</span>`).join('')}</div>` : '';
+
+    const revHTML = (p.reviews||[]).length
+      ? `<div class="modal-reviews-title">What They Say</div>
+         ${(p.reviews||[]).map(r=>`
+           <div class="modal-review">
+             <div class="modal-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+             <p class="modal-review-text">&ldquo;${r.text}&rdquo;</p>
+             <div class="modal-review-author">
+               <div class="mra-line"></div>
+               <div class="mra-name">${r.author||'Anonymous'}</div>
+             </div>
+           </div>`).join('')}`
+      : `<p class="modal-no-reviews">Be the first to experience this piece.</p>`;
+
+    document.getElementById('modalBody').innerHTML = `
+      <div class="modal-meta-strip">
+        <div class="mms-item"><div class="mms-lbl">Sale Code</div><div class="mms-val">${p.saleCode||'—'}</div></div>
+        <div class="mms-item"><div class="mms-lbl">Serial No.</div><div class="mms-val">${p.serialNumber||'—'}</div></div>
+        <div class="mms-item"><div class="mms-lbl">Origin</div><div class="mms-val plain">${p.origin||'—'}</div></div>
+      </div>
+      <p class="modal-desc">${p.description||''}</p>
+      ${weaver}
+      <div class="modal-specs-title">Craft Details</div>
+      <div class="modal-specs">${specs.map(([k,v])=>`<div class="spec-row"><div class="spec-k">${k}</div><div class="spec-v">${v}</div></div>`).join('')}</div>
+      ${tagsHTML}
+      ${revHTML}`;
+
+    const isLiked = document.getElementById('like-'+id)?.classList.contains('liked');
+    document.getElementById('modalFooter').innerHTML = `
+      <a class="modal-wa-btn" href="https://wa.me/${WA}?text=${waMsg}" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enquire on WhatsApp
+      </a>
+      <a class="modal-piece-btn" href="piece.html?id=${p.id}">
+        Full Story
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <button class="modal-like-btn ${isLiked?'liked':''}" id="ml-${p.id}" onclick="modalLike('${p.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span id="ml-count-${p.id}">${p.likes||0}</span>
+      </button>`;
+
+    document.getElementById('productModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('modalDetailCol').scrollTop = 0;
+  };
+
+  window.closeModal = function (e) {
+    if (e && e.target !== document.getElementById('productModal')) return;
+    document.getElementById('productModal').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.getElementById('productModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  /* ── like ── */
+  window.likeProduct = function (id, btn) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p || btn.classList.contains('liked')) return;
+    p.likes = (p.likes||0)+1;
+    btn.classList.add('liked');
+    const svg = btn.querySelector('svg');
+    svg.style.animation = 'none'; svg.getBoundingClientRect();
+    svg.style.animation = 'likePop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+    btn.querySelector('.card-like-count').textContent = p.likes;
+    const mc = document.getElementById('ml-count-'+id);
+    if (mc) mc.textContent = p.likes;
+    const ml = document.getElementById('ml-'+id);
+    if (ml) ml.classList.add('liked');
     if (window.__db) {
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
-        .then(({ doc, updateDoc, increment }) => {
-          updateDoc(doc(window.__db, 'products', id), { likes: increment(1) }).catch(() => {});
+      import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+        .then(({doc, updateDoc, increment}) => {
+          updateDoc(doc(window.__db, 'products', id), { likes: increment(1) }).catch(()=>{});
         });
     }
   };
 
-  // ═══════════════════════════════════════════════════════════
-  //  FIRESTORE LOADER
-  // ═══════════════════════════════════════════════════════════
-  function loadFirestoreProducts(db) {
-    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
-      .then(function(fs) { return fs.getDocs(fs.collection(db, 'products')); })
-      .then(function(snapshot) {
-        if (!snapshot.empty) {
-          allProducts = snapshot.docs.map(function(d) {
-            return Object.assign({ id: d.id }, d.data());
-          });
-          allProducts.sort(function(a,b){ return (b.likes||0)-(a.likes||0); });
-          console.log('✅ Firestore loaded:', allProducts.length, 'products');
-          applyFilters();
-        } else {
-          console.warn('⚠️ Firestore empty — keeping demo data');
-        }
-      })
-      .catch(function(err){ console.error('❌ Firestore error:', err); });
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  //  INIT  (runs last — all functions are defined above)
-  // ═══════════════════════════════════════════════════════════
-
-  // 1. Show demo products immediately
-  allProducts = demoProducts.slice();
-  applyFilters();
-
-  // 2. Load real products from Firestore
-  //    Handle both cases: db already ready, or not yet
-  if (window.__db) {
-    loadFirestoreProducts(window.__db);
-  } else {
-    window.addEventListener('firebase-ready', function() {
-      loadFirestoreProducts(window.__db);
-    }, { once: true });
-  }
+  window.modalLike = function (id) {
+    const cardBtn = document.getElementById('like-'+id);
+    if (cardBtn) { likeProduct(id, cardBtn); return; }
+    const p = allProducts.find(x => x.id === id);
+    const ml = document.getElementById('ml-'+id);
+    if (!p || !ml || ml.classList.contains('liked')) return;
+    p.likes = (p.likes||0)+1;
+    ml.classList.add('liked');
+    const mc = document.getElementById('ml-count-'+id);
+    if (mc) mc.textContent = p.likes;
+    if (window.__db) {
+      import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+        .then(({doc, updateDoc, increment}) => {
+          updateDoc(doc(window.__db, 'products', id), { likes: increment(1) }).catch(()=>{});
+        });
+    }
+  };
 
 })();
 </script>
