@@ -1,479 +1,944 @@
-<!-- ══════════════════════════════════════════════════════════════════
-     BUNAN — WEAVERS MODULE  (weavers.html)
-     Story of the rural women weavers team
-     ══════════════════════════════════════════════════════════════════ -->
-<style>
-  /* ─── WEAVERS SECTION ─────────────────────────────────────── */
-  #weavers {
-    padding: 7rem 3rem;
-    scroll-margin-top: 80px;
-    background: var(--bg-dark);
-    border-top: 1px solid var(--border-soft);
-    border-bottom: 1px solid var(--border-soft);
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>বুনন — The Weavers</title>
+  <link rel="icon" type="image/png" href="logo.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+Bengali:wght@300;400;500&family=Cinzel:wght@300;400&display=swap" rel="stylesheet"/>
 
-  .weavers-intro {
-    max-width: 700px; margin: 0 auto 5rem; text-align: center;
-  }
-  .weavers-tag {
-    font-family: var(--font-deco);
-    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--gold); display: block; margin-bottom: 1rem;
-  }
-  .weavers-title {
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    color: var(--text);
-    font-weight: 400;
-    margin-bottom: 1rem;
-  }
-  .weavers-subtitle {
-    font-family: var(--font-bengali);
-    font-size: 1.05rem; color: var(--text-dim);
-    letter-spacing: 0.05em; margin-bottom: 1.5rem;
-  }
-  .weavers-lead {
-    font-family: var(--font-display);
-    font-size: 1.05rem; line-height: 1.95;
-    color: var(--text-dim);
-  }
+  <style>
+    :root {
+      --bg:          #FAF6F0;
+      --bg-dark:     #F2EAE0;
+      --bg-card:     #FFFFFF;
+      --text:        #2C1A0E;
+      --text-dim:    #7A5C44;
+      --text-light:  #A07858;
+      --gold:        #8B6914;
+      --gold-light:  #C4993A;
+      --gold-dark:   #6B4F0E;
+      --gold-pale:   #E8D5A3;
+      --border:      rgba(139,105,20,0.18);
+      --border-soft: rgba(139,105,20,0.09);
+      --shadow-card: 0 8px 40px rgba(44,26,14,0.10);
+      --font-heading:'Playfair Display', Georgia, serif;
+      --font-display:'EB Garamond', Georgia, serif;
+      --font-bengali:'Noto Serif Bengali', serif;
+      --font-deco:   'Cinzel', Georgia, serif;
+    }
 
-  /* ─── MANIFESTO BANNER ───────────────────────────────────── */
-  .manifesto {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold-light);
-    padding: 3rem 4rem;
-    max-width: 900px; margin: 0 auto 5rem;
-    text-align: center;
-    box-shadow: var(--shadow-card);
-  }
-  .manifesto-text {
-    font-family: var(--font-bengali);
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-    color: var(--text);
-    line-height: 1.95; letter-spacing: 0.04em;
-    font-style: italic;
-  }
-  .manifesto-en {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.95rem; color: var(--text-dim);
-    margin-top: 1rem; letter-spacing: 0.06em;
-  }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--font-display); min-height: 100vh; overflow-x: hidden;
+    }
 
-  /* ─── TEAM GRID ───────────────────────────────────────────── */
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1px; max-width: 1300px; margin: 0 auto 5rem;
-    border: 1px solid var(--border-soft);
-  }
+    /* Grain texture */
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+    }
 
-  .weaver-card {
-    position: relative; overflow: hidden;
-    background: var(--bg-card);
-    border-right: 1px solid var(--border-soft);
-    border-bottom: 1px solid var(--border-soft);
-    transition: all 0.4s ease;
-  }
-  .weaver-card:hover {
-    background: var(--bg);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(44,26,14,0.12);
-  }
+    /* ── LOADING ──────────────────────────────────── */
+    #stateLoading {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.4rem;
+      z-index: 500; transition: opacity 0.6s ease;
+    }
+    #stateLoading.out { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 1px solid var(--border);
+      border-top-color: var(--gold-light);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .spinner-label {
+      font-family: var(--font-deco); font-size: 0.52rem;
+      letter-spacing: 0.36em; text-transform: uppercase; color: var(--text-light);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-  .weaver-portrait {
-    aspect-ratio: 3/4;
-    background:
-      repeating-linear-gradient(
-        -45deg, rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
-        transparent 1px, transparent 12px
-      ),
-      linear-gradient(160deg, var(--bg-dark), var(--bg));
-    display: flex; align-items: center; justify-content: center;
-    color: rgba(139,105,20,0.15);
-    position: relative;
-    overflow: hidden;
-  }
-  .weaver-portrait-icon {
-    width: 80px; height: 80px; opacity: 0.15;
-    color: var(--gold-dark);
-  }
-  .weaver-portrait::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
-    background: linear-gradient(180deg, transparent, rgba(44,26,14,0.35));
-  }
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(250,246,240,0.94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 1.1rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-bengali);
+      font-size: 1.6rem; color: var(--gold-dark);
+      text-decoration: none; letter-spacing: 0.03em;
+    }
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-deco);
+      font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold-dark); }
 
-  .weaver-craft-badge {
-    position: absolute;
-    bottom: 1rem; left: 1rem; z-index: 2;
-    font-family: var(--font-deco);
-    font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase;
-    background: var(--gold-dark);
-    color: #fff;
-    padding: 0.3rem 0.7rem;
-  }
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      padding: 8rem 3rem 6rem;
+      text-align: center;
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border-soft);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg, rgba(139,105,20,0.025) 0px, rgba(139,105,20,0.025) 1px,
+        transparent 1px, transparent 16px
+      );
+    }
+    .hero-eyebrow {
+      font-family: var(--font-deco);
+      font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); display: block; margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      color: var(--text); font-weight: 400; line-height: 1.1;
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.8s ease 0.12s both;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-dark); }
+    .hero-subtitle {
+      font-family: var(--font-bengali);
+      font-size: 1.15rem; color: var(--text-dim);
+      letter-spacing: 0.04em; margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease 0.22s both;
+    }
+    .hero-lead {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      line-height: 2; color: var(--text-dim);
+      max-width: 680px; margin: 0 auto;
+      animation: fadeUp 0.8s ease 0.32s both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-  .weaver-body { padding: 1.5rem; }
-  .weaver-name {
-    font-family: var(--font-bengali);
-    font-size: 1.25rem; color: var(--gold-dark);
-    margin-bottom: 0.2rem;
-  }
-  .weaver-location {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-light); margin-bottom: 1rem;
-  }
-  .weaver-story {
-    font-family: var(--font-display);
-    font-size: 0.95rem; line-height: 1.9;
-    color: var(--text-dim);
-  }
-  .weaver-spec {
-    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
-  }
-  .weaver-tag {
-    font-family: var(--font-deco);
-    font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--gold);
-    border: 1px solid var(--border);
-    padding: 0.2rem 0.6rem;
-  }
-  .weaver-years {
-    font-family: var(--font-heading);
-    font-size: 2rem; color: rgba(139,105,20,0.2);
-    position: absolute; top: 1rem; right: 1rem;
-    line-height: 1; font-weight: 400;
-  }
+    /* ── MANIFESTO ───────────────────────────────── */
+    .manifesto-wrap {
+      padding: 5rem 3rem;
+      display: flex; justify-content: center;
+    }
+    .manifesto {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold-light);
+      padding: 3.5rem 4rem;
+      max-width: 900px; width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .manifesto::before {
+      content: '"';
+      font-family: var(--font-heading);
+      font-size: 7rem; line-height: 0.5;
+      color: rgba(139,105,20,0.07);
+      position: absolute; top: 1.5rem; left: 2rem;
+    }
+    .manifesto-text {
+      font-family: var(--font-bengali);
+      font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+      color: var(--text); line-height: 1.95;
+      letter-spacing: 0.04em; font-style: italic;
+      position: relative; z-index: 1;
+    }
+    .manifesto-en {
+      font-family: var(--font-display);
+      font-style: italic; font-size: 0.95rem;
+      color: var(--text-dim); margin-top: 1.2rem;
+      letter-spacing: 0.05em; line-height: 1.8;
+    }
+    .manifesto-rule {
+      width: 40px; height: 1px;
+      background: var(--gold-light); opacity: 0.4;
+      margin: 1.2rem auto;
+    }
 
-  /* ─── MISSION STRIPS ──────────────────────────────────────── */
-  .mission-section { max-width: 1200px; margin: 0 auto; }
-  .mission-head {
-    text-align: center; margin-bottom: 3rem;
-  }
-  .mission-head h3 {
-    font-family: var(--font-heading);
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    color: var(--text); font-weight: 400;
-  }
-  .mission-head p {
-    font-family: var(--font-bengali);
-    font-size: 0.95rem; color: var(--text-dim); margin-top: 0.5rem;
-  }
+    /* ── IMPACT COUNTER BAND ─────────────────────── */
+    .impact-band {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 4rem 3rem;
+    }
+    .impact-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2rem; text-align: center;
+    }
+    .impact-num {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: var(--gold-dark); line-height: 1;
+      font-weight: 500;
+    }
+    .impact-num.counting { color: var(--gold); }
+    .impact-label {
+      font-family: var(--font-deco);
+      font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-light); margin-top: 0.5rem;
+    }
+    .impact-sub {
+      font-family: var(--font-bengali);
+      font-size: 0.85rem; color: var(--text-dim); margin-top: 0.3rem;
+    }
 
-  .mission-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1px;
-    border: 1px solid var(--border-soft);
-  }
-  .mission-item {
-    padding: 2.5rem 2rem;
-    background: var(--bg-card);
-    border-right: 1px solid var(--border-soft);
-    border-bottom: 1px solid var(--border-soft);
-    text-align: center;
-    transition: all 0.35s ease;
-  }
-  .mission-item:hover {
-    background: var(--bg);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card);
-  }
-  .mission-icon {
-    margin-bottom: 1.2rem; display: block;
-    width: 40px; height: 40px;
-    margin: 0 auto 1.2rem;
-    color: var(--gold-dark); opacity: 0.7;
-  }
-  .mission-title {
-    font-family: var(--font-deco);
-    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold-dark); margin-bottom: 0.8rem;
-  }
-  .mission-desc {
-    font-family: var(--font-display);
-    font-size: 0.95rem; line-height: 1.85;
-    color: var(--text-dim);
-  }
+    /* ── WEAVERS SECTION ─────────────────────────── */
+    .weavers-section {
+      padding: 6rem 3rem;
+      background: var(--bg-dark);
+    }
+    .section-header {
+      text-align: center; margin-bottom: 4rem;
+    }
+    .section-tag {
+      font-family: var(--font-deco);
+      font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); display: block; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      color: var(--text); font-weight: 400; margin-bottom: 0.5rem;
+    }
 
-  /* ─── IMPACT NUMBERS ──────────────────────────────────────── */
-  .impact-band {
-    background: var(--bg-card);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 4rem 3rem; margin-top: 5rem;
-    box-shadow: var(--shadow-card);
-  }
-  .impact-inner {
-    max-width: 1000px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 2rem; text-align: center;
-  }
-  .impact-num {
-    font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 5vw, 3.8rem);
-    color: var(--gold-dark);
-    line-height: 1; font-weight: 500;
-  }
-  .impact-label {
-    font-family: var(--font-deco);
-    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text-light); margin-top: 0.5rem;
-  }
-  .impact-sub {
-    font-family: var(--font-bengali);
-    font-size: 0.85rem; color: var(--text-dim); margin-top: 0.3rem;
-  }
+    /* Filter bar */
+    .filter-bar {
+      display: flex; gap: 0.5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 3rem;
+    }
+    .filter-btn {
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-dim); background: transparent;
+      border: 1px solid var(--border); padding: 0.5rem 1.2rem;
+      cursor: pointer; transition: all 0.3s ease;
+    }
+    .filter-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
+    .filter-btn.active {
+      background: var(--gold-dark); color: #fff; border-color: var(--gold-dark);
+    }
 
-  @media (max-width: 900px) {
-    #weavers { padding: 4rem 1.5rem; }
-    .manifesto { padding: 2rem; }
-    .team-grid { grid-template-columns: 1fr; }
-    .impact-inner { grid-template-columns: repeat(2, 1fr); }
-    .mission-grid { grid-template-columns: 1fr; }
-  }
-</style>
+    /* ── TEAM GRID ───────────────────────────────── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1px; max-width: 1300px; margin: 0 auto;
+      border: 1px solid var(--border-soft);
+    }
 
-<section id="weavers">
+    .weaver-card {
+      position: relative; overflow: hidden;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      cursor: pointer;
+      /* reveal animation set by JS */
+      opacity: 0; transform: translateY(28px);
+    }
+    .weaver-card.revealed {
+      opacity: 1; transform: translateY(0);
+    }
+    .weaver-card:hover {
+      background: var(--bg);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 50px rgba(44,26,14,0.14);
+      z-index: 2;
+    }
+    .weaver-card.featured-card {
+      grid-column: span 2;
+    }
 
-  <div class="weavers-intro">
-    <span class="weavers-tag">The Hands Behind the Cloth</span>
-    <h2 class="weavers-title">Meet the Weavers</h2>
-    <p class="weavers-subtitle">আমাদের তাঁতিরা — যারা স্বপ্ন বোনেন সুতোয়</p>
-    <p class="weavers-lead">
-      These are not anonymous artisans. They are mothers, daughters, teachers, and dreamers — 
-      women whose hands have spent decades learning a language that cannot be written, only woven. 
-      Every piece you wear carries the story of one of them.
-    </p>
-  </div>
+    /* Portrait */
+    .weaver-portrait {
+      aspect-ratio: 3/4;
+      position: relative; overflow: hidden;
+      background:
+        repeating-linear-gradient(
+          -45deg, rgba(139,105,20,0.04) 0px, rgba(139,105,20,0.04) 1px,
+          transparent 1px, transparent 12px
+        ),
+        linear-gradient(160deg, var(--bg-dark), var(--bg));
+      display: flex; align-items: center; justify-content: center;
+    }
+    .weaver-card.featured-card .weaver-portrait {
+      aspect-ratio: 16/9;
+    }
+    .weaver-portrait img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .weaver-card:hover .weaver-portrait img {
+      transform: scale(1.04);
+    }
+    .weaver-portrait-placeholder {
+      width: 80px; height: 80px; opacity: 0.12;
+      color: var(--gold-dark); stroke: currentColor; fill: none;
+    }
+    .weaver-portrait-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(44,26,14,0.55) 100%);
+      pointer-events: none;
+    }
 
-  <!-- Manifesto -->
+    .weaver-craft-badge {
+      position: absolute; bottom: 1.1rem; left: 1.1rem; z-index: 2;
+      font-family: var(--font-deco);
+      font-size: 0.47rem; letter-spacing: 0.15em; text-transform: uppercase;
+      background: var(--gold-dark); color: #fff;
+      padding: 0.3rem 0.8rem;
+    }
+    .weaver-award-badge {
+      position: absolute; top: 1.1rem; right: 1.1rem; z-index: 2;
+      font-family: var(--font-deco);
+      font-size: 0.42rem; letter-spacing: 0.12em; text-transform: uppercase;
+      background: rgba(250,246,240,0.92); color: var(--gold-dark);
+      border: 1px solid var(--gold-light);
+      padding: 0.25rem 0.6rem;
+    }
+
+    /* Card body */
+    .weaver-body { padding: 1.6rem 1.8rem; position: relative; }
+    .weaver-years {
+      font-family: var(--font-heading);
+      font-size: 3rem; color: rgba(139,105,20,0.12);
+      position: absolute; top: 1rem; right: 1.5rem;
+      line-height: 1; font-weight: 400;
+      transition: color 0.4s;
+    }
+    .weaver-card:hover .weaver-years { color: rgba(139,105,20,0.2); }
+    .weaver-name {
+      font-family: var(--font-bengali);
+      font-size: 1.3rem; color: var(--gold-dark);
+      margin-bottom: 0.15rem; line-height: 1.3;
+    }
+    .weaver-name-en {
+      font-family: var(--font-display);
+      font-size: 0.88rem; color: var(--text-dim);
+      margin-bottom: 0.15rem; font-style: italic;
+    }
+    .weaver-location {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-light); margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .weaver-location::before {
+      content: '';
+      width: 14px; height: 1px; background: var(--gold-light); display: inline-block;
+    }
+    .weaver-story {
+      font-family: var(--font-display);
+      font-size: 0.95rem; line-height: 1.95;
+      color: var(--text-dim);
+      /* clamp for non-featured */
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .weaver-card.featured-card .weaver-story {
+      -webkit-line-clamp: 8;
+    }
+    .weaver-spec {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
+    }
+    .weaver-tag {
+      font-family: var(--font-deco);
+      font-size: 0.46rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid var(--border);
+      padding: 0.22rem 0.65rem;
+      transition: all 0.25s;
+    }
+    .weaver-card:hover .weaver-tag {
+      border-color: var(--gold-light); color: var(--gold-dark);
+    }
+    .weaver-read-more {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1rem;
+      font-family: var(--font-deco);
+      font-size: 0.46rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold-dark); cursor: pointer;
+      background: none; border: none;
+      padding: 0; transition: gap 0.3s;
+    }
+    .weaver-read-more:hover { gap: 0.7rem; }
+    .weaver-read-more-arrow {
+      transition: transform 0.3s;
+    }
+    .weaver-read-more:hover .weaver-read-more-arrow { transform: translateX(3px); }
+
+    /* Empty state */
+    .empty-state {
+      grid-column: 1 / -1; text-align: center;
+      padding: 5rem 2rem;
+      font-family: var(--font-heading);
+      font-size: 1.5rem; font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ── MISSION SECTION ─────────────────────────── */
+    .mission-section {
+      padding: 6rem 3rem;
+      background: var(--bg);
+    }
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1px; max-width: 1200px; margin: 0 auto;
+      border: 1px solid var(--border-soft);
+    }
+    .mission-item {
+      padding: 2.8rem 2rem; text-align: center;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      transition: all 0.35s ease;
+      opacity: 0; transform: translateY(20px);
+    }
+    .mission-item.revealed { opacity: 1; transform: translateY(0); }
+    .mission-item:hover {
+      background: var(--bg-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+    .mission-icon {
+      width: 36px; height: 36px; margin: 0 auto 1.4rem;
+      color: var(--gold-dark); opacity: 0.65; display: block;
+    }
+    .mission-title {
+      font-family: var(--font-deco);
+      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-dark); margin-bottom: 0.9rem;
+    }
+    .mission-desc {
+      font-family: var(--font-display);
+      font-size: 0.95rem; line-height: 1.9; color: var(--text-dim);
+    }
+
+    /* ── WEAVER LIGHTBOX ─────────────────────────── */
+    .lightbox-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(44,26,14,0.7); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .lightbox-overlay.open { opacity: 1; pointer-events: all; }
+    .lightbox {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--gold-light);
+      max-width: 860px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 40px 100px rgba(44,26,14,0.3);
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.35s ease;
+      scrollbar-width: thin;
+    }
+    .lightbox-overlay.open .lightbox { transform: translateY(0) scale(1); }
+    .lightbox-inner {
+      display: grid; grid-template-columns: 300px 1fr;
+    }
+    .lightbox-portrait {
+      background: var(--bg-dark);
+      position: relative; min-height: 400px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox-portrait img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; inset: 0;
+    }
+    .lightbox-portrait-placeholder {
+      opacity: 0.1; width: 60px; height: 60px; color: var(--gold-dark);
+    }
+    .lightbox-body { padding: 2.5rem; }
+    .lightbox-close {
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      background: none; border: 1px solid var(--border);
+      width: 30px; height: 30px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); font-size: 1rem;
+      transition: all 0.2s; z-index: 10;
+    }
+    .lightbox-close:hover { border-color: var(--gold); color: var(--gold-dark); }
+    .lightbox-name {
+      font-family: var(--font-bengali);
+      font-size: 2rem; color: var(--gold-dark); margin-bottom: 0.2rem;
+    }
+    .lightbox-name-en {
+      font-family: var(--font-display);
+      font-size: 1rem; font-style: italic; color: var(--text-dim);
+      margin-bottom: 0.4rem;
+    }
+    .lightbox-location {
+      font-family: var(--font-deco);
+      font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-light); margin-bottom: 1.5rem;
+    }
+    .lightbox-divider {
+      height: 1px; background: var(--border-soft); margin: 1.2rem 0;
+    }
+    .lightbox-meta-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.8rem 1.5rem; margin-bottom: 1.4rem;
+    }
+    .lightbox-meta-item {}
+    .lightbox-meta-label {
+      font-family: var(--font-deco);
+      font-size: 0.45rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-light); margin-bottom: 0.25rem;
+    }
+    .lightbox-meta-value {
+      font-family: var(--font-display);
+      font-size: 0.92rem; color: var(--text);
+    }
+    .lightbox-story {
+      font-family: var(--font-display);
+      font-size: 0.97rem; line-height: 1.95;
+      color: var(--text-dim);
+    }
+    .lightbox-expertise {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border-soft);
+      padding: 3rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-bengali);
+      font-size: 2rem; color: var(--gold-dark); margin-bottom: 0.6rem;
+    }
+    .footer-copy {
+      font-family: var(--font-deco);
+      font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero { padding: 5rem 1.5rem 4rem; }
+      .manifesto { padding: 2rem 1.5rem; }
+      .manifesto-wrap { padding: 3rem 1.5rem; }
+      .weavers-section, .mission-section { padding: 4rem 1.5rem; }
+      .team-grid { grid-template-columns: 1fr; }
+      .weaver-card.featured-card { grid-column: span 1; }
+      .impact-inner { grid-template-columns: repeat(2, 1fr); }
+      .impact-band { padding: 3rem 1.5rem; }
+      .lightbox-inner { grid-template-columns: 1fr; }
+      .lightbox-portrait { min-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="stateLoading">
+  <div class="spinner"></div>
+  <div class="spinner-label">Loading Weavers</div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a href="index.html" class="nav-logo">বুনন</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#collection">Collection</a></li>
+    <li><a href="weavers.html" class="active">Weavers</a></li>
+    <li><a href="index.html#testimonials">Stories</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <span class="hero-eyebrow">The Hands Behind the Cloth</span>
+  <h1 class="hero-title">Meet the <em>Weavers</em></h1>
+  <p class="hero-subtitle">আমাদের তাঁতিরা — যারা স্বপ্ন বোনেন সুতোয়</p>
+  <p class="hero-lead">
+    These are not anonymous artisans. They are mothers, daughters, teachers, and dreamers —
+    women whose hands have spent decades learning a language that cannot be written, only woven.
+    Every piece you wear carries the story of one of them.
+  </p>
+</div>
+
+<!-- Manifesto -->
+<div class="manifesto-wrap" id="manifestoWrap">
   <div class="manifesto">
     <p class="manifesto-text">
-      "আমরা বিক্রি করি না শুধু কাপড়। আমরা বহন করি সেই নারীর স্বপ্ন, 
+      "আমরা বিক্রি করি না শুধু কাপড়। আমরা বহন করি সেই নারীর স্বপ্ন,
       যে ভোরবেলা তাঁতে বসেন — শুধু এইটুকু বিশ্বাস নিয়ে যে তাঁর শিল্পের মূল্য আছে।"
     </p>
+    <div class="manifesto-rule"></div>
     <p class="manifesto-en">
-      "We do not merely sell fabric. We carry the dreams of the woman who sits at the loom at dawn — 
+      "We do not merely sell fabric. We carry the dreams of the woman who sits at the loom at dawn —
       with only this one belief: that her craft has worth."
     </p>
   </div>
-
-  <!-- Weavers grid -->
-  <div class="team-grid">
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Jamdani &middot; 28 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">28</div>
-        <div class="weaver-name">সরস্বতী দেবী</div>
-        <div class="weaver-location">Murshidabad, West Bengal</div>
-        <p class="weaver-story">
-          Saraswati learned jamdani at age 9, sitting beside her mother's loom in Murshidabad. 
-          She married into a weaving family and raised three daughters, all of whom now weave for বুনন. 
-          Her signature motif — a three-petal lotus — appears in our most beloved bridal sarees. 
-          "The loom is my language," she says. "I say things with thread that I cannot say with words."
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Jamdani</span>
-          <span class="weaver-tag">Silk</span>
-          <span class="weaver-tag">Bridal</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Kantha &middot; 35 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">35</div>
-        <div class="weaver-name">রাধারানী মণ্ডল</div>
-        <div class="weaver-location">Bolpur, Birbhum</div>
-        <p class="weaver-story">
-          Radharani is a kantha legend in Bolpur. Her running stitch is so precise that 
-          art historians have documented her work as a rare surviving example of pre-industrial kantha technique. 
-          After losing her husband early, kantha became her livelihood and her meditation. 
-          She now trains 40 younger women in her village, ensuring the stitch survives another generation.
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Kantha Stitch</span>
-          <span class="weaver-tag">Cotton</span>
-          <span class="weaver-tag">Stoles</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Block Print &middot; 20 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">20</div>
-        <div class="weaver-name">সুমিত্রা হাঁসদা</div>
-        <div class="weaver-location">Purulia, West Bengal</div>
-        <p class="weaver-story">
-          Sumitra is a Santali woman whose block printing draws from her tribal heritage — 
-          geometric forms, animals of the forest, harvest symbols passed down through oral tradition. 
-          She carves her own printing blocks from wood she collects from the forest. 
-          বুনন was the first platform that paid her fairly for her art. 
-          She used her first payment to put her son through engineering school.
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Block Print</span>
-          <span class="weaver-tag">Tribal Art</span>
-          <span class="weaver-tag">Cotton</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Natural Dye &middot; 15 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">15</div>
-        <div class="weaver-name">মীরা মাহাতো</div>
-        <div class="weaver-location">Jharkhand border, Bengal</div>
-        <p class="weaver-story">
-          Meera doesn't weave — she colours. A master of natural dyeing, she extracts pigments 
-          from indigo plants, pomegranate rind, turmeric, and forest bark. 
-          Her colours don't fade; they age. She supplies the dyed yarns that give বুনন's 
-          cotton pieces their distinctive, earthy richness.
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Natural Dyes</span>
-          <span class="weaver-tag">Indigo</span>
-          <span class="weaver-tag">Organic</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Tant &middot; 40 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">40</div>
-        <div class="weaver-name">কমলা বসাক</div>
-        <div class="weaver-location">Dhaniakhali, Hooghly</div>
-        <p class="weaver-story">
-          Kamala is 68 years old and has been at the tant loom since she was 28. 
-          Her family has woven tant for four generations in Dhaniakhali — 
-          the village that gave Bengal its most beloved everyday saree. 
-          She weaves 3 sarees a day, without counting. 
-          "The loom doesn't need instructions," she says. "It knows what to do. So do I."
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Tant</span>
-          <span class="weaver-tag">Cotton</span>
-          <span class="weaver-tag">Daily Wear</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weaver-card">
-      <div class="weaver-portrait">
-        <svg class="weaver-portrait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 7 14 12 14 C17 14 20 16 20 20"/></svg>
-        <div class="weaver-craft-badge">Zari &middot; 18 years</div>
-      </div>
-      <div class="weaver-body">
-        <div class="weaver-years">18</div>
-        <div class="weaver-name">পূর্ণিমা সাহা</div>
-        <div class="weaver-location">Shantiniketan, Birbhum</div>
-        <p class="weaver-story">
-          Purnima studied under a Tagore-era weaving tradition at Shantiniketan's 
-          craft school before joining বুনন. She specializes in zari borders — 
-          pure gold thread work woven directly into fabric, not stitched on later. 
-          Her bridal dupatta borders are sought after across Bengal. 
-          She is also our youngest master weaver, at 34.
-        </p>
-        <div class="weaver-spec">
-          <span class="weaver-tag">Zari</span>
-          <span class="weaver-tag">Silk</span>
-          <span class="weaver-tag">Bridal</span>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /team-grid -->
-
-  <!-- Mission pillars -->
-  <div class="mission-section">
-    <div class="mission-head">
-      <h3>Why It Matters</h3>
-      <p>আমরা কেন করি এই কাজ</p>
-    </div>
-    <div class="mission-grid">
-      <div class="mission-item">
-        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3 L12 21 M3 12 L21 12 M5 5 L19 19 M19 5 L5 19"/></svg>
-        <div class="mission-title">Fair Wages</div>
-        <p class="mission-desc">Every weaver receives 40% above market rate. We believe the price of craft must reflect the time, skill and soul invested in it.</p>
-      </div>
-      <div class="mission-item">
-        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 12 L11 15 L16 9"/></svg>
-        <div class="mission-title">Skill Preservation</div>
-        <p class="mission-desc">বুনন runs free workshops where master weavers teach their techniques to the next generation, ensuring no art form is lost.</p>
-      </div>
-      <div class="mission-item">
-        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2 C12 2 4 6 4 13 C4 17 7.6 20 12 20 C16.4 20 20 17 20 13 C20 6 12 2 12 2 Z"/></svg>
-        <div class="mission-title">Sustainable Craft</div>
-        <p class="mission-desc">We use natural dyes, organic fibres, and traditional methods that are gentle on the earth — the same earth our weavers live on.</p>
-      </div>
-      <div class="mission-item">
-        <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="7" r="4"/><path d="M3 21 C3 17 5.7 14 9 14"/><circle cx="17" cy="11" r="3"/><path d="M13 21 C13 18.2 14.8 16 17 16 C19.2 16 21 18.2 21 21"/></svg>
-        <div class="mission-title">Women First</div>
-        <p class="mission-desc">92% of our weavers are women. Financial independence through craft has enabled education, healthcare, and dignity for hundreds of families.</p>
-      </div>
-    </div>
-  </div>
-
-</section>
+</div>
 
 <!-- Impact Band -->
 <div class="impact-band">
-  <div class="impact-inner">
+  <div class="impact-inner" id="impactInner">
+    <!-- Filled dynamically or fallback -->
     <div>
-      <div class="impact-num">200+</div>
+      <div class="impact-num" data-target="200" data-suffix="+">0</div>
       <div class="impact-label">Active Weavers</div>
       <div class="impact-sub">সক্রিয় তাঁতি</div>
     </div>
     <div>
-      <div class="impact-num">12</div>
+      <div class="impact-num" data-target="12">0</div>
       <div class="impact-label">Villages</div>
       <div class="impact-sub">গ্রাম</div>
     </div>
     <div>
-      <div class="impact-num">92%</div>
+      <div class="impact-num" data-target="92" data-suffix="%">0</div>
       <div class="impact-label">Women Weavers</div>
       <div class="impact-sub">নারী তাঁতি</div>
     </div>
     <div>
-      <div class="impact-num">40%</div>
+      <div class="impact-num" data-target="40" data-suffix="%">0</div>
       <div class="impact-label">Above Market Pay</div>
       <div class="impact-sub">বাজার মূল্যের উপরে</div>
     </div>
   </div>
 </div>
 
-<script>
-  document.querySelectorAll('.weaver-card, .mission-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { el.style.opacity='1'; el.style.transform='translateY(0)'; }
-    }, {threshold: 0.1}).observe(el);
-  });
+<!-- Weavers Section -->
+<section class="weavers-section">
+  <div class="section-header">
+    <span class="section-tag">Our Artisans</span>
+    <h2 class="section-title">The People of বুনন</h2>
+  </div>
+
+  <!-- Filter bar — populated by JS -->
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-filter="all" onclick="applyFilter('all', this)">All Weavers</button>
+  </div>
+
+  <div class="team-grid" id="teamGrid">
+    <!-- Filled by Firebase -->
+  </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+  <div class="section-header">
+    <span class="section-tag">Our Commitment</span>
+    <h2 class="section-title">Why It Matters</h2>
+    <p style="font-family:var(--font-bengali);color:var(--text-dim);margin-top:0.5rem;font-size:1rem;">আমরা কেন করি এই কাজ</p>
+  </div>
+  <div class="mission-grid">
+    <div class="mission-item">
+      <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <div class="mission-title">Fair Wages</div>
+      <p class="mission-desc">Every weaver receives 40% above market rate. We believe the price of craft must reflect the time, skill and soul invested in it.</p>
+    </div>
+    <div class="mission-item">
+      <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <div class="mission-title">Skill Preservation</div>
+      <p class="mission-desc">বুনন runs free workshops where master weavers teach their techniques to the next generation, ensuring no art form is lost.</p>
+    </div>
+    <div class="mission-item">
+      <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 8v4l3 3"/></svg>
+      <div class="mission-title">Sustainable Craft</div>
+      <p class="mission-desc">We use natural dyes, organic fibres, and traditional methods that are gentle on the earth — the same earth our weavers live on.</p>
+    </div>
+    <div class="mission-item">
+      <svg class="mission-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <div class="mission-title">Women First</div>
+      <p class="mission-desc">92% of our weavers are women. Financial independence through craft has enabled education, healthcare, and dignity for hundreds of families.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="if(event.target===this)closeLightbox()">
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">&#215;</button>
+    <div class="lightbox-inner" id="lightboxInner"></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">বুনন</div>
+  <div class="footer-copy">&copy; 2024 Bunan — Handwoven with love</div>
+</footer>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwV9cghlNFbzv57hkdIcFFzy1rXbIcIS4",
+    authDomain: "bunan-4fd57.firebaseapp.com",
+    projectId: "bunan-4fd57",
+    storageBucket: "bunan-4fd57.firebasestorage.app",
+    messagingSenderId: "612151786648",
+    appId: "1:612151786648:web:6ca884a59cbd73117724ed"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  window.__db = db;
+
+  try {
+    const snap = await getDocs(collection(db, 'weavers'));
+    window.__weavers = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(w => w.isActive !== false);
+  } catch(e) {
+    window.__weavers = [];
+  }
+
+  window.initWeavers();
 </script>
+
+<script>
+  let allWeavers = [];
+  let activeFilter = 'all';
+
+  function driveThumb(url, size = 'w600') {
+    if (!url) return '';
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}`;
+    return '';
+  }
+
+  function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  window.initWeavers = function() {
+    allWeavers = window.__weavers || [];
+
+    // Collect unique expertise tags for filter bar
+    const tags = new Set();
+    allWeavers.forEach(w => (w.expertise || []).forEach(e => tags.add(e)));
+    const filterBar = document.getElementById('filterBar');
+    tags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.filter = tag;
+      btn.textContent = tag;
+      btn.onclick = () => applyFilter(tag, btn);
+      filterBar.appendChild(btn);
+    });
+
+    renderGrid(allWeavers);
+    animateMissionItems();
+    animateCounters();
+    hideLoader();
+  };
+
+  function hideLoader() {
+    const el = document.getElementById('stateLoading');
+    el.classList.add('out');
+    setTimeout(() => el.style.display = 'none', 700);
+  }
+
+  window.applyFilter = function(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = filter === 'all'
+      ? allWeavers
+      : allWeavers.filter(w => (w.expertise || []).includes(filter));
+    renderGrid(filtered);
+  };
+
+  function renderGrid(weavers) {
+    const grid = document.getElementById('teamGrid');
+    grid.innerHTML = '';
+
+    if (!weavers.length) {
+      grid.innerHTML = `<div class="empty-state">No weavers to display at this time.</div>`;
+      return;
+    }
+
+    weavers.forEach((w, i) => {
+      const card = document.createElement('div');
+      card.className = 'weaver-card' + (w.isFeatured && i === 0 ? ' featured-card' : '');
+      card.style.transitionDelay = `${i * 0.07}s`;
+
+      const photoUrl = driveThumb((w.photoLinks && w.photoLinks[0]) || w.photoLink, 'w600');
+      const craftBadge = [
+        (w.expertise || [])[0],
+        w.yearsWeaving ? w.yearsWeaving + ' years' : null
+      ].filter(Boolean).join(' · ');
+
+      const locationStr = [w.village, w.district, w.state].filter(Boolean).join(', ');
+      const yearsNum = parseInt(w.yearsWeaving) || '';
+
+      card.innerHTML = `
+        <div class="weaver-portrait">
+          ${photoUrl
+            ? `<img src="${photoUrl}" alt="${escHtml(w.name)}" loading="lazy" />`
+            : `<svg class="weaver-portrait-placeholder" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20C4 16 7 14 12 14C17 14 20 16 20 20"/></svg>`}
+          <div class="weaver-portrait-overlay"></div>
+          ${craftBadge ? `<div class="weaver-craft-badge">${escHtml(craftBadge)}</div>` : ''}
+          ${w.hasAward ? `<div class="weaver-award-badge">Award Winner</div>` : ''}
+        </div>
+        <div class="weaver-body">
+          ${yearsNum ? `<div class="weaver-years">${yearsNum}</div>` : ''}
+          <div class="weaver-name">${escHtml(w.name || 'Unknown')}</div>
+          ${w.nameBn ? `<div class="weaver-name-en">${escHtml(w.nameBn)}</div>` : ''}
+          ${locationStr ? `<div class="weaver-location">${escHtml(locationStr)}</div>` : ''}
+          ${w.story ? `<p class="weaver-story">${escHtml(w.story)}</p>` : ''}
+          <div class="weaver-spec">
+            ${(w.expertise || []).map(e => `<span class="weaver-tag">${escHtml(e)}</span>`).join('')}
+            ${w.loom ? `<span class="weaver-tag">${escHtml(w.loom)}</span>` : ''}
+            ${w.primaryProduct ? `<span class="weaver-tag">${escHtml(w.primaryProduct)}</span>` : ''}
+          </div>
+          <button class="weaver-read-more" onclick="openLightbox('${w.id}')">
+            Read her story
+            <span class="weaver-read-more-arrow">&#8594;</span>
+          </button>
+        </div>`;
+
+      card.addEventListener('click', (e) => {
+        if (!e.target.closest('.weaver-read-more')) return;
+      });
+
+      grid.appendChild(card);
+
+      // Stagger reveal
+      requestAnimationFrame(() => {
+        setTimeout(() => card.classList.add('revealed'), i * 80);
+      });
+    });
+  }
+
+  window.openLightbox = function(id) {
+    const w = allWeavers.find(x => x.id === id);
+    if (!w) return;
+
+    const photoUrl = driveThumb((w.photoLinks && w.photoLinks[0]) || w.photoLink, 'w800');
+    const locationStr = [w.village, w.district, w.state].filter(Boolean).join(', ');
+
+    document.getElementById('lightboxInner').innerHTML = `
+      <div class="lightbox-portrait">
+        ${photoUrl
+          ? `<img src="${photoUrl}" alt="${escHtml(w.name)}" />`
+          : `<svg class="lightbox-portrait-placeholder" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="0.8"><circle cx="12" cy="8" r="4"/><path d="M4 20C4 16 7 14 12 14C17 14 20 16 20 20"/></svg>`}
+      </div>
+      <div class="lightbox-body">
+        <div class="lightbox-name">${escHtml(w.name || '—')}</div>
+        ${w.nameBn ? `<div class="lightbox-name-en">${escHtml(w.nameBn)}</div>` : ''}
+        ${locationStr ? `<div class="lightbox-location">${escHtml(locationStr)}</div>` : ''}
+        <div class="lightbox-divider"></div>
+        <div class="lightbox-meta-grid">
+          ${w.yearsWeaving ? `<div class="lightbox-meta-item"><div class="lightbox-meta-label">Years Weaving</div><div class="lightbox-meta-value">${escHtml(w.yearsWeaving)}</div></div>` : ''}
+          ${w.primaryProduct ? `<div class="lightbox-meta-item"><div class="lightbox-meta-label">Specialisation</div><div class="lightbox-meta-value">${escHtml(w.primaryProduct)}</div></div>` : ''}
+          ${w.loom ? `<div class="lightbox-meta-item"><div class="lightbox-meta-label">Loom Type</div><div class="lightbox-meta-value">${escHtml(w.loom)}</div></div>` : ''}
+          ${w.age ? `<div class="lightbox-meta-item"><div class="lightbox-meta-label">Age</div><div class="lightbox-meta-value">${escHtml(String(w.age))}</div></div>` : ''}
+          ${w.pin ? `<div class="lightbox-meta-item"><div class="lightbox-meta-label">Pin Code</div><div class="lightbox-meta-value">${escHtml(w.pin)}</div></div>` : ''}
+        </div>
+        <div class="lightbox-divider"></div>
+        ${w.story ? `<p class="lightbox-story">${escHtml(w.story)}</p>` : '<p class="lightbox-story" style="color:var(--text-light);font-style:italic;">No story added yet.</p>'}
+        ${(w.expertise || []).length ? `
+          <div class="lightbox-expertise">
+            ${(w.expertise || []).map(e => `<span class="weaver-tag">${escHtml(e)}</span>`).join('')}
+          </div>` : ''}
+      </div>`;
+
+    document.getElementById('lightboxOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeLightbox = function() {
+    document.getElementById('lightboxOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  // Close lightbox on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  function animateMissionItems() {
+    document.querySelectorAll('.mission-item').forEach((el, i) => {
+      const obs = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => el.classList.add('revealed'), i * 100);
+          obs.unobserve(el);
+        }
+      }, { threshold: 0.1 });
+      obs.observe(el);
+    });
+  }
+
+  function animateCounters() {
+    const nums = document.querySelectorAll('.impact-num[data-target]');
+    const obs = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      nums.forEach(el => {
+        const target = parseInt(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        let current = 0;
+        const duration = 1600;
+        const start = performance.now();
+        const step = (now) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          current = Math.round(ease * target);
+          el.textContent = current + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+      obs.disconnect();
+    }, { threshold: 0.4 });
+    obs.observe(document.getElementById('impactInner'));
+  }
+
+  // Manifesto scroll reveal
+  const manifObs = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+      manifObs.unobserve(entry.target);
+    }
+  }, { threshold: 0.2 });
+  const manifEl = document.querySelector('.manifesto');
+  if (manifEl) {
+    manifEl.style.opacity = '0';
+    manifEl.style.transform = 'translateY(24px)';
+    manifEl.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    manifObs.observe(manifEl);
+  }
+</script>
+</body>
+</html>
