@@ -690,6 +690,9 @@
   let drawerOpen       = false;
   const WA = window.BUNAN_WA || '917501929425';
 
+  /* ── placeholder SVG (declared early so cardHTML can always access it) ── */
+  const phSVG = `<div class="card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg></div>`;
+
   /* ── demo data ── */
   const demoProducts = [
     { id:'demo1', serialNumber:'BN-001', saleCode:'SAR-JMD-001', name:'Jamdani Silk Saree', nameBn:'জামদানি রেশম শাড়ি', tagline:'Six metres of woven daylight.', category:'Saree', fabric:'Silk', colour:'White', occasion:'Wedding', karigari:'Jamdani', size:'Free Size', description:'An exquisite jamdani weave in pure Murshidabad silk. Each motif is woven directly into the cloth by hand — no embroidery, no printing.', material:'Pure Murshidabad Silk, Zari border', timeTaken:'72 hours', origin:'Murshidabad, West Bengal', weaverName:'Sumaitra Hansda', weaverVillage:'Jiaganj, Murshidabad', weaverStory:'Sumaitra has been weaving since she was fourteen. Each saree she makes takes three full days of devoted work.', driveLink:'', likes:142, isNew:true, isBestSeller:true, tags:['handwoven','wedding','jamdani'], reviews:[{text:'Wore this to my wedding — every guest asked where I got it.',author:'Priya M., Kolkata'}] },
@@ -820,8 +823,6 @@
     if (p.driveLink) return driveThumb(p.driveLink);
     return null;
   }
-  const phSVG = `<div class="card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/><circle cx="12" cy="12" r="3"/></svg></div>`;
-
   /* ── render grid ── */
   function renderGrid() {
     const grid  = document.getElementById('productGrid');
