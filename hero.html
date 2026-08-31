@@ -443,6 +443,130 @@
     margin-top: 0.3rem;
   }
 
+  /* ─── FOUNDER'S REFLECTION ───────────────────────────────────── */
+  #reflection {
+    padding: 7rem 3rem;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    overflow: hidden;
+  }
+  .fn-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 5rem; align-items: center;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  /* Artistic scattered gallery */
+  .fn-gallery {
+    position: relative;
+    width: 100%;
+    height: clamp(380px, 40vw, 560px);
+  }
+  .fn-pic {
+    position: absolute;
+    overflow: hidden;
+    border: 6px solid var(--bg-card);
+    box-shadow: var(--shadow-deep);
+    transition: transform 0.5s ease, box-shadow 0.5s ease, z-index 0s;
+  }
+  .fn-pic img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .fn-pic:hover {
+    transform: rotate(0deg) scale(1.05) !important;
+    box-shadow: 0 20px 55px rgba(44,26,14,0.28);
+    z-index: 5 !important;
+  }
+  .fn-pic-1 {
+    top: 0; left: 0; width: 58%; height: 60%;
+    z-index: 2; transform: rotate(-4deg);
+  }
+  .fn-pic-2 {
+    top: 4%; right: 0; width: 44%; height: 44%;
+    z-index: 3; transform: rotate(5deg);
+  }
+  .fn-pic-3 {
+    bottom: 2%; left: 8%; width: 42%; height: 44%;
+    z-index: 1; transform: rotate(3deg);
+  }
+  .fn-pic-4 {
+    bottom: -2%; right: 6%; width: 48%; height: 48%;
+    z-index: 4; transform: rotate(-6deg);
+  }
+  .fn-gallery::before {
+    content: '';
+    position: absolute; top: -14px; left: -14px;
+    width: 60px; height: 60px;
+    border-top: 1px solid var(--gold-light);
+    border-left: 1px solid var(--gold-light);
+    opacity: 0.6; pointer-events: none;
+  }
+  .fn-gallery::after {
+    content: '';
+    position: absolute; bottom: -14px; right: -14px;
+    width: 60px; height: 60px;
+    border-bottom: 1px solid var(--gold-light);
+    border-right: 1px solid var(--gold-light);
+    opacity: 0.6; pointer-events: none;
+  }
+
+  .fn-text { padding: 1rem 0; }
+  .fn-tag {
+    display: inline-block;
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(139,105,20,0.25);
+    padding-bottom: 0.3rem;
+    margin-bottom: 1.5rem;
+  }
+  .fn-heading {
+    font-family: var(--font-bengali);
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+  }
+  .fn-heading-en {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem; color: var(--text-light);
+    margin-bottom: 2rem; letter-spacing: 0.02em;
+  }
+  .fn-quote {
+    border-left: 2px solid var(--gold-light);
+    padding-left: 1.6rem;
+    position: relative;
+  }
+  .fn-quote::before {
+    content: '\201C';
+    position: absolute; top: -2.2rem; left: 0.6rem;
+    font-family: var(--font-heading);
+    font-size: 5rem; line-height: 1;
+    color: rgba(139,105,20,0.1);
+    pointer-events: none;
+  }
+  .fn-quote p {
+    font-family: var(--font-bengali);
+    font-style: italic;
+    font-size: 1.12rem; line-height: 2;
+    color: var(--text-dim);
+    margin-bottom: 1.3rem;
+    letter-spacing: 0.02em;
+  }
+  .fn-quote p:last-child { margin-bottom: 0; }
+  .fn-cite {
+    display: block;
+    margin-top: 1.8rem;
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold);
+  }
+
   /* ─── TYPES OF WEARABLES ──────────────────────────────────── */
   #wearables {
     padding: 7rem 3rem;
@@ -523,10 +647,13 @@
   @media (max-width: 900px) {
     .story-grid { grid-template-columns: 1fr; gap: 3rem; }
     .story-badge { display: none; }
-    #story, #wearables, .categories-preview { padding: 4rem 1.5rem; }
+    #story, #wearables, .categories-preview, #reflection { padding: 4rem 1.5rem; }
     .hero-cta-group { flex-direction: column; align-items: center; }
     .story-stats { gap: 1.5rem; }
     .wearables-grid { grid-template-columns: 1fr; }
+    .fn-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+    .fn-grid .fn-gallery { order: -1; }
+    .fn-gallery { height: clamp(320px, 90vw, 460px); max-width: 420px; margin: 0 auto; }
   }
 </style>
 
@@ -733,6 +860,36 @@
   </div>
 </section>
 
+<!-- ══════════════════ FOUNDER'S REFLECTION -->
+<section id="reflection">
+  <div class="fn-grid">
+
+    <!-- Text side -->
+    <div class="fn-text" data-aos>
+      <span class="fn-tag">In Her Words</span>
+      <h2 class="fn-heading">একজন শিক্ষিকার উপলব্ধি</h2>
+      <p class="fn-heading-en">A reflection on বুনন</p>
+
+      <blockquote class="fn-quote">
+        <p>"বুনন" বোধহয় আমার কাছে এই মুহূর্তে কোনো নাম নয়, এটা একটা সৃষ্টির কথা বলে যা একান্তই যে শুধু ব্যবসায়িক প্রয়োজনে টা নয়, মস্তিষ্ক আর মননের মিলন। আর সেই মিলনের বহিঃপ্রকাশ অনবদ্য।</p>
+        <p>যার পিছনে লুকিয়ে আছে অনেক অধ্যবসায়, তাকে আত্মস্থ করে সুচ সুতো দিয়ে কাপড়ের উপর যেটা ফুটে ওঠে তাকে শুধুই ব্যবসা করার মাপকাঠি আমি বাণিজ্য বিভাগের ছাত্রী ও শিক্ষিকা হয়েও বলতে পারিনা।</p>
+        <p>মনন ছাড়া শুধুই যে বাণিজ্যিক সাফল্য আসে না তার প্রমাণ বোধহয় বুনন। প্রতিটি শাড়ি নিজের মহিমায় উজ্জ্বল।</p>
+        <p>দাম দিয়ে বোধহয় এই শাড়ির মান বিচার করা ঠিক হবে না। স্ট্যাটাস বোঝানোর জন্য বুননের প্রয়োজন নেই, তবে বুনন আপনাকে একটা স্বতন্ত্র আভিজাত্য এনে দেবে — তা বলার অপেক্ষা রাখে না।</p>
+      </blockquote>
+      <cite class="fn-cite">— A Commerce Teacher, on discovering বুনন</cite>
+    </div>
+
+    <!-- Artistic scattered gallery -->
+    <div class="fn-gallery" data-aos>
+      <div class="fn-pic fn-pic-1"><img src="pics/1.jpeg" alt="বুনন handwoven saree, draped in green and gold" loading="lazy" /></div>
+      <div class="fn-pic fn-pic-2"><img src="pics/2.jpeg" alt="বুনন handwoven saree, detail among the leaves" loading="lazy" /></div>
+      <div class="fn-pic fn-pic-3"><img src="pics/3.jpeg" alt="বুনন handwoven saree, seated portrait" loading="lazy" /></div>
+      <div class="fn-pic fn-pic-4"><img src="pics/4.jpeg" alt="বুনন handwoven saree, standing portrait" loading="lazy" /></div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ══════════════════ WEARABLES TYPE STORIES -->
 <section id="wearables">
   <div class="section-head">
@@ -746,11 +903,8 @@
       <div class="wearable-name-bn">শাড়ি</div>
       <div class="wearable-name-en">Saree</div>
       <p class="wearable-story">
-        The saree is not just a garment — it is an identity. Each শাড়ি in our collection 
-        carries the DNA of a specific village: the jamdani of Tangail with its floral whispers, 
-        the muslin of Dhaka so fine it was once called "woven air," 
-        and the bold block-printed cottons of the Santali tradition.
-        Draped in six meters of handspun heritage.
+        The saree is not just a garment — it is an expression of India. Each শাড়ি in our collection carries the soul of a distinct state: its timeless crafts, regional motifs, and ancestral artistry, thoughtfully brought into contemporary form. From intricate weaves to evocative prints, every design celebrates the heritage of its land, crafted in pure, carefully chosen materials. Draped in six meters of enduring tradition.
+
       </p>
       <span class="wearable-origin">Bengal &middot; Assam &middot; Odisha</span>
     </div>
@@ -827,7 +981,7 @@
     });
   }, { threshold: 0.1 });
 
-  document.querySelectorAll('.wearable-card, .story-text, .story-visual').forEach(el => {
+  document.querySelectorAll('.wearable-card, .story-text, .story-visual, .fn-text, .fn-gallery').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
