@@ -1,0 +1,782 @@
+<!-- ══════════════════════════════════════════════════════════════════
+     BUNAN — HERO MODULE  (hero.html)
+     Full-screen hero + Inspiration Story
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ─── HERO ─────────────────────────────────────────────────── */
+  #home {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    padding-top: 80px;
+    background: var(--bg);
+  }
+
+  /* Woven grid pattern background */
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        rgba(139,105,20,0.05) 0px, rgba(139,105,20,0.05) 1px,
+        transparent 1px, transparent 48px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(139,105,20,0.05) 0px, rgba(139,105,20,0.05) 1px,
+        transparent 1px, transparent 48px
+      ),
+      radial-gradient(ellipse 70% 55% at 55% 50%, rgba(139,105,20,0.06) 0%, transparent 70%),
+      linear-gradient(160deg, #F5EFE4 0%, #FAF6F0 40%, #F2EAE0 100%);
+    animation: weaveShift 25s ease-in-out infinite alternate;
+  }
+  @keyframes weaveShift {
+    from { background-position: 0 0, 0 0, center; }
+    to   { background-position: 48px 48px, 48px 48px, center; }
+  }
+
+  /* Diagonal cloth-fold overlay */
+  .hero-cloth {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        transparent 0px, transparent 22px,
+        rgba(139,105,20,0.025) 22px, rgba(139,105,20,0.025) 24px
+      );
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    animation: heroFadeIn 1.6s ease forwards;
+  }
+  @keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-deco);
+    font-size: 0.62rem; letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--font-bengali);
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    color: var(--gold-dark);
+    text-shadow:
+      0 0 60px rgba(139,105,20,0.18),
+      0 2px 8px rgba(44,26,14,0.1);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation: heroFadeIn 1.2s ease 0.5s forwards;
+  }
+
+  .hero-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1.2rem; margin: 1.8rem auto;
+    max-width: 360px;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 0.8s forwards;
+  }
+  .hero-divider::before,
+  .hero-divider::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+  }
+  .hero-divider-icon {
+    color: var(--gold); font-size: 0.9rem; line-height: 1;
+    font-family: var(--font-deco);
+    letter-spacing: 0.2em;
+  }
+
+  .hero-motto {
+    font-family: var(--font-bengali);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--text-dim);
+    font-style: italic;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 1s forwards;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    color: var(--text-light);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-top: 0.8rem;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 1.2s forwards;
+  }
+
+  .hero-cta-group {
+    display: flex; gap: 1.2rem; justify-content: center;
+    margin-top: 3rem;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 1.4s forwards;
+  }
+
+  .btn-primary {
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--bg);
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-dark) 100%);
+    padding: 0.9rem 2.4rem;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(139,105,20,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: all 0.35s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transition: left 0.5s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,105,20,0.35); }
+  .btn-primary:hover::before { left: 100%; }
+
+  .btn-ghost {
+    font-family: var(--font-deco);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-dark);
+    background: transparent;
+    padding: 0.9rem 2.4rem;
+    text-decoration: none;
+    border: 1px solid rgba(139,105,20,0.4);
+    cursor: pointer;
+    transition: all 0.35s ease;
+  }
+  .btn-ghost:hover {
+    background: rgba(139,105,20,0.06);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* Scroll indicator */
+  .hero-scroll {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0;
+    animation: heroFadeIn 1s ease 2s forwards;
+    cursor: pointer;
+  }
+  .hero-scroll span {
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .hero-scroll-line {
+    width: 1px; height: 46px;
+    background: linear-gradient(180deg, var(--gold-light) 0%, transparent 100%);
+    animation: scrollDrop 2s ease-in-out infinite;
+  }
+  @keyframes scrollDrop {
+    0%   { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* Floating geometric motifs */
+  .hero-motif {
+    position: absolute;
+    width: 200px; height: 200px;
+    border: 1px solid rgba(139,105,20,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-motif:nth-child(1) { top: 15%; left: 8%; animation: floatMotif 18s ease-in-out infinite; }
+  .hero-motif:nth-child(2) { bottom: 20%; right: 8%; width: 280px; height: 280px; animation: floatMotif 22s ease-in-out infinite reverse; }
+  .hero-motif:nth-child(3) { top: 50%; left: 3%; width: 120px; height: 120px; animation: floatMotif 14s ease-in-out 3s infinite; }
+  @keyframes floatMotif {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.35; }
+    50%       { transform: translate(10px, -15px) rotate(8deg); opacity: 0.7; }
+  }
+
+  /* ─── CATEGORY STRIPS ───────────────────────────────────────── */
+  .categories-preview {
+    padding: 4rem 3rem;
+    background: linear-gradient(180deg, var(--bg-dark), var(--bg), var(--bg-dark));
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .categories-label {
+    text-align: center;
+    font-family: var(--font-deco);
+    font-size: 0.6rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 2.5rem;
+  }
+  .cat-strip {
+    display: flex; gap: 1px; max-width: 1200px; margin: 0 auto;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .cat-strip::-webkit-scrollbar { display: none; }
+  .cat-item {
+    flex: 1; min-width: 160px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.8rem; padding: 2.2rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: all 0.35s ease;
+    position: relative; overflow: hidden;
+  }
+  .cat-item::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+  }
+  .cat-item:hover { background: var(--bg-dark); transform: translateY(-3px); box-shadow: var(--shadow-card); }
+  .cat-item:hover::before { transform: scaleX(1); }
+
+  .cat-icon-svg {
+    width: 36px; height: 36px;
+    color: var(--gold-dark); opacity: 0.7;
+  }
+  .cat-name-bn {
+    font-family: var(--font-bengali);
+    font-size: 1.1rem; color: var(--gold-dark);
+  }
+  .cat-name-en {
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  /* ─── INSPIRATION STORY ──────────────────────────────────── */
+  #story {
+    padding: 7rem 3rem;
+    max-width: 1200px; margin: 0 auto;
+    scroll-margin-top: 80px;
+  }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+  .story-visual {
+    position: relative;
+  }
+  .story-frame {
+    width: 100%; aspect-ratio: 4/5;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    border-radius: 2px;
+    box-shadow:
+      0 20px 60px rgba(44,26,14,0.18),
+      0 4px 20px rgba(139,105,20,0.12),
+      inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  /* Actual photo fills the frame */
+  .story-frame-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+  /* Subtle vignette over the photo */
+  .story-frame-vignette {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(44,26,14,0.28) 100%),
+      linear-gradient(180deg, transparent 55%, rgba(44,26,14,0.45) 100%);
+    pointer-events: none;
+  }
+  /* Glassy overlay panel at bottom */
+  .story-frame-glass {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 1.6rem 1.8rem 1.4rem;
+    background: rgba(245,239,228,0.12);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-top: 1px solid rgba(255,255,255,0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .story-frame-glass-label {
+    font-family: var(--font-deco);
+    font-size: 0.52rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(245,239,228,0.65);
+    margin-bottom: 0.35rem;
+  }
+  .story-frame-glass-title {
+    font-family: var(--font-bengali);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(245,239,228,0.95);
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+  }
+  /* Corner accent marks */
+  .story-frame-accent {
+    position: absolute;
+    top: 16px; left: 16px;
+    width: 32px; height: 32px;
+    border-top: 1px solid rgba(255,255,255,0.35);
+    border-left: 1px solid rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  .story-frame-accent2 {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    border-top: 1px solid rgba(255,255,255,0.35);
+    border-right: 1px solid rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  /* Gold shimmer line on frame edge */
+  .story-frame::after {
+    content: '';
+    position: absolute; top: 0; left: 20%; right: 20%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(196,160,60,0.6), transparent);
+    pointer-events: none;
+  }
+  .story-badge {
+    position: absolute;
+    bottom: -1.5rem; right: -1.5rem;
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 8px 30px rgba(139,105,20,0.2);
+  }
+  .story-badge-num {
+    font-family: var(--font-deco);
+    font-size: 1.8rem; font-weight: 600;
+    color: #fff; line-height: 1;
+  }
+  .story-badge-text {
+    font-family: var(--font-deco);
+    font-size: 0.48rem; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85); text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  .story-text { padding: 1rem 0; }
+  .story-tag {
+    display: inline-block;
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(139,105,20,0.25);
+    padding-bottom: 0.3rem;
+    margin-bottom: 1.5rem;
+  }
+  .story-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--text);
+    line-height: 1.25;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  .story-body {
+    font-family: var(--font-display);
+    font-size: 1.08rem; line-height: 1.95;
+    color: var(--text-dim);
+    margin-bottom: 1.2rem;
+  }
+  .story-quote {
+    border-left: 2px solid var(--gold-light);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    background: rgba(139,105,20,0.04);
+  }
+  .story-quote p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem; line-height: 1.85;
+    color: var(--text);
+  }
+  .story-quote cite {
+    display: block;
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-top: 0.8rem;
+    font-style: normal;
+  }
+  .story-stats {
+    display: flex; gap: 2.5rem; margin-top: 2.5rem;
+  }
+  .stat-num {
+    font-family: var(--font-heading);
+    font-size: 2.6rem; color: var(--gold-dark);
+    line-height: 1; font-weight: 500;
+  }
+  .stat-label {
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 0.3rem;
+  }
+
+  /* ─── TYPES OF WEARABLES ──────────────────────────────────── */
+  #wearables {
+    padding: 7rem 3rem;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .section-head {
+    text-align: center; margin-bottom: 4rem;
+  }
+  .section-tag {
+    font-family: var(--font-deco);
+    font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--gold); display: block; margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    color: var(--text);
+    font-weight: 400;
+  }
+  .section-sub {
+    font-family: var(--font-bengali);
+    font-size: 1rem; color: var(--text-dim);
+    margin-top: 0.5rem; letter-spacing: 0.05em;
+  }
+
+  .wearables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1px; max-width: 1200px; margin: 0 auto;
+    border: 1px solid var(--border-soft);
+  }
+  .wearable-card {
+    position: relative; overflow: hidden;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 2.5rem 2rem;
+    cursor: default;
+    transition: all 0.4s ease;
+  }
+  .wearable-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+  .wearable-card:hover { background: var(--bg); transform: translateY(-3px); box-shadow: var(--shadow-card); }
+  .wearable-card:hover::before { transform: scaleX(1); }
+
+  .wearable-name-bn {
+    font-family: var(--font-bengali);
+    font-size: 1.5rem; color: var(--gold-dark);
+    margin-bottom: 0.3rem;
+  }
+  .wearable-name-en {
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 1rem;
+  }
+  .wearable-story {
+    font-family: var(--font-display);
+    font-size: 0.95rem; line-height: 1.9;
+    color: var(--text-dim);
+  }
+  .wearable-origin {
+    display: inline-block;
+    margin-top: 1.2rem;
+    font-family: var(--font-deco);
+    font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem;
+  }
+
+  @media (max-width: 900px) {
+    .story-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .story-badge { display: none; }
+    #story, #wearables, .categories-preview { padding: 4rem 1.5rem; }
+    .hero-cta-group { flex-direction: column; align-items: center; }
+    .story-stats { gap: 1.5rem; }
+    .wearables-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- ══════════════════ HERO SECTION -->
+<section id="home" style="scroll-margin-top:0;">
+  <div class="hero-bg"></div>
+  <div class="hero-cloth"></div>
+  <div class="hero-motif"></div>
+  <div class="hero-motif"></div>
+  <div class="hero-motif"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Handwoven Traditions Since Generations</p>
+    <h1 class="hero-title">বুনন</h1> 
+       <p style="font-family: var(--font-bengali); font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--gold-dark); text-align: right; letter-spacing: 0.05em; font-style: italic; margin-top: -1.0rem; margin-right: 5.8rem; opacity: 0; animation: heroFadeIn 1s ease 0.7s forwards;">শান্তিনিকেতন</p>
+    <div class="hero-divider">
+  <span class="hero-divider-icon">— Bunan —</span>
+</div>
+<p style="font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.15em; color: var(--gold-dark); font-style: italic; text-align: center; margin-top: -1.6rem; margin-bottom: 0.5rem; opacity: 0; animation: heroFadeIn 1s ease 0.9s forwards;">Shantiniketan</p>
+    <p class="hero-motto">যতনে শাড়ি যতনে নারী</p>
+    <p class="hero-subtitle">Woven with love &nbsp;&middot;&nbsp; Crafted with soul</p>
+    <div class="hero-cta-group">
+      <a href="#collection" class="btn-primary">Explore Collection</a>
+      <a href="#story" class="btn-ghost">Our Story</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('story').scrollIntoView({behavior:'smooth'})">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══════════════════ CATEGORY PREVIEW STRIP -->
+<div class="categories-preview">
+  <p class="categories-label">Our Collections</p>
+  <div class="cat-strip">
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Saree')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/></svg> -->
+      <span class="cat-name-bn">শাড়ি</span>
+      <span class="cat-name-en">Saree</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Punjabi')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="1"/><line x1="6" y1="8" x2="18" y2="8"/><line x1="12" y1="2" x2="12" y2="8"/></svg> -->
+      <span class="cat-name-bn">পাঞ্জাবি</span>
+      <span class="cat-name-en">Punjabi</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kantha')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="8"/><path d="M4 12 Q8 8 12 12 Q16 16 20 12"/></svg> -->
+      <span class="cat-name-bn">কাঁথা</span>
+      <span class="cat-name-en">Kantha</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Dupatta')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 6 Q7 3 12 6 Q17 9 21 6"/><path d="M3 12 Q7 9 12 12 Q17 15 21 12"/><path d="M3 18 Q7 15 12 18 Q17 21 21 18"/></svg> -->
+      <span class="cat-name-bn">দোপাট্টা</span>
+      <span class="cat-name-en">Dupatta</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kurta')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2 L4 6 L6 8 L8 6 L8 22 L16 22 L16 6 L18 8 L20 6 L16 2 Z"/></svg> -->
+      <span class="cat-name-bn">কুর্তা</span>
+      <span class="cat-name-en">Kurta</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Shawl')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 8 C6 6 10 10 12 8 C14 6 18 10 22 8 L22 18 C18 16 14 20 12 18 C10 16 6 20 2 18 Z"/></svg> -->
+      <span class="cat-name-bn">শাল</span>
+      <span class="cat-name-en">Shawl</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Cushion Cover')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 3 L21 21 M21 3 L3 21"/></svg> -->
+      <span class="cat-name-bn">কুশন কভার</span>
+      <span class="cat-name-en">Cushion Cover</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bags')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 8 L18 8 L17 21 L7 21 Z"/><path d="M9 8 V5 A3 3 0 0 1 15 5 V8"/></svg> -->
+      <span class="cat-name-bn">ব্যাগ</span>
+      <span class="cat-name-en">Bags</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Table Runner')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="9" width="20" height="6" rx="1"/><path d="M2 12 H22"/></svg> -->
+      <span class="cat-name-bn">টেবিল রানার</span>
+      <span class="cat-name-en">Table Runner</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedsheet')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="6" width="20" height="14" rx="1"/><path d="M2 11 H22"/></svg> -->
+      <span class="cat-name-bn">বিছানার চাদর</span>
+      <span class="cat-name-en">Bedsheet</span>
+    </div>
+    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedcover')">
+      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9 Q7 6 12 9 Q17 12 21 9"/></svg> -->
+      <span class="cat-name-bn">বেডকভার</span>
+      <span class="cat-name-en">Bedcover</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ INSPIRATION STORY SECTION -->
+<section id="story">
+  <div class="story-grid">
+    <!-- Visual side -->
+    <div class="story-visual" data-aos>
+      <div class="story-frame">
+        <!-- <img class="story-frame-img" src="https://drive.google.com/file/d/15TOhjP7BydZ3t_dE3DrEpqKhgiIOPtW_/view?usp=drive_link" alt="The art of বুনন" /> -->
+           <img class="story-frame-img" 
+               src="hero.JPG" 
+               alt="The art of বুনন" />
+        <div class="story-frame-vignette"></div>
+        <div class="story-frame-accent"></div>
+        <div class="story-frame-accent2"></div>
+        <div class="story-frame-glass">
+          <div class="story-frame-glass-label">Our Inspiration</div>
+          <div class="story-frame-glass-title">From a Single Thread,<br>a World was Woven</div>
+        </div>
+      </div>
+      <div class="story-badge">
+        <div class="story-badge-num">10+</div>
+        <div class="story-badge-text">Years of Craft</div>
+      </div>
+    </div>
+
+    <!-- Text side -->
+    <div class="story-text">
+      <span class="story-tag">Our Inspiration</span>
+      <h2 class="story-heading">From a Single Thread, a World was Woven</h2>
+      <p class="story-body">
+        বুনন was born not in a boardroom, but at the edge of a loom — in a small village in West Bengal, 
+        where a grandmother's fingers moved with quiet authority over threads of silk and cotton, 
+        telling stories that no pen had ever written.
+      </p>
+      <p class="story-body">
+        We watched the old traditions fade as machines took over and villages emptied. 
+        We refused to let that happen. বুনন is our answer — a bridge between 
+        the ancient art of hand-weaving and the modern world that has forgotten its beauty.
+      </p>
+
+      <div class="story-quote">
+        <p>"প্রতিটি সুতোয় একটি জীবন, প্রতিটি বুননে একটি স্বপ্ন।"</p>
+        <cite>— In every thread, a life. In every weave, a dream.</cite>
+      </div>
+
+      <p class="story-body">
+        Today, বুনন works with over 200 rural women weavers across Bengal, 
+        Jharkhand and Odisha — ensuring fair wages, artistic freedom, and a 
+        platform where their craft finds the dignity it deserves.
+      </p>
+
+      <div class="story-stats">
+        <div class="stat-item">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">Weavers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Villages</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1500+</div>
+          <div class="stat-label">Products</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Craft Styles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ WEARABLES TYPE STORIES -->
+<section id="wearables">
+  <div class="section-head">
+    <span class="section-tag">What We Weave</span>
+    <h2 class="section-title">Our Collections</h2>
+    <p class="section-sub">প্রতিটি পোশাকের পেছনে একটি গল্প</p>
+  </div>
+
+  <div class="wearables-grid">
+    <div class="wearable-card">
+      <div class="wearable-name-bn">শাড়ি</div>
+      <div class="wearable-name-en">Saree</div>
+      <p class="wearable-story">
+        The saree is not just a garment — it is an identity. Each শাড়ি in our collection 
+        carries the DNA of a specific village: the jamdani of Tangail with its floral whispers, 
+        the muslin of Dhaka so fine it was once called "woven air," 
+        and the bold block-printed cottons of the Santali tradition.
+        Draped in six meters of handspun heritage.
+      </p>
+      <span class="wearable-origin">Bengal &middot; Assam &middot; Odisha</span>
+    </div>
+
+    <div class="wearable-card">
+      <div class="wearable-name-bn">পাঞ্জাবি</div>
+      <div class="wearable-name-en">Punjabi / Kurta</div>
+      <p class="wearable-story">
+        Our পাঞ্জাবি collection reimagines the classic kurta through the lens of 
+        Bengali craftsmanship. Woven from handspun cotton and silk blends, 
+        each piece features traditional motifs — fish scales, lotus borders, kantha-stitch accents — 
+        that transform everyday wear into a living artwork.
+      </p>
+      <span class="wearable-origin">Murshidabad &middot; Birbhum</span>
+    </div>
+
+    <div class="wearable-card">
+      <div class="wearable-name-bn">কাঁথা</div>
+      <div class="wearable-name-en">Kantha</div>
+      <p class="wearable-story">
+        Kantha is patience made visible. Rural women once stitched running-stitch patterns 
+        through layers of old saris to create warmth for their families. 
+        Today, our কাঁথা blends — stoles, quilts, jackets — carry that same meditative 
+        devotion. No two pieces are identical.
+      </p>
+      <span class="wearable-origin">West Bengal &middot; Bangladesh border villages</span>
+    </div>
+
+    <div class="wearable-card">
+      <div class="wearable-name-bn">দোপাট্টা</div>
+      <div class="wearable-name-en">Dupatta / Stole</div>
+      <p class="wearable-story">
+        A dupatta can complete a look or become the look itself. 
+        Our দোপাট্টা collection spans sheer organza with zari borders to heavy 
+        hand-block-printed cotton stoles. Perfect for every season and every occasion — 
+        a bridal statement or a daily drape.
+      </p>
+      <span class="wearable-origin">Shantiniketan &middot; Purulia</span>
+    </div>
+
+    <div class="wearable-card">
+      <div class="wearable-name-bn">কুর্তা সেট</div>
+      <div class="wearable-name-en">Kurta Sets</div>
+      <p class="wearable-story">
+        Where tradition meets the contemporary wardrobe. 
+        Our kurta sets are designed for the woman who wants to carry her roots 
+        into the modern world — breathable handloom fabrics with modern silhouettes, 
+        traditional embroidery with clean cuts. Sustainable fashion that tells a story worth wearing.
+      </p>
+      <span class="wearable-origin">Bankura &middot; Burdwan</span>
+    </div>
+
+    <div class="wearable-card">
+      <div class="wearable-name-bn">শাল ও চাদর</div>
+      <div class="wearable-name-en">Shawls & Wraps</div>
+      <p class="wearable-story">
+        Woven for warmth and wonder. Our শাল collection draws from the 
+        Muga silk of Assam and the wool traditions of the hill villages, 
+        blending them with Bengali cotton to create wraps that are 
+        as lightweight as air and as warm as belonging.
+      </p>
+      <span class="wearable-origin">Assam &middot; Darjeeling foothills</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.wearable-card, .story-text, .story-visual').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
+</script>
