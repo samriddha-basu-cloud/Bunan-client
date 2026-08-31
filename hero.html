@@ -223,12 +223,23 @@
     color: var(--gold); margin-bottom: 2.5rem;
   }
   .cat-strip {
-    display: flex; gap: 1px; max-width: 1200px; margin: 0 auto;
-    overflow-x: auto; scrollbar-width: none;
+    max-width: 1200px; margin: 0 auto;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+            mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
   }
-  .cat-strip::-webkit-scrollbar { display: none; }
+  .cat-marquee {
+    display: flex; width: max-content;
+    animation: catMarquee 36s linear infinite;
+  }
+  .cat-strip:hover .cat-marquee { animation-play-state: paused; }
+  @keyframes catMarquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .cat-track { display: flex; gap: 1px; flex-shrink: 0; }
   .cat-item {
-    flex: 1; min-width: 160px;
+    width: 180px; flex-shrink: 0;
     display: flex; flex-direction: column; align-items: center;
     gap: 0.8rem; padding: 2.2rem 1rem;
     background: var(--bg-card);
@@ -259,6 +270,10 @@
     font-family: var(--font-deco);
     font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--text-light);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cat-marquee { animation: none; }
+    .cat-strip { overflow-x: auto; }
   }
 
   /* ─── INSPIRATION STORY ──────────────────────────────────── */
@@ -549,60 +564,99 @@
 <div class="categories-preview">
   <p class="categories-label">Our Collections</p>
   <div class="cat-strip">
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Saree')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 4 Q8 8 12 4 Q16 0 20 4 L20 20 Q16 16 12 20 Q8 24 4 20 Z"/></svg> -->
-      <span class="cat-name-bn">শাড়ি</span>
-      <span class="cat-name-en">Saree</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Punjabi')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="2" width="12" height="20" rx="1"/><line x1="6" y1="8" x2="18" y2="8"/><line x1="12" y1="2" x2="12" y2="8"/></svg> -->
-      <span class="cat-name-bn">পাঞ্জাবি</span>
-      <span class="cat-name-en">Punjabi</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kantha')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="8"/><path d="M4 12 Q8 8 12 12 Q16 16 20 12"/></svg> -->
-      <span class="cat-name-bn">কাঁথা</span>
-      <span class="cat-name-en">Kantha</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Dupatta')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 6 Q7 3 12 6 Q17 9 21 6"/><path d="M3 12 Q7 9 12 12 Q17 15 21 12"/><path d="M3 18 Q7 15 12 18 Q17 21 21 18"/></svg> -->
-      <span class="cat-name-bn">দোপাট্টা</span>
-      <span class="cat-name-en">Dupatta</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kurta')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 2 L4 6 L6 8 L8 6 L8 22 L16 22 L16 6 L18 8 L20 6 L16 2 Z"/></svg> -->
-      <span class="cat-name-bn">কুর্তা</span>
-      <span class="cat-name-en">Kurta</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Shawl')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 8 C6 6 10 10 12 8 C14 6 18 10 22 8 L22 18 C18 16 14 20 12 18 C10 16 6 20 2 18 Z"/></svg> -->
-      <span class="cat-name-bn">শাল</span>
-      <span class="cat-name-en">Shawl</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Cushion Cover')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 3 L21 21 M21 3 L3 21"/></svg> -->
-      <span class="cat-name-bn">কুশন কভার</span>
-      <span class="cat-name-en">Cushion Cover</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bags')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 8 L18 8 L17 21 L7 21 Z"/><path d="M9 8 V5 A3 3 0 0 1 15 5 V8"/></svg> -->
-      <span class="cat-name-bn">ব্যাগ</span>
-      <span class="cat-name-en">Bags</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Table Runner')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="9" width="20" height="6" rx="1"/><path d="M2 12 H22"/></svg> -->
-      <span class="cat-name-bn">টেবিল রানার</span>
-      <span class="cat-name-en">Table Runner</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedsheet')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="6" width="20" height="14" rx="1"/><path d="M2 11 H22"/></svg> -->
-      <span class="cat-name-bn">বিছানার চাদর</span>
-      <span class="cat-name-en">Bedsheet</span>
-    </div>
-    <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedcover')">
-      <!-- <svg class="cat-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9 Q7 6 12 9 Q17 12 21 9"/></svg> -->
-      <span class="cat-name-bn">বেডকভার</span>
-      <span class="cat-name-en">Bedcover</span>
+    <div class="cat-marquee">
+      <div class="cat-track">
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Saree')">
+          <span class="cat-name-bn">শাড়ি</span>
+          <span class="cat-name-en">Saree</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Punjabi')">
+          <span class="cat-name-bn">পাঞ্জাবি</span>
+          <span class="cat-name-en">Punjabi</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kantha')">
+          <span class="cat-name-bn">কাঁথা</span>
+          <span class="cat-name-en">Kantha</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Dupatta')">
+          <span class="cat-name-bn">দোপাট্টা</span>
+          <span class="cat-name-en">Dupatta</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kurta')">
+          <span class="cat-name-bn">কুর্তা</span>
+          <span class="cat-name-en">Kurta</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Shawl')">
+          <span class="cat-name-bn">শাল</span>
+          <span class="cat-name-en">Shawl</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Cushion Cover')">
+          <span class="cat-name-bn">কুশন কভার</span>
+          <span class="cat-name-en">Cushion Cover</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bags')">
+          <span class="cat-name-bn">ব্যাগ</span>
+          <span class="cat-name-en">Bags</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Table Runner')">
+          <span class="cat-name-bn">টেবিল রানার</span>
+          <span class="cat-name-en">Table Runner</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedsheet')">
+          <span class="cat-name-bn">বিছানার চাদর</span>
+          <span class="cat-name-en">Bedsheet</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedcover')">
+          <span class="cat-name-bn">বেডকভার</span>
+          <span class="cat-name-en">Bedcover</span>
+        </div>
+      </div>
+      <div class="cat-track" aria-hidden="true">
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Saree')">
+          <span class="cat-name-bn">শাড়ি</span>
+          <span class="cat-name-en">Saree</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Punjabi')">
+          <span class="cat-name-bn">পাঞ্জাবি</span>
+          <span class="cat-name-en">Punjabi</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kantha')">
+          <span class="cat-name-bn">কাঁথা</span>
+          <span class="cat-name-en">Kantha</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Dupatta')">
+          <span class="cat-name-bn">দোপাট্টা</span>
+          <span class="cat-name-en">Dupatta</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Kurta')">
+          <span class="cat-name-bn">কুর্তা</span>
+          <span class="cat-name-en">Kurta</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Shawl')">
+          <span class="cat-name-bn">শাল</span>
+          <span class="cat-name-en">Shawl</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Cushion Cover')">
+          <span class="cat-name-bn">কুশন কভার</span>
+          <span class="cat-name-en">Cushion Cover</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bags')">
+          <span class="cat-name-bn">ব্যাগ</span>
+          <span class="cat-name-en">Bags</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Table Runner')">
+          <span class="cat-name-bn">টেবিল রানার</span>
+          <span class="cat-name-en">Table Runner</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedsheet')">
+          <span class="cat-name-bn">বিছানার চাদর</span>
+          <span class="cat-name-en">Bedsheet</span>
+        </div>
+        <div class="cat-item" onclick="window.__filterCategory && window.__filterCategory('Bedcover')">
+          <span class="cat-name-bn">বেডকভার</span>
+          <span class="cat-name-en">Bedcover</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
